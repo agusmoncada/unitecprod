@@ -299,4 +299,19 @@
         <field name="context">{'form_view_initial_mode': 'edit'}</field>
     </record>
 
+    <!-- Inspection Template Action -->
+    <record id="action_fleet_inspection_template" model="ir.actions.act_window">
+        <field name="name">Inspection Templates</field>
+        <field name="res_model">fleet.inspection.template</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create an Inspection Template
+            </p>
+            <p>
+                Templates define the items to check during vehicle inspections.
+            </p>
+        </field>
+    </record>
+
 </odoo>
