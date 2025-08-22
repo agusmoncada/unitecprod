@@ -286,3 +286,15 @@ class FleetInspection(models.Model):
             return all_items[current_index - 1]
         
         return False
+
+    def action_view_details(self):
+        """Open inspection details view"""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Inspection Details',
+            'view_mode': 'form',
+            'res_model': 'fleet.inspection',
+            'res_id': self.id,
+            'target': 'current',
+        }

@@ -261,8 +261,8 @@
                                         <button t-if="record.state.raw_value == 'draft'" class="btn btn-primary btn-sm" name="action_resume_inspection" type="object">
                                             Resume
                                         </button>
-                                        <button t-if="record.state.raw_value == 'completed'" class="btn btn-secondary btn-sm" name="%(action_fleet_inspection_report)d" type="action">
-                                            Report
+                                        <button t-if="record.state.raw_value == 'completed'" class="btn btn-secondary btn-sm" name="action_view_details" type="object">
+                                            View
                                         </button>
                                     </div>
                                 </div>
