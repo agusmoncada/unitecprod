@@ -21,7 +21,7 @@ with a digital, user-friendly interface. Features:
     """,
     'author': 'ItPatagon',
     'website': 'https://www.itpatagon.com',
-    'depends': ['base', 'web', 'fleet'],
+    'depends': ['base', 'web', 'fleet', 'mail'],
     'images': ['static/description/icon.png'],
     'data': [
         'security/inspection_security.xml',

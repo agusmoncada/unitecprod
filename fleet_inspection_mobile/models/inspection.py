@@ -9,6 +9,7 @@ _logger = logging.getLogger(__name__)
 class FleetInspection(models.Model):
     _name = 'fleet.inspection'
     _description = 'Vehicle Inspection'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'inspection_date desc'
     _rec_name = 'name'
 
@@ -24,7 +25,7 @@ class FleetInspection(models.Model):
         ('draft', 'In Progress'),
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled')
-    ], string='Status', default='draft', required=True)
+    ], string='Status', default='draft', required=True, tracking=True)
     
     # Driver information
     license_number = fields.Char(string='License Number')
