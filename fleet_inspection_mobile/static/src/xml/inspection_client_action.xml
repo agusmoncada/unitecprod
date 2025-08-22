@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="fleet_inspection_mobile.InspectionMobile">
+        <div class="o_fleet_inspection_mobile">
+            <div class="inspection-mobile-container">
+                <div class="inspection-header bg-primary text-white p-3">
+                    <h3 class="mb-0">
+                        <i class="fa fa-clipboard-check me-2"/>
+                        Vehicle Inspection
+                    </h3>
+                </div>
+
+                <div class="inspection-body p-4">
+                    <t t-if="state.loading">
+                        <div class="text-center py-5">
+                            <i class="fa fa-spinner fa-spin fa-3x text-primary"/>
+                            <p class="mt-3">Loading...</p>
+                        </div>
+                    </t>
+                    
+                    <t t-else="">
+                        <div class="text-center py-5">
+                            <h4 class="mb-4">Welcome to Vehicle Inspection</h4>
+                            <p class="text-muted mb-4">
+                                Select an option to begin
+                            </p>
+                            
+                            <div class="d-grid gap-3 mx-auto" style="max-width: 300px;">
+                                <button class="btn btn-primary btn-lg" t-on-click="onClickStart">
+                                    <i class="fa fa-plus me-2"/>
+                                    Start New Inspection
+                                </button>
+                                
+                                <button class="btn btn-outline-primary btn-lg" t-on-click="onClickResume">
+                                    <i class="fa fa-play me-2"/>
+                                    Resume Inspection
+                                </button>
+                                
+                                <button class="btn btn-outline-secondary" t-on-click="onClickBack">
+                                    <i class="fa fa-arrow-left me-2"/>
+                                    Back to Vehicles
+                                </button>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

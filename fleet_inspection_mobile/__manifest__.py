@@ -37,15 +37,8 @@ with a digital, user-friendly interface. Features:
     'assets': {
         'web.assets_backend': [
             'fleet_inspection_mobile/static/src/scss/inspection_mobile.scss',
-            'fleet_inspection_mobile/static/src/js/utils/camera.js',
-            'fleet_inspection_mobile/static/src/js/utils/storage.js',
-            'fleet_inspection_mobile/static/src/js/inspection_model.js',
-            'fleet_inspection_mobile/static/src/js/inspection_controller.js',
-            'fleet_inspection_mobile/static/src/js/inspection_renderer.js',
-            'fleet_inspection_mobile/static/src/js/components/photo_capture.js',
-            'fleet_inspection_mobile/static/src/js/components/signature_pad.js',
-            'fleet_inspection_mobile/static/src/js/inspection_view.js',
-            'fleet_inspection_mobile/static/src/xml/inspection_templates.xml',
+            'fleet_inspection_mobile/static/src/js/inspection_client_action.js',
+            'fleet_inspection_mobile/static/src/xml/inspection_client_action.xml',
         ],
     },
     'installable': True,

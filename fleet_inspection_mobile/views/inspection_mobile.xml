@@ -1,21 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Mobile Inspection View -->
-    <record id="view_fleet_inspection_mobile" model="ir.ui.view">
-        <field name="name">fleet.inspection.mobile</field>
-        <field name="model">fleet.inspection</field>
-        <field name="mode">primary</field>
-        <field name="arch" type="xml">
-            <inspection_mobile/>
-        </field>
-    </record>
-
-    <!-- Mobile Inspection Interface -->
-    <record id="action_fleet_inspection_mobile" model="ir.actions.act_window">
+    <!-- Mobile Inspection Interface Action -->
+    <record id="action_fleet_inspection_mobile" model="ir.actions.client">
         <field name="name">Mobile Inspection</field>
-        <field name="res_model">fleet.inspection</field>
-        <field name="view_mode">inspection_mobile</field>
+        <field name="tag">fleet_inspection_mobile</field>
         <field name="target">current</field>
         <field name="context">{
             'default_state': 'draft',
