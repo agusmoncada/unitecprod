@@ -252,7 +252,7 @@
                     <div class="modal-header">
                         <h5 class="modal-title">Take Photo</h5>
                         <button type="button" class="close" data-dismiss="modal">
-                            <span>&times;</span>
+                            <span>&#215;</span>
                         </button>
                     </div>
                     <div class="modal-body">
