@@ -228,7 +228,7 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-6">
-                                <button class="btn btn-outline-primary btn-block nav-previous" disabled>
+                                <button class="btn btn-outline-primary btn-block nav-previous" disabled="disabled">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </button>
                             </div>
