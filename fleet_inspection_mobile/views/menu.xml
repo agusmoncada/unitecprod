@@ -11,7 +11,7 @@
     <menuitem id="menu_fleet_vehicles"
               name="Vehicles"
               parent="menu_fleet_inspection_main"
-              action="action_fleet_vehicle"
+              action="fleet.fleet_vehicle_action"
               sequence="5"
               groups="group_fleet_inspection_user"/>
               
@@ -53,14 +53,14 @@
     <menuitem id="menu_fleet_vehicle_models"
               name="Vehicle Models"
               parent="menu_fleet_inspection_config"
-              action="action_fleet_vehicle_model"
+              action="fleet.fleet_vehicle_model_action"
               sequence="20"
               groups="group_fleet_inspection_manager"/>
 
     <menuitem id="menu_fleet_vehicle_brands"
               name="Vehicle Brands"
               parent="menu_fleet_inspection_config"
-              action="action_fleet_vehicle_model_brand"
+              action="fleet.fleet_vehicle_model_brand_action"
               sequence="30"
               groups="group_fleet_inspection_manager"/>
 
