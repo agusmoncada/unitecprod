@@ -19,9 +19,9 @@ with a digital, user-friendly interface. Features:
 * Digital signatures
 * Progress tracking and analytics
     """,
-    'author': 'Your Company',
-    'website': 'https://www.yourcompany.com',
-    'depends': ['base', 'web'],
+    'author': 'ItPatagon',
+    'website': 'https://www.itpatagon.com',
+    'depends': ['base', 'web', 'fleet'],
     'data': [
         'security/inspection_security.xml',
         'security/ir.model.access.csv',

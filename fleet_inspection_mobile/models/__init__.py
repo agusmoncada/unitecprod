@@ -1,4 +1,4 @@
-from . import vehicle_simple
+from . import fleet_vehicle_extension
 from . import inspection
 from . import inspection_item
 from . import inspection_template

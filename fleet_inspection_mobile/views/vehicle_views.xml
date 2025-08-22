@@ -1,66 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Vehicle Views -->
-    <record id="view_fleet_vehicle_tree" model="ir.ui.view">
-        <field name="name">fleet.vehicle.tree</field>
+    <!-- Vehicle Views Extension -->
+    <record id="view_fleet_vehicle_tree_inspection" model="ir.ui.view">
+        <field name="name">fleet.vehicle.tree.inspection</field>
         <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_tree"/>
         <field name="arch" type="xml">
-            <tree string="Vehicles">
-                <field name="license_plate"/>
-                <field name="name"/>
-                <field name="model_id"/>
-                <field name="brand_id"/>
-                <field name="driver_id"/>
-                <field name="state_id"/>
+            <field name="state_id" position="after">
                 <field name="last_inspection_date"/>
                 <field name="inspection_due" widget="boolean_toggle"/>
-            </tree>
+            </field>
         </field>
     </record>
 
-    <record id="view_fleet_vehicle_form" model="ir.ui.view">
-        <field name="name">fleet.vehicle.form</field>
+    <record id="view_fleet_vehicle_form_inspection" model="ir.ui.view">
+        <field name="name">fleet.vehicle.form.inspection</field>
         <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
         <field name="arch" type="xml">
-            <form string="Vehicle">
-                <header>
-                    <button name="action_start_inspection" string="Start Inspection" 
-                            type="object" class="oe_highlight" 
-                            groups="fleet_inspection_mobile.group_fleet_inspection_user"/>
-                </header>
-                <sheet>
-                    <div class="oe_button_box" name="button_box">
-                        <button name="action_start_inspection" type="object" 
-                                class="oe_stat_button" icon="fa-clipboard-list">
-                            <field name="inspection_count" widget="statinfo" 
-                                   string="Inspections"/>
-                        </button>
-                    </div>
-                    
-                    <div class="oe_title">
-                        <h1>
-                            <field name="display_name" readonly="1"/>
-                        </h1>
-                    </div>
-                    
-                    <group>
-                        <group>
-                            <field name="name"/>
-                            <field name="license_plate"/>
-                            <field name="vin_sn"/>
-                        </group>
-                        <group>
-                            <field name="brand_id"/>
-                            <field name="model_id"/>
-                            <field name="color"/>
-                        </group>
-                    </group>
+            <xpath expr="//header" position="inside">
+                <button name="action_start_inspection" string="Start Inspection" 
+                        type="object" class="oe_highlight" 
+                        groups="fleet_inspection_mobile.group_fleet_inspection_user"/>
+            </xpath>
+            
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_start_inspection" type="object" 
+                        class="oe_stat_button" icon="fa-clipboard-list">
+                    <field name="inspection_count" widget="statinfo" 
+                           string="Inspections"/>
+                </button>
+            </xpath>
 
-                    <group string="Driver">
-                        <field name="driver_id"/>
-                    </group>
-
+            <xpath expr="//notebook" position="inside">
+                <page string="Inspections">
                     <group string="Inspection Status">
                         <group>
                             <field name="last_inspection_date" readonly="1"/>
@@ -71,109 +45,19 @@
                             <field name="inspection_due" readonly="1" widget="boolean_toggle"/>
                         </group>
                     </group>
-
-                    <notebook>
-                        <page string="Inspections">
-                            <field name="inspection_ids" nolabel="1">
-                                <tree>
-                                    <field name="name"/>
-                                    <field name="inspection_date"/>
-                                    <field name="driver_id"/>
-                                    <field name="state"/>
-                                    <field name="overall_status"/>
-                                </tree>
-                            </field>
-                        </page>
-                        <page string="Details">
-                            <group>
-                                <group>
-                                    <field name="seats"/>
-                                    <field name="doors"/>
-                                </group>
-                                <group>
-                                    <field name="odometer"/>
-                                    <field name="odometer_unit"/>
-                                </group>
-                            </group>
-                        </page>
-                    </notebook>
-                </sheet>
-            </form>
+                    <field name="inspection_ids" nolabel="1">
+                        <tree>
+                            <field name="name"/>
+                            <field name="inspection_date"/>
+                            <field name="driver_id"/>
+                            <field name="state"/>
+                            <field name="overall_status"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
         </field>
     </record>
 
-    <!-- Vehicle Model Views -->
-    <record id="view_fleet_vehicle_model_tree" model="ir.ui.view">
-        <field name="name">fleet.vehicle.model.tree</field>
-        <field name="model">fleet.vehicle.model</field>
-        <field name="arch" type="xml">
-            <tree string="Vehicle Models">
-                <field name="name"/>
-                <field name="brand_id"/>
-                <field name="vehicle_type"/>
-            </tree>
-        </field>
-    </record>
-
-    <record id="view_fleet_vehicle_model_form" model="ir.ui.view">
-        <field name="name">fleet.vehicle.model.form</field>
-        <field name="model">fleet.vehicle.model</field>
-        <field name="arch" type="xml">
-            <form string="Vehicle Model">
-                <sheet>
-                    <group>
-                        <field name="name"/>
-                        <field name="brand_id"/>
-                        <field name="vehicle_type"/>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
-
-    <!-- Vehicle Brand Views -->
-    <record id="view_fleet_vehicle_model_brand_tree" model="ir.ui.view">
-        <field name="name">fleet.vehicle.model.brand.tree</field>
-        <field name="model">fleet.vehicle.model.brand</field>
-        <field name="arch" type="xml">
-            <tree string="Vehicle Brands">
-                <field name="name"/>
-            </tree>
-        </field>
-    </record>
-
-    <record id="view_fleet_vehicle_model_brand_form" model="ir.ui.view">
-        <field name="name">fleet.vehicle.model.brand.form</field>
-        <field name="model">fleet.vehicle.model.brand</field>
-        <field name="arch" type="xml">
-            <form string="Vehicle Brand">
-                <sheet>
-                    <group>
-                        <field name="name"/>
-                        <field name="logo" widget="image"/>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
-
-    <!-- Actions -->
-    <record id="action_fleet_vehicle" model="ir.actions.act_window">
-        <field name="name">Vehicles</field>
-        <field name="res_model">fleet.vehicle</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-
-    <record id="action_fleet_vehicle_model" model="ir.actions.act_window">
-        <field name="name">Vehicle Models</field>
-        <field name="res_model">fleet.vehicle.model</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-
-    <record id="action_fleet_vehicle_model_brand" model="ir.actions.act_window">
-        <field name="name">Vehicle Brands</field>
-        <field name="res_model">fleet.vehicle.model.brand</field>
-        <field name="view_mode">tree,form</field>
-    </record>
 
 </odoo>
