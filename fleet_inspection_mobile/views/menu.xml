@@ -3,12 +3,18 @@
     
     <!-- Main Menu Item -->
     <menuitem id="menu_fleet_inspection_main"
-              name="Inspections"
-              parent="fleet.menu_root"
+              name="Vehicle Inspections"
               sequence="30"
               groups="group_fleet_inspection_user"/>
 
     <!-- Sub-menu Items -->
+    <menuitem id="menu_fleet_vehicles"
+              name="Vehicles"
+              parent="menu_fleet_inspection_main"
+              action="action_fleet_vehicle"
+              sequence="5"
+              groups="group_fleet_inspection_user"/>
+              
     <menuitem id="menu_fleet_inspection_new"
               name="New Inspection"
               parent="menu_fleet_inspection_main"
@@ -42,6 +48,20 @@
               parent="menu_fleet_inspection_config"
               action="action_fleet_inspection_template"
               sequence="10"
+              groups="group_fleet_inspection_manager"/>
+
+    <menuitem id="menu_fleet_vehicle_models"
+              name="Vehicle Models"
+              parent="menu_fleet_inspection_config"
+              action="action_fleet_vehicle_model"
+              sequence="20"
+              groups="group_fleet_inspection_manager"/>
+
+    <menuitem id="menu_fleet_vehicle_brands"
+              name="Vehicle Brands"
+              parent="menu_fleet_inspection_config"
+              action="action_fleet_vehicle_model_brand"
+              sequence="30"
               groups="group_fleet_inspection_manager"/>
 
     <menuitem id="menu_fleet_inspection_reports"

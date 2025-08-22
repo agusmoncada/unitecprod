@@ -14,6 +14,8 @@ class FleetInspection(models.Model):
 
     name = fields.Char(string='Inspection Number', compute='_compute_name', store=True)
     vehicle_id = fields.Many2one('fleet.vehicle', string='Vehicle', required=True, ondelete='cascade')
+    # Fallback vehicle name if fleet module not available
+    vehicle_name = fields.Char(string='Vehicle Name')
     driver_id = fields.Many2one('res.partner', string='Driver', required=True)
     inspection_date = fields.Datetime(string='Inspection Date', default=fields.Datetime.now, required=True)
     odometer = fields.Float(string='Odometer (km)')

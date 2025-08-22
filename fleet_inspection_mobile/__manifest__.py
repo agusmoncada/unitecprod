@@ -21,15 +21,16 @@ with a digital, user-friendly interface. Features:
     """,
     'author': 'Your Company',
     'website': 'https://www.yourcompany.com',
-    'depends': ['base', 'fleet', 'web'],
+    'depends': ['base', 'web'],
     'data': [
         'security/inspection_security.xml',
         'security/ir.model.access.csv',
+        'data/vehicle_data.xml',
         'data/inspection_template_data.xml',
         'data/inspection_items_data.xml',
+        'views/vehicle_views.xml',
         'views/inspection_views.xml',
         'views/inspection_mobile.xml',
-        'views/fleet_vehicle_views.xml',
         'views/menu.xml',
     ],
     'assets': {

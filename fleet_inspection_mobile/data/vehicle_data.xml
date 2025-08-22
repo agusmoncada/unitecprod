@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Vehicle Brands -->
+    <record id="brand_toyota" model="fleet.vehicle.model.brand">
+        <field name="name">Toyota</field>
+    </record>
+    
+    <record id="brand_ford" model="fleet.vehicle.model.brand">
+        <field name="name">Ford</field>
+    </record>
+    
+    <record id="brand_chevrolet" model="fleet.vehicle.model.brand">
+        <field name="name">Chevrolet</field>
+    </record>
+    
+    <record id="brand_volkswagen" model="fleet.vehicle.model.brand">
+        <field name="name">Volkswagen</field>
+    </record>
+    
+    <record id="brand_renault" model="fleet.vehicle.model.brand">
+        <field name="name">Renault</field>
+    </record>
+
+    <!-- Vehicle Models -->
+    <record id="model_toyota_hilux" model="fleet.vehicle.model">
+        <field name="name">Hilux</field>
+        <field name="brand_id" ref="brand_toyota"/>
+        <field name="vehicle_type">truck</field>
+    </record>
+    
+    <record id="model_ford_ranger" model="fleet.vehicle.model">
+        <field name="name">Ranger</field>
+        <field name="brand_id" ref="brand_ford"/>
+        <field name="vehicle_type">truck</field>
+    </record>
+    
+    <record id="model_ford_transit" model="fleet.vehicle.model">
+        <field name="name">Transit</field>
+        <field name="brand_id" ref="brand_ford"/>
+        <field name="vehicle_type">van</field>
+    </record>
+    
+    <record id="model_chevrolet_s10" model="fleet.vehicle.model">
+        <field name="name">S10</field>
+        <field name="brand_id" ref="brand_chevrolet"/>
+        <field name="vehicle_type">truck</field>
+    </record>
+    
+    <record id="model_volkswagen_amarok" model="fleet.vehicle.model">
+        <field name="name">Amarok</field>
+        <field name="brand_id" ref="brand_volkswagen"/>
+        <field name="vehicle_type">truck</field>
+    </record>
+    
+    <record id="model_renault_kangoo" model="fleet.vehicle.model">
+        <field name="name">Kangoo</field>
+        <field name="brand_id" ref="brand_renault"/>
+        <field name="vehicle_type">van</field>
+    </record>
+
+    <!-- Vehicle States -->
+    <record id="vehicle_state_active" model="fleet.vehicle.state">
+        <field name="name">Activo</field>
+        <field name="sequence">10</field>
+    </record>
+    
+    <record id="vehicle_state_maintenance" model="fleet.vehicle.state">
+        <field name="name">En Mantenimiento</field>
+        <field name="sequence">20</field>
+    </record>
+    
+    <record id="vehicle_state_inactive" model="fleet.vehicle.state">
+        <field name="name">Inactivo</field>
+        <field name="sequence">30</field>
+    </record>
+
+    <!-- Sample Vehicles -->
+    <record id="vehicle_toyota_hilux_abc123" model="fleet.vehicle">
+        <field name="name">Toyota Hilux 2020</field>
+        <field name="license_plate">ABC-123</field>
+        <field name="model_id" ref="model_toyota_hilux"/>
+        <field name="brand_id" ref="brand_toyota"/>
+        <field name="color">Blanco</field>
+        <field name="seats">5</field>
+        <field name="doors">4</field>
+        <field name="state_id" ref="vehicle_state_active"/>
+        <field name="vin_sn">8AFXR4BG1LJ123456</field>
+    </record>
+    
+    <record id="vehicle_ford_transit_def456" model="fleet.vehicle">
+        <field name="name">Ford Transit 2019</field>
+        <field name="license_plate">DEF-456</field>
+        <field name="model_id" ref="model_ford_transit"/>
+        <field name="brand_id" ref="brand_ford"/>
+        <field name="color">Azul</field>
+        <field name="seats">3</field>
+        <field name="doors">4</field>
+        <field name="state_id" ref="vehicle_state_active"/>
+        <field name="vin_sn">WF0XXXTTFXFW123456</field>
+    </record>
+
+</odoo>
