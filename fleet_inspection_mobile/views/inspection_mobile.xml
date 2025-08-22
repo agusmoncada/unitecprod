@@ -257,7 +257,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="camera-container">
-                            <video class="camera-preview" autoplay playsinline></video>
+                            <video class="camera-preview" autoplay="autoplay" playsinline="playsinline"></video>
                             <canvas class="photo-canvas" style="display: none;"></canvas>
                         </div>
                         <div class="photo-preview" style="display: none;">
