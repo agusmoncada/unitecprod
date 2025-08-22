@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Main Menu Item -->
+    <menuitem id="menu_fleet_inspection_main"
+              name="Inspections"
+              parent="fleet.menu_root"
+              sequence="30"
+              groups="group_fleet_inspection_user"/>
+
+    <!-- Sub-menu Items -->
+    <menuitem id="menu_fleet_inspection_new"
+              name="New Inspection"
+              parent="menu_fleet_inspection_main"
+              action="action_fleet_inspection_new"
+              sequence="10"
+              groups="group_fleet_inspection_user"/>
+
+    <menuitem id="menu_fleet_inspections"
+              name="All Inspections"
+              parent="menu_fleet_inspection_main"
+              action="action_fleet_inspection"
+              sequence="20"
+              groups="group_fleet_inspection_user"/>
+
+    <menuitem id="menu_fleet_inspection_mobile"
+              name="Mobile Interface"
+              parent="menu_fleet_inspection_main"
+              action="action_fleet_inspection_mobile"
+              sequence="30"
+              groups="group_fleet_inspection_user"/>
+
+    <!-- Configuration Menu -->
+    <menuitem id="menu_fleet_inspection_config"
+              name="Configuration"
+              parent="menu_fleet_inspection_main"
+              sequence="100"
+              groups="group_fleet_inspection_manager"/>
+
+    <menuitem id="menu_fleet_inspection_templates"
+              name="Inspection Templates"
+              parent="menu_fleet_inspection_config"
+              action="action_fleet_inspection_template"
+              sequence="10"
+              groups="group_fleet_inspection_manager"/>
+
+    <menuitem id="menu_fleet_inspection_reports"
+              name="Reports"
+              parent="menu_fleet_inspection_main"
+              sequence="90"
+              groups="group_fleet_inspection_user"/>
+
+</odoo>

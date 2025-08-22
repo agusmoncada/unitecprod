@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Mobile Inspection Interface -->
+    <record id="action_fleet_inspection_mobile" model="ir.actions.act_window">
+        <field name="name">Mobile Inspection</field>
+        <field name="res_model">fleet.inspection</field>
+        <field name="view_mode">inspection_mobile</field>
+        <field name="target">current</field>
+        <field name="context">{
+            'default_state': 'draft',
+            'mobile_interface': True
+        }</field>
+    </record>
+
+    <!-- Vehicle Selection View for Mobile -->
+    <record id="view_fleet_vehicle_selection_mobile" model="ir.ui.view">
+        <field name="name">fleet.vehicle.selection.mobile</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="arch" type="xml">
+            <kanban class="o_fleet_inspection_mobile_vehicles" create="false" edit="false" delete="false">
+                <field name="name"/>
+                <field name="license_plate"/>
+                <field name="model_id"/>
+                <field name="color"/>
+                <field name="last_inspection_date"/>
+                <field name="days_since_inspection"/>
+                <field name="inspection_due"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card o_inspection_vehicle_card" t-attf-data-vehicle-id="#{record.id.raw_value}">
+                            <div class="o_kanban_card_header">
+                                <div class="o_kanban_card_header_title">
+                                    <div class="o_primary">
+                                        <strong><t t-esc="record.license_plate.value or record.name.value"/></strong>
+                                        <span t-if="record.inspection_due.raw_value" class="badge badge-warning ml-2">Due</span>
+                                    </div>
+                                    <div class="o_secondary">
+                                        <t t-esc="record.model_id.value"/>
+                                        <t t-if="record.color.value"> - <t t-esc="record.color.value"/></t>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o_kanban_card_content">
+                                <div class="o_fleet_last_inspection">
+                                    <strong>Last Inspection:</strong>
+                                    <t t-if="record.last_inspection_date.value">
+                                        <t t-esc="record.last_inspection_date.value"/>
+                                        (<t t-esc="record.days_since_inspection.value"/> days ago)
+                                    </t>
+                                    <t t-else="">Never</t>
+                                </div>
+                            </div>
+                            <div class="o_kanban_card_footer">
+                                <button class="btn btn-primary btn-block o_start_inspection_btn" 
+                                        t-attf-data-vehicle-id="#{record.id.raw_value}">
+                                    Start Inspection
+                                </button>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Mobile Inspection Template -->
+    <template id="inspection_mobile_interface" name="Mobile Inspection Interface">
+        <t t-call="web.layout">
+            <div class="o_fleet_inspection_mobile">
+                <!-- Header -->
+                <div class="inspection-header">
+                    <div class="container-fluid">
+                        <div class="row align-items-center">
+                            <div class="col-2">
+                                <button class="btn btn-link back-btn">
+                                    <i class="fa fa-arrow-left"/>
+                                </button>
+                            </div>
+                            <div class="col-8 text-center">
+                                <h4 class="mb-0 vehicle-name">Vehicle Inspection</h4>
+                            </div>
+                            <div class="col-2 text-right">
+                                <div class="progress-indicator">
+                                    <span class="current-item">1</span> / <span class="total-items">42</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Progress Bar -->
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <div class="progress inspection-progress">
+                                    <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="inspection-content">
+                    <!-- Vehicle Selection Screen -->
+                    <div class="screen vehicle-selection-screen active">
+                        <div class="container-fluid">
+                            <div class="search-section mt-3">
+                                <div class="input-group">
+                                    <input type="text" class="form-control vehicle-search" 
+                                           placeholder="Search by license plate, model..." />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-search"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="recent-vehicles mt-4">
+                                <h5>Recent Vehicles</h5>
+                                <div class="recent-vehicles-list">
+                                    <!-- Recent vehicles will be loaded here -->
+                                </div>
+                            </div>
+                            
+                            <div class="all-vehicles mt-4">
+                                <h5>All Vehicles</h5>
+                                <div class="all-vehicles-list">
+                                    <!-- All vehicles will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Inspection Item Screen -->
+                    <div class="screen inspection-item-screen">
+                        <div class="container-fluid">
+                            <div class="item-card">
+                                <div class="section-header">
+                                    <span class="section-name">SISTEMA ELÉCTRICO</span>
+                                    <span class="section-progress">2 / 7</span>
+                                </div>
+                                
+                                <div class="item-title">
+                                    <h2>Luces altas y bajas</h2>
+                                </div>
+                                
+                                <div class="status-buttons">
+                                    <button class="btn btn-status btn-good" data-status="bien">
+                                        <i class="fa fa-check-circle"></i>
+                                        <span>BIEN</span>
+                                    </button>
+                                    <button class="btn btn-status btn-regular" data-status="regular">
+                                        <i class="fa fa-exclamation-triangle"></i>
+                                        <span>REGULAR</span>
+                                    </button>
+                                    <button class="btn btn-status btn-bad" data-status="mal">
+                                        <i class="fa fa-times-circle"></i>
+                                        <span>MAL</span>
+                                    </button>
+                                </div>
+                                
+                                <div class="observations-section">
+                                    <button class="btn btn-link observations-toggle">
+                                        <i class="fa fa-comment"></i> Add observation
+                                    </button>
+                                    <div class="observations-field-container" style="display: none;">
+                                        <textarea class="form-control observations-field" 
+                                                  placeholder="Write your observations here..." 
+                                                  rows="3"></textarea>
+                                    </div>
+                                </div>
+                                
+                                <div class="photo-section" style="display: none;">
+                                    <div class="photo-required-alert">
+                                        <i class="fa fa-camera"></i> Photo required for items marked as BAD
+                                    </div>
+                                    <div class="photo-controls">
+                                        <button class="btn btn-primary btn-block take-photo-btn">
+                                            <i class="fa fa-camera"></i> Take Photo
+                                        </button>
+                                    </div>
+                                    <div class="photo-gallery">
+                                        <!-- Photos will be displayed here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary Screen -->
+                    <div class="screen summary-screen">
+                        <div class="container-fluid">
+                            <div class="summary-card">
+                                <h3>Inspection Complete</h3>
+                                <div class="summary-stats">
+                                    <div class="stat-item good">
+                                        <div class="stat-number">35</div>
+                                        <div class="stat-label">Good</div>
+                                    </div>
+                                    <div class="stat-item regular">
+                                        <div class="stat-number">5</div>
+                                        <div class="stat-label">Regular</div>
+                                    </div>
+                                    <div class="stat-item bad">
+                                        <div class="stat-number">2</div>
+                                        <div class="stat-label">Bad</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="general-observations">
+                                    <h5>General Observations</h5>
+                                    <textarea class="form-control" placeholder="Any additional comments..." rows="4"></textarea>
+                                </div>
+                                
+                                <div class="signature-section">
+                                    <h5>Driver Signature</h5>
+                                    <canvas class="signature-pad" width="400" height="200"></canvas>
+                                    <div class="signature-controls">
+                                        <button class="btn btn-secondary clear-signature">Clear</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Navigation -->
+                <div class="inspection-footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-6">
+                                <button class="btn btn-outline-primary btn-block nav-previous" disabled>
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button class="btn btn-primary btn-block nav-next">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Photo Capture Modal -->
+    <template id="photo_capture_modal" name="Photo Capture Modal">
+        <div class="modal fade photo-capture-modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Take Photo</h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="camera-container">
+                            <video class="camera-preview" autoplay playsinline></video>
+                            <canvas class="photo-canvas" style="display: none;"></canvas>
+                        </div>
+                        <div class="photo-preview" style="display: none;">
+                            <img class="captured-photo" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="camera-controls">
+                            <button class="btn btn-primary btn-lg capture-btn">
+                                <i class="fa fa-camera"></i> Capture
+                            </button>
+                            <button class="btn btn-secondary retake-btn" style="display: none;">
+                                <i class="fa fa-refresh"></i> Retake
+                            </button>
+                            <button class="btn btn-success save-photo-btn" style="display: none;">
+                                <i class="fa fa-check"></i> Save Photo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+</odoo>

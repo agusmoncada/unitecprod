@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+
+    <!-- Main Mobile Inspection Interface -->
+    <t t-name="fleet_inspection_mobile.MobileInterface" owl="1">
+        <div class="o_fleet_inspection_mobile">
+            <!-- Header -->
+            <div class="inspection-header">
+                <div class="container-fluid">
+                    <div class="row align-items-center py-2">
+                        <div class="col-2">
+                            <button class="btn btn-link back-btn" t-on-click="onBackClick" 
+                                    t-att-style="state.currentScreen === 'vehicle-selection' ? 'visibility: hidden;' : ''">
+                                <i class="fa fa-arrow-left"/>
+                            </button>
+                        </div>
+                        <div class="col-8 text-center">
+                            <h4 class="mb-0 vehicle-name">
+                                <t t-if="model.currentInspection">
+                                    <t t-esc="model.currentInspection.vehicle_id[1]"/>
+                                </t>
+                                <t t-else="">Vehicle Inspection</t>
+                            </h4>
+                            <t t-if="model.isOffline or model.pendingChanges.length > 0">
+                                <div class="connection-status" t-att-class="{'offline': model.isOffline, 'pending': !model.isOffline}">
+                                    <i class="fa" t-att-class="model.isOffline ? 'fa-wifi-slash' : 'fa-clock-o'"/>
+                                    <small>
+                                        <t t-if="model.isOffline">Offline</t>
+                                        <t t-else="">
+                                            <t t-esc="model.pendingChanges.length"/> pending
+                                        </t>
+                                    </small>
+                                </div>
+                            </t>
+                        </div>
+                        <div class="col-2 text-right">
+                            <t t-if="state.currentScreen === 'inspection'">
+                                <div class="progress-indicator">
+                                    <span class="current-item"><t t-esc="model.currentItemIndex + 1"/></span> / 
+                                    <span class="total-items"><t t-esc="state.progress.total"/></span>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                    <t t-if="state.currentScreen === 'inspection'">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="progress inspection-progress">
+                                    <div class="progress-bar" role="progressbar" t-att-style="'width: ' + state.progress.percentage + '%;'">
+                                        <span class="sr-only">
+                                            <t t-esc="Math.round(state.progress.percentage)"/>% Complete
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="inspection-content">
+                <!-- Vehicle Selection Screen -->
+                <div class="screen vehicle-selection-screen" t-att-class="{'active': state.currentScreen === 'vehicle-selection'}">
+                    <t t-call="fleet_inspection_mobile.VehicleSelection"/>
+                </div>
+
+                <!-- Inspection Item Screen -->
+                <div class="screen inspection-item-screen" t-att-class="{'active': state.currentScreen === 'inspection'}">
+                    <t t-if="state.currentItem" t-call="fleet_inspection_mobile.InspectionItem"/>
+                </div>
+
+                <!-- Summary Screen -->
+                <div class="screen summary-screen" t-att-class="{'active': state.currentScreen === 'summary'}">
+                    <t t-call="fleet_inspection_mobile.InspectionSummary"/>
+                </div>
+            </div>
+
+            <!-- Footer Navigation -->
+            <t t-if="state.currentScreen !== 'vehicle-selection'">
+                <div class="inspection-footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <t t-if="state.currentScreen === 'inspection'">
+                                <div class="col-6">
+                                    <button class="btn btn-outline-primary btn-block nav-previous" 
+                                            t-on-click="onPreviousClick"
+                                            t-att-disabled="model.currentItemIndex === 0">
+                                        <i class="fa fa-arrow-left"/> Previous
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn btn-primary btn-block nav-next" 
+                                            t-on-click="onNextClick">
+                                        <t t-if="model.currentItemIndex === model.inspectionItems.length - 1">
+                                            Complete <i class="fa fa-check"/>
+                                        </t>
+                                        <t t-else="">
+                                            Next <i class="fa fa-arrow-right"/>
+                                        </t>
+                                    </button>
+                                </div>
+                            </t>
+                            <t t-if="state.currentScreen === 'summary'">
+                                <div class="col-6">
+                                    <button class="btn btn-outline-secondary btn-block" t-on-click="onBackToInspection">
+                                        <i class="fa fa-arrow-left"/> Back
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn btn-success btn-block" t-on-click="onCompleteInspection">
+                                        <i class="fa fa-check"/> Complete
+                                    </button>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+
+    <!-- Vehicle Selection Sub-template -->
+    <t t-name="fleet_inspection_mobile.VehicleSelection" owl="1">
+        <div class="container-fluid">
+            <div class="search-section mt-3">
+                <div class="input-group">
+                    <input type="text" class="form-control vehicle-search" 
+                           placeholder="Search by license plate, model..." 
+                           t-model="state.searchTerm"
+                           t-on-input="onSearchInput"
+                           autocomplete="off"/>
+                    <div class="input-group-append">
+                        <span class="input-group-text">
+                            <i class="fa fa-search"/>
+                        </span>
+                    </div>
+                </div>
+                <div class="search-tips mt-2">
+                    <small class="text-muted">
+                        <i class="fa fa-lightbulb-o"/> 
+                        Tip: Search by license plate for fastest results
+                    </small>
+                </div>
+            </div>
+            
+            <div class="recent-vehicles mt-4">
+                <h5>
+                    <i class="fa fa-history"/> Recent Vehicles
+                </h5>
+                <div class="recent-vehicles-list">
+                    <t t-if="state.isLoading">
+                        <t t-call="fleet_inspection_mobile.LoadingSpinner"/>
+                    </t>
+                    <t t-else="">
+                        <t t-foreach="state.recentVehicles" t-as="vehicle" t-key="vehicle.id">
+                            <t t-call="fleet_inspection_mobile.VehicleItem">
+                                <t t-set="vehicle" t-value="vehicle"/>
+                            </t>
+                        </t>
+                        <t t-if="!state.recentVehicles.length">
+                            <div class="text-center text-muted py-4">
+                                <i class="fa fa-car fa-2x mb-2"/>
+                                <p>No recent vehicles found</p>
+                            </div>
+                        </t>
+                    </t>
+                </div>
+            </div>
+            
+            <div class="all-vehicles mt-4">
+                <h5>
+                    <i class="fa fa-car"/> All Vehicles
+                </h5>
+                <div class="all-vehicles-list">
+                    <t t-if="state.searchTerm and state.isSearching">
+                        <t t-call="fleet_inspection_mobile.LoadingSpinner"/>
+                    </t>
+                    <t t-else="">
+                        <t t-foreach="state.allVehicles" t-as="vehicle" t-key="vehicle.id">
+                            <t t-call="fleet_inspection_mobile.VehicleItem">
+                                <t t-set="vehicle" t-value="vehicle"/>
+                            </t>
+                        </t>
+                        <t t-if="state.searchTerm and !state.allVehicles.length">
+                            <div class="text-center text-muted py-4">
+                                <i class="fa fa-search fa-2x mb-2"/>
+                                <p>No vehicles found matching "<t t-esc="state.searchTerm"/>"</p>
+                            </div>
+                        </t>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!-- Vehicle Item Component -->
+    <t t-name="fleet_inspection_mobile.VehicleItem" owl="1">
+        <div class="vehicle-item" t-att-data-vehicle-id="vehicle.id">
+            <div class="vehicle-info">
+                <div class="vehicle-title">
+                    <strong><t t-esc="vehicle.license_plate or vehicle.name"/></strong>
+                    <t t-if="vehicle.inspection_due">
+                        <span class="badge badge-warning">Due</span>
+                    </t>
+                    <t t-if="vehicle.has_draft_inspection">
+                        <span class="badge badge-info">In Progress</span>
+                    </t>
+                </div>
+                <div class="vehicle-subtitle">
+                    <t t-esc="vehicle.model"/>
+                    <t t-if="vehicle.color"> - <t t-esc="vehicle.color"/></t>
+                </div>
+                <div class="vehicle-last-inspection">
+                    Last: 
+                    <t t-if="vehicle.last_inspection_date">
+                        <t t-esc="formatDate(vehicle.last_inspection_date)"/>
+                        (<t t-esc="vehicle.days_since_inspection"/> days ago)
+                    </t>
+                    <t t-else="">Never</t>
+                </div>
+            </div>
+            <button class="btn btn-primary btn-sm o_start_inspection_btn" 
+                    t-on-click="() => this.onStartInspection(vehicle.id)">
+                <t t-if="vehicle.has_draft_inspection">Resume</t>
+                <t t-else="">Start</t>
+            </button>
+        </div>
+    </t>
+
+    <!-- Inspection Item Sub-template -->
+    <t t-name="fleet_inspection_mobile.InspectionItem" owl="1">
+        <div class="container-fluid">
+            <div class="item-card">
+                <div class="section-header">
+                    <span class="section-name"><t t-esc="state.currentItem.section or 'General'"/></span>
+                    <span class="section-progress">
+                        <t t-esc="getSectionProgress().current"/> / <t t-esc="getSectionProgress().total"/>
+                    </span>
+                </div>
+                
+                <div class="item-title">
+                    <h2><t t-esc="state.currentItem.name"/></h2>
+                    <t t-if="state.currentItem.instructions">
+                        <p class="item-instructions"><t t-esc="state.currentItem.instructions"/></p>
+                    </t>
+                </div>
+                
+                <div class="status-buttons">
+                    <button class="btn btn-status btn-good" 
+                            t-att-class="{'active': state.currentStatus === 'bien'}"
+                            t-on-click="() => this.setItemStatus('bien')"
+                            aria-label="Mark as Good">
+                        <i class="fa fa-check-circle"/>
+                        <span>BIEN</span>
+                    </button>
+                    <button class="btn btn-status btn-regular" 
+                            t-att-class="{'active': state.currentStatus === 'regular'}"
+                            t-on-click="() => this.setItemStatus('regular')"
+                            aria-label="Mark as Regular">
+                        <i class="fa fa-exclamation-triangle"/>
+                        <span>REGULAR</span>
+                    </button>
+                    <button class="btn btn-status btn-bad" 
+                            t-att-class="{'active': state.currentStatus === 'mal'}"
+                            t-on-click="() => this.setItemStatus('mal')"
+                            aria-label="Mark as Bad">
+                        <i class="fa fa-times-circle"/>
+                        <span>MAL</span>
+                    </button>
+                </div>
+                
+                <div class="observations-section">
+                    <button class="btn btn-link observations-toggle" 
+                            type="button" 
+                            t-on-click="toggleObservations"
+                            t-att-aria-expanded="state.showObservations">
+                        <i class="fa fa-comment"/> Add observation
+                        <i class="fa fa-chevron-down toggle-icon" 
+                           t-att-style="state.showObservations ? 'transform: rotate(180deg);' : ''"/>
+                    </button>
+                    <div class="observations-field-container" 
+                         t-att-style="state.showObservations ? '' : 'display: none;'">
+                        <textarea class="form-control observations-field" 
+                                  placeholder="Write your observations here..." 
+                                  rows="3"
+                                  t-model="state.observations"
+                                  t-on-change="onObservationsChange"/>
+                        <small class="form-text text-muted">
+                            Describe any issues, damage, or additional notes
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="photo-section" 
+                     t-att-style="shouldShowPhotoSection() ? '' : 'display: none;'">
+                    <t t-if="state.currentStatus === 'mal'">
+                        <div class="photo-required-alert">
+                            <i class="fa fa-camera"/> Photo required for items marked as BAD
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="photo-optional-info">
+                            <i class="fa fa-camera"/> Add photos to document the issue
+                        </div>
+                    </t>
+                    <div class="photo-controls">
+                        <button class="btn btn-primary btn-block take-photo-btn" t-on-click="openPhotoCapture">
+                            <i class="fa fa-camera"/> Take Photo
+                        </button>
+                    </div>
+                    <div class="photo-gallery">
+                        <t t-if="state.photos.length">
+                            <div class="photo-thumbnails">
+                                <t t-foreach="state.photos" t-as="photo" t-key="photo.id">
+                                    <div class="photo-thumbnail" t-att-data-photo-id="photo.id">
+                                        <img t-att-src="getPhotoUrl(photo.id)" 
+                                             t-att-alt="'Photo ' + (photo_index + 1)"
+                                             class="thumbnail-image"/>
+                                        <button class="btn btn-sm btn-danger photo-delete" 
+                                                t-att-data-photo-id="photo.id"
+                                                t-on-click="() => this.deletePhoto(photo.id)">
+                                            <i class="fa fa-trash"/>
+                                        </button>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!-- Summary Sub-template -->
+    <t t-name="fleet_inspection_mobile.InspectionSummary" owl="1">
+        <div class="container-fluid">
+            <div class="summary-card">
+                <div class="text-center mb-4">
+                    <i class="fa fa-check-circle fa-4x text-success"/>
+                    <h3 class="mt-3">Inspection Complete!</h3>
+                    <p class="text-muted">Review your results and sign below</p>
+                </div>
+                
+                <div class="summary-stats">
+                    <div class="row text-center">
+                        <div class="col-3">
+                            <div class="stat-item good">
+                                <div class="stat-number"><t t-esc="getSummaryStats().good"/></div>
+                                <div class="stat-label">Good</div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="stat-item regular">
+                                <div class="stat-number"><t t-esc="getSummaryStats().regular"/></div>
+                                <div class="stat-label">Regular</div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="stat-item bad">
+                                <div class="stat-number"><t t-esc="getSummaryStats().bad"/></div>
+                                <div class="stat-label">Bad</div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="stat-item na">
+                                <div class="stat-number"><t t-esc="getSummaryStats().na"/></div>
+                                <div class="stat-label">N/A</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="general-observations mt-4">
+                    <h5><i class="fa fa-comment"/> General Observations</h5>
+                    <textarea class="form-control" 
+                              placeholder="Any additional comments about the vehicle..." 
+                              rows="4" 
+                              t-model="state.generalObservations"/>
+                    <small class="form-text text-muted">
+                        Add any overall comments about the vehicle condition
+                    </small>
+                </div>
+                
+                <div class="signature-section mt-4">
+                    <h5><i class="fa fa-pencil"/> Driver Signature</h5>
+                    <div class="signature-pad-container">
+                        <canvas class="signature-pad" 
+                                width="400" 
+                                height="200" 
+                                t-ref="signaturePad"/>
+                        <t t-if="!state.hasSignature">
+                            <div class="signature-placeholder">
+                                <i class="fa fa-pencil"/>
+                                <span>Sign here</span>
+                            </div>
+                        </t>
+                    </div>
+                    <div class="signature-controls mt-2">
+                        <button class="btn btn-secondary clear-signature" t-on-click="clearSignature">
+                            <i class="fa fa-eraser"/> Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!-- Photo Capture Modal Template -->
+    <t t-name="fleet_inspection_mobile.PhotoCaptureModal" owl="1">
+        <div class="modal fade photo-capture-modal" t-ref="photoModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Take Photo</h5>
+                        <button type="button" class="close" t-on-click="closeModal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <t t-if="!state.isPhotoTaken">
+                            <div class="camera-container">
+                                <video class="camera-preview" 
+                                       autoplay="true" 
+                                       playsinline="true" 
+                                       muted="true"
+                                       t-ref="videoElement"/>
+                                <div class="camera-overlay">
+                                    <div class="camera-guides"/>
+                                </div>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="photo-preview">
+                                <img class="captured-photo" 
+                                     t-att-src="state.capturedImageData"
+                                     alt="Captured photo"
+                                     t-ref="previewElement"/>
+                            </div>
+                        </t>
+                        <canvas class="photo-canvas" style="display: none;" t-ref="canvasElement"/>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="camera-controls">
+                            <t t-if="!state.isPhotoTaken">
+                                <button class="btn btn-secondary" t-on-click="switchCamera" t-if="isMobile">
+                                    <i class="fa fa-refresh"/>
+                                </button>
+                                <button class="btn btn-primary btn-lg capture-btn" t-on-click="capturePhoto">
+                                    <i class="fa fa-camera"/>
+                                </button>
+                                <button class="btn btn-secondary" t-on-click="toggleFlash" t-if="supportsFlash">
+                                    <i class="fa" t-att-class="state.isFlashOn ? 'fa-flash' : 'fa-flash-off'"/>
+                                </button>
+                            </t>
+                            <t t-else="">
+                                <button class="btn btn-secondary retake-btn" t-on-click="retakePhoto">
+                                    <i class="fa fa-refresh"/> Retake
+                                </button>
+                                <button class="btn btn-success save-photo-btn" t-on-click="savePhoto">
+                                    <i class="fa fa-check"/> Save Photo
+                                </button>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!-- Loading Spinner Component -->
+    <t t-name="fleet_inspection_mobile.LoadingSpinner" owl="1">
+        <div class="text-center p-3">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </t>
+
+    <!-- Error Message Component -->
+    <t t-name="fleet_inspection_mobile.ErrorMessage" owl="1">
+        <div class="error-message">
+            <i class="fa fa-exclamation-triangle"/>
+            <h4><t t-esc="props.title or 'Error'"/></h4>
+            <p><t t-esc="props.message"/></p>
+            <t t-if="props.showRetry">
+                <button class="btn btn-primary" t-on-click="props.onRetry">
+                    <i class="fa fa-refresh"/> Retry
+                </button>
+            </t>
+        </div>
+    </t>
+
+    <!-- Confirmation Modal Template -->
+    <t t-name="fleet_inspection_mobile.ConfirmationModal" owl="1">
+        <div class="modal fade confirmation-modal" t-ref="confirmModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><t t-esc="props.title or 'Confirm Action'"/></h5>
+                        <button type="button" class="close" t-on-click="cancel">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="confirmation-message"><t t-esc="props.message"/></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" t-on-click="cancel">
+                            <t t-esc="props.cancelText or 'Cancel'"/>
+                        </button>
+                        <button type="button" class="btn btn-primary confirm-btn" t-on-click="confirm">
+                            <t t-esc="props.confirmText or 'Confirm'"/>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- SISTEMA ELÉCTRICO Items -->
+    <record id="item_luces_altas_bajas" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_sistema_electrico"/>
+        <field name="name">Luces altas y bajas</field>
+        <field name="sequence">10</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Verificar el correcto funcionamiento de las luces altas y bajas</field>
+    </record>
+
+    <record id="item_luces_posicion_giro" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_sistema_electrico"/>
+        <field name="name">Luces de posición y giro</field>
+        <field name="sequence">20</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Comprobar luces de posición delanteras y traseras, y direccionales</field>
+    </record>
+
+    <record id="item_luces_freno_retroceso" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_sistema_electrico"/>
+        <field name="name">Luces de freno y retroceso</field>
+        <field name="sequence">30</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Verificar luces de freno y marcha atrás</field>
+    </record>
+
+    <record id="item_balizas_intermitentes" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_sistema_electrico"/>
+        <field name="name">Balizas Intermitentes</field>
+        <field name="sequence">40</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Comprobar funcionamiento de luces de emergencia</field>
+    </record>
+
+    <record id="item_alarma_retroceso" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_sistema_electrico"/>
+        <field name="name">Alarma acústica de retroceso</field>
+        <field name="sequence">50</field>
+        <field name="is_mandatory">False</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Verificar alarma sonora al engranar marcha atrás (si aplica)</field>
+    </record>
+
+    <record id="item_luces_tablero" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_sistema_electrico"/>
+        <field name="name">Luces de tablero instrumentos</field>
+        <field name="sequence">60</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Comprobar iluminación del tablero y testigos</field>
+    </record>
+
+    <record id="item_bocina" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_sistema_electrico"/>
+        <field name="name">Bocina</field>
+        <field name="sequence">70</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Verificar funcionamiento de la bocina</field>
+    </record>
+
+    <!-- CARROCERÍA Y CHASIS Items -->
+    <record id="item_chapa_pintura" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_carroceria_chasis"/>
+        <field name="name">Chapa y pintura</field>
+        <field name="sequence">10</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Inspeccionar estado de chapa, pintura, abolladuras y óxido</field>
+    </record>
+
+    <record id="item_parabrisas_cristales" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_carroceria_chasis"/>
+        <field name="name">Parabrisas, limpia parabrisas, cristales y espejos</field>
+        <field name="sequence">20</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Verificar estado de vidrios, limpiaparabrisas y espejos retrovisores</field>
+    </record>
+
+    <record id="item_paragolpes" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_carroceria_chasis"/>
+        <field name="name">Paragolpe trasero / delantero</field>
+        <field name="sequence">30</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Inspeccionar estado y fijación de paragolpes</field>
+    </record>
+
+    <record id="item_puertas_seguros" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_carroceria_chasis"/>
+        <field name="name">Puertas y seguros</field>
+        <field name="sequence">40</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Verificar funcionamiento de puertas, cerraduras y seguros</field>
+    </record>
+
+    <record id="item_freno_estacionamiento" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_carroceria_chasis"/>
+        <field name="name">Freno de estacionamiento</field>
+        <field name="sequence">50</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Comprobar funcionamiento del freno de mano</field>
+    </record>
+
+    <!-- INTERIOR Items -->
+    <record id="item_instrumental" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_interior"/>
+        <field name="name">Instrumental</field>
+        <field name="sequence">10</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Verificar funcionamiento de instrumental: velocímetro, combustible, temperatura</field>
+    </record>
+
+    <record id="item_levantavidrios" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_interior"/>
+        <field name="name">Levantavidrios, cerraduras</field>
+        <field name="sequence">20</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Comprobar funcionamiento de levantavidrios y cerraduras interiores</field>
+    </record>
+
+    <record id="item_calefactor" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_interior"/>
+        <field name="name">Calefactor / Desempañador</field>
+        <field name="sequence">30</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Verificar funcionamiento de calefacción y desempañado</field>
+    </record>
+
+    <record id="item_aire_acondicionado" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_interior"/>
+        <field name="name">Aire acondicionado</field>
+        <field name="sequence">40</field>
+        <field name="is_mandatory">False</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Comprobar funcionamiento del aire acondicionado (si aplica)</field>
+    </record>
+
+    <record id="item_apoyacabezas" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_interior"/>
+        <field name="name">Apoyacabezas</field>
+        <field name="sequence">50</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Verificar presencia y estado de apoyacabezas</field>
+    </record>
+
+    <record id="item_radio" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_interior"/>
+        <field name="name">Funcionamiento equipo de radio Am/Fm</field>
+        <field name="sequence">60</field>
+        <field name="is_mandatory">False</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Comprobar funcionamiento del sistema de audio</field>
+    </record>
+
+    <record id="item_tacografo" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_interior"/>
+        <field name="name">Tacógrafo</field>
+        <field name="sequence">70</field>
+        <field name="is_mandatory">False</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Verificar funcionamiento del tacógrafo (si aplica para vehículos comerciales)</field>
+    </record>
+
+    <!-- ELEMENTOS DE SEGURIDAD Items -->
+    <record id="item_cinturones" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_elementos_seguridad"/>
+        <field name="name">Cinturones de seguridad</field>
+        <field name="sequence">10</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Verificar presencia, estado y funcionamiento de cinturones de seguridad</field>
+    </record>
+
+    <record id="item_matafuegos" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_elementos_seguridad"/>
+        <field name="name">Matafuegos</field>
+        <field name="sequence">20</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Comprobar presencia, carga y vencimiento del matafuegos</field>
+    </record>
+
+    <record id="item_balizas_triangulo" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_elementos_seguridad"/>
+        <field name="name">Balizas triángulo</field>
+        <field name="sequence">30</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Verificar presencia y estado de balizas triangulares reflectivas</field>
+    </record>
+
+    <record id="item_barra_remolque" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_elementos_seguridad"/>
+        <field name="name">Barra remolque</field>
+        <field name="sequence">40</field>
+        <field name="is_mandatory">False</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Inspeccionar barra de remolque y enganche (si aplica)</field>
+    </record>
+
+    <record id="item_botiquin" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_elementos_seguridad"/>
+        <field name="name">Botiquín</field>
+        <field name="sequence">50</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Comprobar presencia y contenido del botiquín de primeros auxilios</field>
+    </record>
+
+    <record id="item_arrestallamas" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_elementos_seguridad"/>
+        <field name="name">Arrestallamas</field>
+        <field name="sequence">60</field>
+        <field name="is_mandatory">False</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Verificar arrestallamas en escape (si aplica para vehículos a gas)</field>
+    </record>
+
+    <!-- TREN RODANTE Items -->
+    <record id="item_cubiertas_llantas" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_tren_rodante"/>
+        <field name="name">Cubiertas, llantas y bulones</field>
+        <field name="sequence">10</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Inspeccionar estado de neumáticos, llantas y apriete de bulones</field>
+    </record>
+
+    <record id="item_presion_neumaticos" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_tren_rodante"/>
+        <field name="name">Presión de los neumáticos</field>
+        <field name="sequence">20</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Verificar presión de inflado según especificaciones del fabricante</field>
+    </record>
+
+    <record id="item_rueda_auxilio" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_tren_rodante"/>
+        <field name="name">Rueda/s de auxilio</field>
+        <field name="sequence">30</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Comprobar presencia, estado y presión de rueda de auxilio</field>
+    </record>
+
+    <record id="item_alineacion_balanceo" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_tren_rodante"/>
+        <field name="name">Alineación y balanceo</field>
+        <field name="sequence">40</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Verificar alineación y balanceo mediante desgaste de neumáticos</field>
+    </record>
+
+    <record id="item_llave_gato" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_tren_rodante"/>
+        <field name="name">Llave de ruedas y gato</field>
+        <field name="sequence">50</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Comprobar presencia y estado de llave de ruedas y gato hidráulico</field>
+    </record>
+
+    <!-- LIMPIEZA Items -->
+    <record id="item_limpieza_general" model="fleet.inspection.template.item">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="section_id" ref="section_limpieza"/>
+        <field name="name">Estado general de limpieza</field>
+        <field name="sequence">10</field>
+        <field name="is_mandatory">True</field>
+        <field name="photo_required_on_bad">True</field>
+        <field name="photo_allowed_on_regular">True</field>
+        <field name="instructions">Evaluar el estado general de limpieza interior y exterior del vehículo</field>
+    </record>
+
+</odoo>

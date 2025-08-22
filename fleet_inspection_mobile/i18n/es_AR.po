@@ -1,0 +1,799 @@
+# Spanish (Argentina) translation for fleet_inspection_mobile module
+# Copyright (C) 2025 Your Company
+# This file is distributed under the same license as the Odoo package.
+# FIRST AUTHOR <email@yourcompany.com>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 16.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-01 12:00+0000\n"
+"PO-Revision-Date: 2025-01-01 12:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: Spanish (Argentina)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es_AR\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__name
+msgid "Inspection Number"
+msgstr "Número de Inspección"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__vehicle_id
+msgid "Vehicle"
+msgstr "Vehículo"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__driver_id
+msgid "Driver"
+msgstr "Conductor"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__inspection_date
+msgid "Inspection Date"
+msgstr "Fecha de Inspección"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__state
+msgid "Status"
+msgstr "Estado"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,selection:fleet_inspection_mobile.field_fleet_inspection__state
+msgid "In Progress"
+msgstr "En Progreso"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,selection:fleet_inspection_mobile.field_fleet_inspection__state
+msgid "Completed"
+msgstr "Completada"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,selection:fleet_inspection_mobile.field_fleet_inspection__state
+msgid "Cancelled"
+msgstr "Cancelada"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__odometer
+msgid "Odometer (km)"
+msgstr "Odómetro (km)"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__license_number
+msgid "License Number"
+msgstr "Número de Licencia"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__license_type
+msgid "License Type"
+msgstr "Tipo de Licencia"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__license_expiry
+msgid "License Expiry"
+msgstr "Vencimiento de Licencia"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__defensive_course
+msgid "Defensive Driving Course"
+msgstr "Curso de Manejo Defensivo"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__course_duration
+msgid "Course Duration"
+msgstr "Duración del Curso"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__insurance_policy
+msgid "Insurance Policy"
+msgstr "Póliza de Seguro"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__insurance_expiry
+msgid "Insurance Expiry"
+msgstr "Vencimiento del Seguro"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__inspection_line_ids
+msgid "Inspection Items"
+msgstr "Items de Inspección"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__items_good
+msgid "Items - Good"
+msgstr "Items - Bien"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__items_regular
+msgid "Items - Regular"
+msgstr "Items - Regular"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__items_bad
+msgid "Items - Bad"
+msgstr "Items - Mal"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__items_na
+msgid "Items - N/A"
+msgstr "Items - N/A"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__total_items
+msgid "Total Items"
+msgstr "Total de Items"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__completion_percentage
+msgid "Completion %"
+msgstr "% Completado"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__overall_status
+msgid "Overall Status"
+msgstr "Estado General"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,selection:fleet_inspection_mobile.field_fleet_inspection__overall_status
+msgid "Good - Ready to Use"
+msgstr "Bien - Listo para Usar"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,selection:fleet_inspection_mobile.field_fleet_inspection__overall_status
+msgid "Attention Required"
+msgstr "Requiere Atención"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,selection:fleet_inspection_mobile.field_fleet_inspection__overall_status
+msgid "Requires Maintenance"
+msgstr "Requiere Mantenimiento"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__driver_signature
+msgid "Driver Signature"
+msgstr "Firma del Conductor"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__supervisor_signature
+msgid "Supervisor Signature"
+msgstr "Firma del Supervisor"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__observations
+msgid "General Observations"
+msgstr "Observaciones Generales"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__completion_time
+msgid "Completion Time (minutes)"
+msgstr "Tiempo de Finalización (minutos)"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__device_info
+msgid "Device Info"
+msgstr "Información del Dispositivo"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_line__name
+msgid "Item Name"
+msgstr "Nombre del Item"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_line__section
+msgid "Section"
+msgstr "Sección"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_line__status
+msgid "Status"
+msgstr "Estado"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,selection:fleet_inspection_mobile.field_fleet_inspection_line__status
+msgid "Bien"
+msgstr "Bien"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,selection:fleet_inspection_mobile.field_fleet_inspection_line__status
+msgid "Regular"
+msgstr "Regular"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,selection:fleet_inspection_mobile.field_fleet_inspection_line__status
+msgid "Mal"
+msgstr "Mal"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,selection:fleet_inspection_mobile.field_fleet_inspection_line__status
+msgid "N/A"
+msgstr "N/A"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_line__observations
+msgid "Observations"
+msgstr "Observaciones"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_line__photo_ids
+msgid "Photos"
+msgstr "Fotos"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_line__photo_count
+msgid "Photo Count"
+msgstr "Cantidad de Fotos"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_line__photo_required
+msgid "Photo Required"
+msgstr "Foto Requerida"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_line__inspected_at
+msgid "Inspected At"
+msgstr "Inspeccionado en"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_line__time_spent
+msgid "Time Spent (seconds)"
+msgstr "Tiempo Empleado (segundos)"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_photo__name
+msgid "Photo Name"
+msgstr "Nombre de la Foto"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_photo__description
+msgid "Description"
+msgstr "Descripción"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_photo__image
+msgid "Photo"
+msgstr "Foto"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_photo__taken_at
+msgid "Taken At"
+msgstr "Tomada en"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_photo__gps_latitude
+msgid "GPS Latitude"
+msgstr "Latitud GPS"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_photo__gps_longitude
+msgid "GPS Longitude"
+msgstr "Longitud GPS"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_template__name
+msgid "Template Name"
+msgstr "Nombre de la Plantilla"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_template_section__name
+msgid "Section Name"
+msgstr "Nombre de la Sección"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_template_item__instructions
+msgid "Instructions"
+msgstr "Instrucciones"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_template_item__tips
+msgid "Tips"
+msgstr "Consejos"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_vehicle__inspection_ids
+msgid "Inspections"
+msgstr "Inspecciones"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_vehicle__inspection_count
+msgid "Inspection Count"
+msgstr "Cantidad de Inspecciones"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_vehicle__last_inspection_id
+msgid "Last Inspection"
+msgstr "Última Inspección"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_vehicle__last_inspection_date
+msgid "Last Inspection Date"
+msgstr "Fecha de Última Inspección"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_vehicle__last_inspection_status
+msgid "Last Inspection Status"
+msgstr "Estado de Última Inspección"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_vehicle__days_since_inspection
+msgid "Days Since Last Inspection"
+msgstr "Días Desde Última Inspección"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_vehicle__inspection_due
+msgid "Inspection Due"
+msgstr "Inspección Vencida"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_res_company__inspection_require_photo_for_bad
+msgid "Require Photo for Bad Items"
+msgstr "Requerir Foto para Items Malos"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_res_company__inspection_allow_photo_for_regular
+msgid "Allow Photo for Regular Items"
+msgstr "Permitir Foto para Items Regulares"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_res_company__inspection_max_photos_per_item
+msgid "Max Photos per Item"
+msgstr "Máximo de Fotos por Item"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_res_company__inspection_enable_gps
+msgid "Enable GPS Location"
+msgstr "Habilitar Ubicación GPS"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_res_company__inspection_require_signature
+msgid "Require Digital Signature"
+msgstr "Requerir Firma Digital"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_res_company__inspection_auto_create_maintenance
+msgid "Auto-create Maintenance Request"
+msgstr "Auto-crear Solicitud de Mantenimiento"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_res_company__inspection_template_id
+msgid "Default Inspection Template"
+msgstr "Plantilla de Inspección Predeterminada"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_res_company__inspection_auto_advance
+msgid "Auto-advance to Next Item"
+msgstr "Avanzar Automáticamente al Siguiente Item"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_res_company__inspection_sound_feedback
+msgid "Sound Feedback"
+msgstr "Retroalimentación Sonora"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_res_company__inspection_high_contrast
+msgid "High Contrast Mode"
+msgstr "Modo Alto Contraste"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_res_company__inspection_retention_days
+msgid "Inspection Retention (days)"
+msgstr "Retención de Inspecciones (días)"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_res_company__inspection_require_odometer
+msgid "Require Odometer Reading"
+msgstr "Requerir Lectura del Odómetro"
+
+#. module: fleet_inspection_mobile
+#: model:ir.actions.act_window,name:fleet_inspection_mobile.action_fleet_inspection
+#: model:ir.ui.menu,name:fleet_inspection_mobile.menu_fleet_inspections
+msgid "Fleet Inspections"
+msgstr "Inspecciones de Flota"
+
+#. module: fleet_inspection_mobile
+#: model:ir.actions.act_window,name:fleet_inspection_mobile.action_fleet_inspection_new
+#: model:ir.ui.menu,name:fleet_inspection_mobile.menu_fleet_inspection_new
+msgid "New Inspection"
+msgstr "Nueva Inspección"
+
+#. module: fleet_inspection_mobile
+#: model:ir.actions.act_window,name:fleet_inspection_mobile.action_fleet_inspection_mobile
+#: model:ir.ui.menu,name:fleet_inspection_mobile.menu_fleet_inspection_mobile
+msgid "Mobile Interface"
+msgstr "Interfaz Móvil"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.menu,name:fleet_inspection_mobile.menu_fleet_inspection_main
+msgid "Inspections"
+msgstr "Inspecciones"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.menu,name:fleet_inspection_mobile.menu_fleet_inspection_config
+msgid "Configuration"
+msgstr "Configuración"
+
+#. module: fleet_inspection_mobile
+#: model:ir.actions.act_window,name:fleet_inspection_mobile.action_fleet_inspection_template
+#: model:ir.ui.menu,name:fleet_inspection_mobile.menu_fleet_inspection_templates
+msgid "Inspection Templates"
+msgstr "Plantillas de Inspección"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.menu,name:fleet_inspection_mobile.menu_fleet_inspection_reports
+msgid "Reports"
+msgstr "Reportes"
+
+#. module: fleet_inspection_mobile
+#: model:res.groups,name:fleet_inspection_mobile.group_fleet_inspection_user
+msgid "Fleet Inspection User"
+msgstr "Usuario de Inspección de Flota"
+
+#. module: fleet_inspection_mobile
+#: model:res.groups,name:fleet_inspection_mobile.group_fleet_inspection_manager
+msgid "Fleet Inspection Manager"
+msgstr "Administrador de Inspección de Flota"
+
+#. module: fleet_inspection_mobile
+#: code:addons/fleet_inspection_mobile/models/inspection.py:0
+#, python-format
+msgid "Please complete all inspection items. %s items remaining."
+msgstr "Por favor complete todos los items de inspección. Quedan %s items."
+
+#. module: fleet_inspection_mobile
+#: code:addons/fleet_inspection_mobile/models/inspection.py:0
+#, python-format
+msgid "Photos are required for all items marked as 'Mal'."
+msgstr "Se requieren fotos para todos los items marcados como 'Mal'."
+
+#. module: fleet_inspection_mobile
+#: code:addons/fleet_inspection_mobile/models/inspection.py:0
+#, python-format
+msgid "No active inspection template found. Please create one first."
+msgstr "No se encontró una plantilla de inspección activa. Por favor cree una primero."
+
+#. module: fleet_inspection_mobile
+#: code:addons/fleet_inspection_mobile/models/inspection.py:0
+#, python-format
+msgid "Vehicle not found."
+msgstr "Vehículo no encontrado."
+
+#. module: fleet_inspection_mobile
+#: code:addons/fleet_inspection_mobile/models/inspection.py:0
+#, python-format
+msgid "Only draft inspections can be resumed."
+msgstr "Solo se pueden reanudar las inspecciones en borrador."
+
+# Mobile Interface Strings
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Vehicle Inspection"
+msgstr "Inspección de Vehículo"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Search by license plate, model..."
+msgstr "Buscar por patente, modelo..."
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Recent Vehicles"
+msgstr "Vehículos Recientes"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "All Vehicles"
+msgstr "Todos los Vehículos"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Start Inspection"
+msgstr "Iniciar Inspección"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Resume Inspection"
+msgstr "Reanudar Inspección"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Complete Inspection"
+msgstr "Completar Inspección"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Add observation"
+msgstr "Agregar observación"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Write your observations here..."
+msgstr "Escriba sus observaciones aquí..."
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Photo required for items marked as BAD"
+msgstr "Foto requerida para items marcados como MAL"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Take Photo"
+msgstr "Tomar Foto"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Previous"
+msgstr "Anterior"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Next"
+msgstr "Siguiente"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Complete"
+msgstr "Completar"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Inspection Complete!"
+msgstr "¡Inspección Completa!"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Review your results and sign below"
+msgstr "Revise sus resultados y firme abajo"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Good"
+msgstr "Bien"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Bad"
+msgstr "Mal"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Any additional comments about the vehicle..."
+msgstr "Cualquier comentario adicional sobre el vehículo..."
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Sign here"
+msgstr "Firme aquí"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Clear"
+msgstr "Borrar"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Back"
+msgstr "Volver"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Offline"
+msgstr "Sin Conexión"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Due"
+msgstr "Vencida"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "In Progress"
+msgstr "En Progreso"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Last:"
+msgstr "Última:"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Never"
+msgstr "Nunca"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Start"
+msgstr "Iniciar"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Resume"
+msgstr "Reanudar"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Retake"
+msgstr "Tomar Otra Vez"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Save Photo"
+msgstr "Guardar Foto"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Loading..."
+msgstr "Cargando..."
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Error"
+msgstr "Error"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Retry"
+msgstr "Reintentar"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Confirm Action"
+msgstr "Confirmar Acción"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: fleet_inspection_mobile
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.inspection_mobile_interface
+msgid "Confirm"
+msgstr "Confirmar"
+
+# Field Descriptions - Data Records
+#. module: fleet_inspection_mobile
+#: model:fleet.inspection.template,name:fleet_inspection_mobile.default_inspection_template
+msgid "Inspección de Vehículos - Estándar"
+msgstr "Inspección de Vehículos - Estándar"
+
+#. module: fleet_inspection_mobile
+#: model:fleet.inspection.template,description:fleet_inspection_mobile.default_inspection_template
+msgid "Plantilla estándar para inspección de vehículos según normativas argentinas"
+msgstr "Plantilla estándar para inspección de vehículos según normativas argentinas"
+
+# Help text and tooltips
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,help:fleet_inspection_mobile.field_res_company__inspection_require_photo_for_bad
+msgid "Require photos when items are marked as 'Mal'"
+msgstr "Requerir fotos cuando los items se marcan como 'Mal'"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,help:fleet_inspection_mobile.field_res_company__inspection_allow_photo_for_regular
+msgid "Allow photos when items are marked as 'Regular'"
+msgstr "Permitir fotos cuando los items se marcan como 'Regular'"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,help:fleet_inspection_mobile.field_res_company__inspection_max_photos_per_item
+msgid "Maximum number of photos allowed per inspection item"
+msgstr "Número máximo de fotos permitidas por item de inspección"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,help:fleet_inspection_mobile.field_res_company__inspection_enable_gps
+msgid "Capture GPS coordinates with photos"
+msgstr "Capturar coordenadas GPS con las fotos"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,help:fleet_inspection_mobile.field_res_company__inspection_require_signature
+msgid "Require driver signature to complete inspection"
+msgstr "Requerir firma del conductor para completar la inspección"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,help:fleet_inspection_mobile.field_res_company__inspection_auto_create_maintenance
+msgid "Automatically create maintenance requests for items marked as \"Mal\""
+msgstr "Crear automáticamente solicitudes de mantenimiento para items marcados como \"Mal\""
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,help:fleet_inspection_mobile.field_res_company__inspection_template_id
+msgid "Default template used for new inspections"
+msgstr "Plantilla predeterminada utilizada para nuevas inspecciones"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,help:fleet_inspection_mobile.field_res_company__inspection_auto_advance
+msgid "Automatically move to next item after rating current one"
+msgstr "Moverse automáticamente al siguiente item después de calificar el actual"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,help:fleet_inspection_mobile.field_res_company__inspection_sound_feedback
+msgid "Play sounds when buttons are pressed"
+msgstr "Reproducir sonidos cuando se presionan botones"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,help:fleet_inspection_mobile.field_res_company__inspection_high_contrast
+msgid "Use high contrast colors for better visibility"
+msgstr "Usar colores de alto contraste para mejor visibilidad"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,help:fleet_inspection_mobile.field_res_company__inspection_retention_days
+msgid "Number of days to retain completed inspections"
+msgstr "Número de días para retener inspecciones completadas"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,help:fleet_inspection_mobile.field_res_company__inspection_require_odometer
+msgid "Require odometer reading during inspection"
+msgstr "Requerir lectura del odómetro durante la inspección"
+
+# Notifications and Messages
+#. module: fleet_inspection_mobile
+#: code:addons/fleet_inspection_mobile/static/src/js/inspection_controller.js:0
+#, python-format
+msgid "Failed to start inspection"
+msgstr "Error al iniciar la inspección"
+
+#. module: fleet_inspection_mobile
+#: code:addons/fleet_inspection_mobile/static/src/js/inspection_controller.js:0
+#, python-format
+msgid "Error starting inspection"
+msgstr "Error al iniciar la inspección"
+
+#. module: fleet_inspection_mobile
+#: code:addons/fleet_inspection_mobile/static/src/js/inspection_controller.js:0
+#, python-format
+msgid "Failed to save status"
+msgstr "Error al guardar el estado"
+
+#. module: fleet_inspection_mobile
+#: code:addons/fleet_inspection_mobile/static/src/js/inspection_controller.js:0
+#, python-format
+msgid "Changes synced successfully"
+msgstr "Cambios sincronizados exitosamente"
+
+#. module: fleet_inspection_mobile
+#: code:addons/fleet_inspection_mobile/static/src/js/components/photo_capture.js:0
+#, python-format
+msgid "Camera permission denied. Please allow camera access and try again."
+msgstr "Permiso de cámara denegado. Por favor permita el acceso a la cámara e intente nuevamente."
+
+#. module: fleet_inspection_mobile
+#: code:addons/fleet_inspection_mobile/static/src/js/components/photo_capture.js:0
+#, python-format
+msgid "No camera found on this device."
+msgstr "No se encontró cámara en este dispositivo."
+
+#. module: fleet_inspection_mobile
+#: code:addons/fleet_inspection_mobile/static/src/js/components/photo_capture.js:0
+#, python-format
+msgid "Camera not supported on this device."
+msgstr "Cámara no compatible con este dispositivo."
+
+#. module: fleet_inspection_mobile
+#: code:addons/fleet_inspection_mobile/static/src/js/components/photo_capture.js:0
+#, python-format
+msgid "Camera is being used by another application."
+msgstr "La cámara está siendo usada por otra aplicación."
+
+#. module: fleet_inspection_mobile
+#: code:addons/fleet_inspection_mobile/static/src/js/components/photo_capture.js:0
+#, python-format
+msgid "Failed to capture photo"
+msgstr "Error al capturar la foto"
+
+#. module: fleet_inspection_mobile
+#: code:addons/fleet_inspection_mobile/static/src/js/components/photo_capture.js:0
+#, python-format
+msgid "No photo to save"
+msgstr "No hay foto para guardar"
+
+#. module: fleet_inspection_mobile
+#: code:addons/fleet_inspection_mobile/static/src/js/components/photo_capture.js:0
+#, python-format
+msgid "Photo saved successfully"
+msgstr "Foto guardada exitosamente"
+
+#. module: fleet_inspection_mobile
+#: code:addons/fleet_inspection_mobile/static/src/js/components/photo_capture.js:0
+#, python-format
+msgid "Failed to save photo"
+msgstr "Error al guardar la foto"

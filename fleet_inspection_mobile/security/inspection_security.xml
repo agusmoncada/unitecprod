@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Security Groups -->
+    <record id="group_fleet_inspection_user" model="res.groups">
+        <field name="name">Fleet Inspection User</field>
+        <field name="category_id" ref="base.module_category_operations_fleet"/>
+        <field name="implied_ids" eval="[(4, ref('fleet.fleet_group_user'))]"/>
+        <field name="comment">User can create and manage their own vehicle inspections</field>
+    </record>
+
+    <record id="group_fleet_inspection_manager" model="res.groups">
+        <field name="name">Fleet Inspection Manager</field>
+        <field name="category_id" ref="base.module_category_operations_fleet"/>
+        <field name="implied_ids" eval="[(4, ref('group_fleet_inspection_user')), (4, ref('fleet.fleet_group_manager'))]"/>
+        <field name="comment">Manager can access all inspections, templates, and configuration</field>
+    </record>
+
+    <!-- Record Rules -->
+    
+    <!-- Fleet Inspections -->
+    <record id="fleet_inspection_user_rule" model="ir.rule">
+        <field name="name">Fleet Inspection User Access</field>
+        <field name="model_id" ref="model_fleet_inspection"/>
+        <field name="groups" eval="[(4, ref('group_fleet_inspection_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="domain_force">[('create_uid', '=', user.id)]</field>
+    </record>
+
+    <record id="fleet_inspection_manager_rule" model="ir.rule">
+        <field name="name">Fleet Inspection Manager Access</field>
+        <field name="model_id" ref="model_fleet_inspection"/>
+        <field name="groups" eval="[(4, ref('group_fleet_inspection_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Inspection Lines -->
+    <record id="fleet_inspection_line_user_rule" model="ir.rule">
+        <field name="name">Fleet Inspection Line User Access</field>
+        <field name="model_id" ref="model_fleet_inspection_line"/>
+        <field name="groups" eval="[(4, ref('group_fleet_inspection_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="domain_force">[('inspection_id.create_uid', '=', user.id)]</field>
+    </record>
+
+    <record id="fleet_inspection_line_manager_rule" model="ir.rule">
+        <field name="name">Fleet Inspection Line Manager Access</field>
+        <field name="model_id" ref="model_fleet_inspection_line"/>
+        <field name="groups" eval="[(4, ref('group_fleet_inspection_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Inspection Photos -->
+    <record id="fleet_inspection_photo_user_rule" model="ir.rule">
+        <field name="name">Fleet Inspection Photo User Access</field>
+        <field name="model_id" ref="model_fleet_inspection_photo"/>
+        <field name="groups" eval="[(4, ref('group_fleet_inspection_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+        <field name="domain_force">[('inspection_id.create_uid', '=', user.id)]</field>
+    </record>
+
+    <record id="fleet_inspection_photo_manager_rule" model="ir.rule">
+        <field name="name">Fleet Inspection Photo Manager Access</field>
+        <field name="model_id" ref="model_fleet_inspection_photo"/>
+        <field name="groups" eval="[(4, ref('group_fleet_inspection_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Templates - Manager only -->
+    <record id="fleet_inspection_template_rule" model="ir.rule">
+        <field name="name">Fleet Inspection Template Access</field>
+        <field name="model_id" ref="model_fleet_inspection_template"/>
+        <field name="groups" eval="[(4, ref('group_fleet_inspection_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <record id="fleet_inspection_template_section_rule" model="ir.rule">
+        <field name="name">Fleet Inspection Template Section Access</field>
+        <field name="model_id" ref="model_fleet_inspection_template_section"/>
+        <field name="groups" eval="[(4, ref('group_fleet_inspection_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <record id="fleet_inspection_template_item_rule" model="ir.rule">
+        <field name="name">Fleet Inspection Template Item Access</field>
+        <field name="model_id" ref="model_fleet_inspection_template_item"/>
+        <field name="groups" eval="[(4, ref('group_fleet_inspection_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Users can read templates but not modify them -->
+    <record id="fleet_inspection_template_user_read_rule" model="ir.rule">
+        <field name="name">Fleet Inspection Template User Read</field>
+        <field name="model_id" ref="model_fleet_inspection_template"/>
+        <field name="groups" eval="[(4, ref('group_fleet_inspection_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="domain_force">[('active', '=', True)]</field>
+    </record>
+
+    <record id="fleet_inspection_template_section_user_read_rule" model="ir.rule">
+        <field name="name">Fleet Inspection Template Section User Read</field>
+        <field name="model_id" ref="model_fleet_inspection_template_section"/>
+        <field name="groups" eval="[(4, ref('group_fleet_inspection_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="domain_force">[('template_id.active', '=', True)]</field>
+    </record>
+
+    <record id="fleet_inspection_template_item_user_read_rule" model="ir.rule">
+        <field name="name">Fleet Inspection Template Item User Read</field>
+        <field name="model_id" ref="model_fleet_inspection_template_item"/>
+        <field name="groups" eval="[(4, ref('group_fleet_inspection_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="domain_force">[('template_id.active', '=', True)]</field>
+    </record>
+
+</odoo>

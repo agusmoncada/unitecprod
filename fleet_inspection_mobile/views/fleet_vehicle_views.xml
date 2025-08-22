@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Extend Fleet Vehicle Form -->
+    <record id="view_fleet_vehicle_form_inspection" model="ir.ui.view">
+        <field name="name">fleet.vehicle.form.inspection</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add inspection button in header -->
+            <xpath expr="//header" position="inside">
+                <button name="action_start_inspection" string="Start Inspection" 
+                        type="object" class="oe_highlight" 
+                        groups="fleet_inspection_mobile.group_fleet_inspection_user"/>
+            </xpath>
+
+            <!-- Add smart buttons for inspections -->
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                <button name="action_view_inspections" type="object" 
+                        class="oe_stat_button" icon="fa-clipboard-list">
+                    <field name="inspection_count" widget="statinfo" 
+                           string="Inspections"/>
+                </button>
+            </xpath>
+
+            <!-- Add inspection status info -->
+            <xpath expr="//group[@name='fleet_configuration']" position="after">
+                <group string="Inspection Status" groups="fleet_inspection_mobile.group_fleet_inspection_user">
+                    <group>
+                        <field name="last_inspection_date" readonly="1"/>
+                        <field name="last_inspection_status" readonly="1" 
+                               attrs="{'invisible': [('last_inspection_status', '=', False)]}"/>
+                    </group>
+                    <group>
+                        <field name="days_since_inspection" readonly="1"/>
+                        <field name="inspection_due" readonly="1" 
+                               widget="boolean_toggle"/>
+                    </group>
+                </group>
+            </xpath>
+
+            <!-- Add inspections page in notebook -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Inspections" groups="fleet_inspection_mobile.group_fleet_inspection_user">
+                    <field name="inspection_ids" nolabel="1">
+                        <tree decoration-info="state=='draft'" decoration-success="state=='completed'">
+                            <field name="name"/>
+                            <field name="driver_id"/>
+                            <field name="inspection_date"/>
+                            <field name="state"/>
+                            <field name="overall_status"/>
+                            <field name="completion_time"/>
+                            <button name="action_resume_inspection" string="Resume" 
+                                    type="object" class="btn-sm btn-primary"
+                                    attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                        </tree>
+                        <form>
+                            <field name="name" readonly="1"/>
+                            <group>
+                                <group>
+                                    <field name="driver_id"/>
+                                    <field name="inspection_date"/>
+                                    <field name="state"/>
+                                </group>
+                                <group>
+                                    <field name="overall_status"/>
+                                    <field name="completion_time"/>
+                                    <field name="completion_percentage" widget="progressbar"/>
+                                </group>
+                            </group>
+                            <notebook>
+                                <page string="Items">
+                                    <field name="inspection_line_ids" nolabel="1">
+                                        <tree decoration-danger="status=='mal'" 
+                                              decoration-warning="status=='regular'" 
+                                              decoration-success="status=='bien'">
+                                            <field name="section"/>
+                                            <field name="name"/>
+                                            <field name="status"/>
+                                            <field name="observations"/>
+                                            <field name="photo_count"/>
+                                        </tree>
+                                    </field>
+                                </page>
+                                <page string="Observations">
+                                    <field name="observations" nolabel="1"/>
+                                </page>
+                            </notebook>
+                        </form>
+                    </field>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Extend Fleet Vehicle Tree View -->
+    <record id="view_fleet_vehicle_tree_inspection" model="ir.ui.view">
+        <field name="name">fleet.vehicle.tree.inspection</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='state_id']" position="after">
+                <field name="last_inspection_date" optional="show"/>
+                <field name="days_since_inspection" optional="show"/>
+                <field name="inspection_due" optional="show" widget="boolean_toggle"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add inspection filters to vehicle search -->
+    <record id="view_fleet_vehicle_search_inspection" model="ir.ui.view">
+        <field name="name">fleet.vehicle.search.inspection</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='alert']" position="after">
+                <separator/>
+                <filter name="inspection_due" string="Inspection Due" 
+                        domain="[('inspection_due', '=', True)]"/>
+                <filter name="never_inspected" string="Never Inspected" 
+                        domain="[('last_inspection_date', '=', False)]"/>
+                <filter name="inspected_last_week" string="Inspected Last Week" 
+                        domain="[('last_inspection_date', '>=', (datetime.datetime.now() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Template Views -->
+    <record id="view_fleet_inspection_template_tree" model="ir.ui.view">
+        <field name="name">fleet.inspection.template.tree</field>
+        <field name="model">fleet.inspection.template</field>
+        <field name="arch" type="xml">
+            <tree string="Inspection Templates">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="section_count"/>
+                <field name="item_count"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_fleet_inspection_template_form" model="ir.ui.view">
+        <field name="name">fleet.inspection.template.form</field>
+        <field name="model">fleet.inspection.template</field>
+        <field name="arch" type="xml">
+            <form string="Inspection Template">
+                <header>
+                    <button name="action_duplicate_template" string="Duplicate" type="object" class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Template Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="section_count" readonly="1"/>
+                            <field name="item_count" readonly="1"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="Template description..."/>
+                    
+                    <notebook>
+                        <page string="Sections">
+                            <field name="section_ids" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="item_count" readonly="1"/>
+                                    <field name="description"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <field name="name"/>
+                                        <field name="sequence"/>
+                                    </group>
+                                    <field name="description"/>
+                                    <field name="item_ids" nolabel="1">
+                                        <tree editable="bottom">
+                                            <field name="sequence" widget="handle"/>
+                                            <field name="name"/>
+                                            <field name="is_mandatory"/>
+                                            <field name="photo_required_on_bad"/>
+                                        </tree>
+                                    </field>
+                                </form>
+                            </field>
+                        </page>
+                        <page string="All Items">
+                            <field name="item_ids" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="section_id"/>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="is_mandatory"/>
+                                    <field name="photo_required_on_bad"/>
+                                    <field name="photo_allowed_on_regular"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_fleet_inspection_template" model="ir.actions.act_window">
+        <field name="name">Inspection Templates</field>
+        <field name="res_model">fleet.inspection.template</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>

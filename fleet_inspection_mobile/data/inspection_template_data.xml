@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Default Inspection Template -->
+    <record id="default_inspection_template" model="fleet.inspection.template">
+        <field name="name">Inspección de Vehículos - Estándar</field>
+        <field name="description">Plantilla estándar para inspección de vehículos según normativas argentinas</field>
+        <field name="active">True</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- Section 1: SISTEMA ELÉCTRICO -->
+    <record id="section_sistema_electrico" model="fleet.inspection.template.section">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="name">SISTEMA ELÉCTRICO</field>
+        <field name="sequence">10</field>
+        <field name="description">Verificación del sistema eléctrico del vehículo</field>
+    </record>
+
+    <!-- Section 2: CARROCERÍA Y CHASIS -->
+    <record id="section_carroceria_chasis" model="fleet.inspection.template.section">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="name">CARROCERÍA Y CHASIS</field>
+        <field name="sequence">20</field>
+        <field name="description">Inspección de carrocería, chasis y elementos estructurales</field>
+    </record>
+
+    <!-- Section 3: INTERIOR -->
+    <record id="section_interior" model="fleet.inspection.template.section">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="name">INTERIOR</field>
+        <field name="sequence">30</field>
+        <field name="description">Verificación de componentes internos del vehículo</field>
+    </record>
+
+    <!-- Section 4: ELEMENTOS DE SEGURIDAD -->
+    <record id="section_elementos_seguridad" model="fleet.inspection.template.section">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="name">ELEMENTOS DE SEGURIDAD</field>
+        <field name="sequence">40</field>
+        <field name="description">Inspección de elementos de seguridad obligatorios</field>
+    </record>
+
+    <!-- Section 5: TREN RODANTE -->
+    <record id="section_tren_rodante" model="fleet.inspection.template.section">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="name">TREN RODANTE</field>
+        <field name="sequence">50</field>
+        <field name="description">Verificación de ruedas, neumáticos y elementos relacionados</field>
+    </record>
+
+    <!-- Section 6: LIMPIEZA -->
+    <record id="section_limpieza" model="fleet.inspection.template.section">
+        <field name="template_id" ref="default_inspection_template"/>
+        <field name="name">LIMPIEZA</field>
+        <field name="sequence">60</field>
+        <field name="description">Estado general de limpieza del vehículo</field>
+    </record>
+
+</odoo>

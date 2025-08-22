@@ -1,0 +1,1011 @@
+// Variables
+$color-good: #28a745;
+$color-regular: #ffc107;
+$color-bad: #dc3545;
+$color-na: #6c757d;
+$color-primary: #2c3e50;
+$color-background: #f8f9fa;
+$color-text: #212529;
+$color-muted: #6c757d;
+$color-border: #dee2e6;
+$color-white: #ffffff;
+
+// Typography
+$font-size-title: 24px;
+$font-size-body: 16px;
+$font-size-button: 18px;
+$font-size-small: 14px;
+
+// Touch targets
+$min-touch-target: 48px;
+$button-padding: 16px 24px;
+$spacing-unit: 8px;
+
+// Mobile-first responsive breakpoints
+$mobile-max: 767px;
+$tablet-min: 768px;
+$tablet-max: 1023px;
+$desktop-min: 1024px;
+
+// Mixins
+@mixin button-variant($bg-color, $text-color: white) {
+  background-color: $bg-color;
+  color: $text-color;
+  border-color: $bg-color;
+  
+  &:hover, &:focus {
+    background-color: darken($bg-color, 10%);
+    border-color: darken($bg-color, 10%);
+    color: $text-color;
+  }
+  
+  &.active {
+    background-color: darken($bg-color, 15%);
+    border-color: darken($bg-color, 15%);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    transform: scale(0.98);
+  }
+}
+
+@mixin touch-feedback {
+  transition: all 0.15s ease;
+  
+  &:active, &.touching {
+    transform: scale(0.98);
+    opacity: 0.8;
+  }
+}
+
+// Base mobile inspection styles
+.o_fleet_inspection_mobile {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: $color-background;
+  font-size: $font-size-body;
+  
+  // Prevent text selection on mobile
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  
+  // Prevent zoom on input focus
+  input, textarea, select {
+    font-size: $font-size-body; // Prevents zoom on iOS
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+}
+
+// Mobile mode body adjustments
+body.o_inspection_mobile_mode {
+  overflow: hidden;
+  
+  // Hide Odoo's default elements
+  .o_control_panel,
+  .o_breadcrumb,
+  .o_searchview,
+  .o_cp_buttons {
+    display: none !important;
+  }
+  
+  .o_content {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}
+
+// Header
+.inspection-header {
+  background: $color-white;
+  border-bottom: 1px solid $color-border;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  flex-shrink: 0;
+  
+  .back-btn {
+    color: $color-primary;
+    font-size: 20px;
+    padding: 8px;
+    min-width: $min-touch-target;
+    min-height: $min-touch-target;
+    
+    @include touch-feedback;
+  }
+  
+  .vehicle-name {
+    color: $color-text;
+    font-weight: 600;
+    margin: 0;
+    font-size: 18px;
+  }
+  
+  .progress-indicator {
+    font-size: $font-size-small;
+    color: $color-muted;
+    text-align: right;
+    
+    .current-item {
+      font-weight: 600;
+      color: $color-primary;
+    }
+  }
+  
+  .connection-status {
+    font-size: 12px;
+    margin-top: 2px;
+    
+    &.offline {
+      color: $color-bad;
+    }
+    
+    &.pending {
+      color: $color-regular;
+    }
+    
+    i {
+      margin-right: 4px;
+    }
+  }
+}
+
+// Progress bar
+.inspection-progress {
+  height: 4px;
+  background-color: lighten($color-border, 5%);
+  border-radius: 0;
+  overflow: hidden;
+  
+  .progress-bar {
+    background: linear-gradient(45deg, $color-primary, lighten($color-primary, 10%));
+    transition: width 0.3s ease;
+  }
+}
+
+// Main content area
+.inspection-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  
+  .screen {
+    display: none;
+    min-height: 100%;
+    
+    &.active {
+      display: block;
+    }
+  }
+}
+
+// Vehicle Selection Screen
+.vehicle-selection-screen {
+  padding: $spacing-unit * 2;
+  
+  .search-section {
+    .input-group {
+      .form-control {
+        border-radius: 25px 0 0 25px;
+        border: 2px solid $color-border;
+        font-size: $font-size-body;
+        padding: 12px 16px;
+        
+        &:focus {
+          border-color: $color-primary;
+          box-shadow: none;
+        }
+      }
+      
+      .input-group-append .input-group-text {
+        border-radius: 0 25px 25px 0;
+        border: 2px solid $color-border;
+        border-left: none;
+        background: $color-primary;
+        color: white;
+      }
+    }
+    
+    .search-tips {
+      text-align: center;
+      
+      i {
+        color: $color-regular;
+      }
+    }
+  }
+  
+  .recent-vehicles, .all-vehicles {
+    h5 {
+      color: $color-text;
+      font-weight: 600;
+      margin-bottom: $spacing-unit * 2;
+      
+      i {
+        color: $color-primary;
+        margin-right: $spacing-unit;
+      }
+    }
+  }
+}
+
+// Vehicle item cards
+.vehicle-item {
+  background: $color-white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: $spacing-unit * 2;
+  padding: $spacing-unit * 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+  @include touch-feedback;
+  
+  .vehicle-info {
+    flex: 1;
+    
+    .vehicle-title {
+      font-weight: 600;
+      color: $color-text;
+      margin-bottom: 4px;
+      
+      .badge {
+        font-size: 11px;
+        margin-left: $spacing-unit;
+      }
+    }
+    
+    .vehicle-subtitle {
+      color: $color-muted;
+      font-size: $font-size-small;
+      margin-bottom: 4px;
+    }
+    
+    .vehicle-last-inspection {
+      color: $color-muted;
+      font-size: 12px;
+    }
+  }
+  
+  .o_start_inspection_btn {
+    min-width: 80px;
+    min-height: $min-touch-target;
+    border-radius: 20px;
+    font-weight: 600;
+    
+    @include touch-feedback;
+  }
+}
+
+// Inspection Item Screen
+.inspection-item-screen {
+  padding: $spacing-unit * 2;
+  
+  .item-card {
+    background: $color-white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: $spacing-unit * 3;
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: $spacing-unit * 3;
+      padding-bottom: $spacing-unit * 2;
+      border-bottom: 1px solid $color-border;
+      
+      .section-name {
+        font-weight: 600;
+        color: $color-primary;
+        font-size: $font-size-small;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .section-progress {
+        color: $color-muted;
+        font-size: $font-size-small;
+        font-weight: 500;
+      }
+    }
+    
+    .item-title {
+      text-align: center;
+      margin-bottom: $spacing-unit * 4;
+      
+      h2 {
+        font-size: $font-size-title;
+        font-weight: 600;
+        color: $color-text;
+        margin: 0;
+        line-height: 1.3;
+      }
+      
+      .item-instructions {
+        margin-top: $spacing-unit * 2;
+        color: $color-muted;
+        font-size: $font-size-small;
+        font-style: italic;
+      }
+    }
+  }
+}
+
+// Status buttons
+.status-buttons {
+  display: flex;
+  gap: $spacing-unit * 2;
+  margin-bottom: $spacing-unit * 4;
+  
+  @media (max-width: $mobile-max) {
+    flex-direction: column;
+    gap: $spacing-unit;
+  }
+  
+  .btn-status {
+    flex: 1;
+    min-height: 60px;
+    border-radius: 12px;
+    font-size: $font-size-button;
+    font-weight: 600;
+    border: 2px solid transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    position: relative;
+    overflow: hidden;
+    
+    @include touch-feedback;
+    
+    i {
+      font-size: 24px;
+    }
+    
+    span {
+      font-size: 14px;
+      font-weight: 700;
+    }
+    
+    // Ripple effect
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    
+    &:active::after {
+      width: 200px;
+      height: 200px;
+    }
+  }
+  
+  .btn-good {
+    @include button-variant($color-good);
+    
+    &:not(.active) {
+      background: lighten($color-good, 40%);
+      color: $color-good;
+      border-color: lighten($color-good, 20%);
+    }
+  }
+  
+  .btn-regular {
+    @include button-variant($color-regular, $color-text);
+    
+    &:not(.active) {
+      background: lighten($color-regular, 30%);
+      color: darken($color-regular, 20%);
+      border-color: lighten($color-regular, 10%);
+    }
+  }
+  
+  .btn-bad {
+    @include button-variant($color-bad);
+    
+    &:not(.active) {
+      background: lighten($color-bad, 40%);
+      color: $color-bad;
+      border-color: lighten($color-bad, 20%);
+    }
+  }
+}
+
+// Observations section
+.observations-section {
+  margin-bottom: $spacing-unit * 3;
+  
+  .observations-toggle {
+    width: 100%;
+    text-align: left;
+    color: $color-primary;
+    font-weight: 500;
+    padding: $spacing-unit * 2;
+    border: 1px solid $color-border;
+    border-radius: 8px;
+    background: lighten($color-background, 2%);
+    
+    @include touch-feedback;
+    
+    .toggle-icon {
+      float: right;
+      transition: transform 0.3s ease;
+    }
+    
+    &[aria-expanded="true"] .toggle-icon {
+      transform: rotate(180deg);
+    }
+  }
+  
+  .observations-field-container {
+    margin-top: $spacing-unit;
+    
+    .observations-field {
+      border: 2px solid $color-border;
+      border-radius: 8px;
+      padding: $spacing-unit * 2;
+      font-size: $font-size-body;
+      resize: none;
+      
+      &:focus {
+        border-color: $color-primary;
+        box-shadow: 0 0 0 0.2rem rgba($color-primary, 0.25);
+      }
+    }
+    
+    .form-text {
+      margin-top: $spacing-unit;
+    }
+  }
+}
+
+// Photo section
+.photo-section {
+  margin-top: $spacing-unit * 3;
+  
+  .photo-required-alert,
+  .photo-optional-info {
+    background: lighten($color-regular, 35%);
+    color: darken($color-regular, 20%);
+    padding: $spacing-unit * 2;
+    border-radius: 8px;
+    margin-bottom: $spacing-unit * 2;
+    text-align: center;
+    font-weight: 500;
+    
+    i {
+      font-size: 20px;
+      margin-right: $spacing-unit;
+    }
+  }
+  
+  .photo-required-alert {
+    background: lighten($color-bad, 35%);
+    color: darken($color-bad, 10%);
+    border: 1px solid lighten($color-bad, 20%);
+  }
+  
+  .take-photo-btn {
+    min-height: 50px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: $font-size-button;
+    
+    @include touch-feedback;
+    
+    i {
+      font-size: 24px;
+      margin-right: $spacing-unit;
+    }
+  }
+  
+  .photo-gallery {
+    margin-top: $spacing-unit * 2;
+    
+    .photo-thumbnails {
+      display: flex;
+      gap: $spacing-unit;
+      flex-wrap: wrap;
+      
+      .photo-thumbnail {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        
+        .thumbnail-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        
+        .photo-delete {
+          position: absolute;
+          top: 4px;
+          right: 4px;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          padding: 0;
+          font-size: 12px;
+          
+          @include touch-feedback;
+        }
+      }
+    }
+  }
+}
+
+// Summary screen
+.summary-screen {
+  padding: $spacing-unit * 2;
+  text-align: center;
+  
+  .summary-card {
+    background: $color-white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: $spacing-unit * 4;
+    
+    h3 {
+      color: $color-text;
+      margin-bottom: $spacing-unit * 2;
+    }
+    
+    .summary-stats {
+      .stat-item {
+        padding: $spacing-unit * 2;
+        border-radius: 12px;
+        margin-bottom: $spacing-unit;
+        
+        .stat-number {
+          font-size: 36px;
+          font-weight: 700;
+          margin-bottom: 4px;
+        }
+        
+        .stat-label {
+          font-size: $font-size-small;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+        
+        &.good {
+          background: lighten($color-good, 40%);
+          color: darken($color-good, 10%);
+        }
+        
+        &.regular {
+          background: lighten($color-regular, 35%);
+          color: darken($color-regular, 20%);
+        }
+        
+        &.bad {
+          background: lighten($color-bad, 40%);
+          color: darken($color-bad, 10%);
+        }
+        
+        &.na {
+          background: lighten($color-na, 40%);
+          color: darken($color-na, 10%);
+        }
+      }
+    }
+    
+    .general-observations {
+      margin-top: $spacing-unit * 4;
+      text-align: left;
+      
+      h5 {
+        color: $color-text;
+        margin-bottom: $spacing-unit * 2;
+        
+        i {
+          color: $color-primary;
+          margin-right: $spacing-unit;
+        }
+      }
+      
+      textarea {
+        border: 2px solid $color-border;
+        border-radius: 8px;
+        
+        &:focus {
+          border-color: $color-primary;
+          box-shadow: 0 0 0 0.2rem rgba($color-primary, 0.25);
+        }
+      }
+    }
+    
+    .signature-section {
+      margin-top: $spacing-unit * 4;
+      text-align: left;
+      
+      h5 {
+        color: $color-text;
+        margin-bottom: $spacing-unit * 2;
+        
+        i {
+          color: $color-primary;
+          margin-right: $spacing-unit;
+        }
+      }
+      
+      .signature-pad-container {
+        position: relative;
+        border: 2px dashed $color-border;
+        border-radius: 8px;
+        overflow: hidden;
+        
+        .signature-pad {
+          display: block;
+          width: 100%;
+          height: 200px;
+          touch-action: none;
+        }
+        
+        .signature-placeholder {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          color: $color-muted;
+          pointer-events: none;
+          text-align: center;
+          
+          i {
+            font-size: 24px;
+            margin-bottom: $spacing-unit;
+            display: block;
+          }
+        }
+      }
+      
+      .signature-controls {
+        text-align: center;
+        
+        .clear-signature {
+          @include touch-feedback;
+        }
+      }
+    }
+  }
+}
+
+// Footer navigation
+.inspection-footer {
+  background: $color-white;
+  border-top: 1px solid $color-border;
+  padding: $spacing-unit * 2;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  
+  .btn {
+    min-height: 50px;
+    font-weight: 600;
+    font-size: $font-size-button;
+    border-radius: 8px;
+    
+    @include touch-feedback;
+    
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      
+      &:active {
+        transform: none;
+      }
+    }
+  }
+  
+  .nav-previous {
+    i {
+      margin-right: $spacing-unit;
+    }
+  }
+  
+  .nav-next {
+    i {
+      margin-left: $spacing-unit;
+    }
+  }
+}
+
+// Photo capture modal
+.photo-capture-modal {
+  .modal-dialog {
+    margin: 0;
+    max-width: 100%;
+    height: 100vh;
+  }
+  
+  .modal-content {
+    height: 100vh;
+    border-radius: 0;
+    border: none;
+  }
+  
+  .modal-header {
+    background: $color-primary;
+    color: white;
+    border-bottom: none;
+    
+    .modal-title {
+      font-weight: 600;
+    }
+    
+    .close {
+      color: white;
+      opacity: 1;
+      font-size: 24px;
+      
+      @include touch-feedback;
+    }
+  }
+  
+  .modal-body {
+    padding: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    
+    .camera-container {
+      position: relative;
+      flex: 1;
+      background: black;
+      
+      .camera-preview {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      .camera-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        
+        .camera-guides {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 200px;
+          height: 200px;
+          transform: translate(-50%, -50%);
+          border: 2px solid rgba(255, 255, 255, 0.5);
+          border-radius: 8px;
+        }
+      }
+      
+      .photo-canvas {
+        display: none;
+      }
+    }
+    
+    .photo-preview {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: black;
+      
+      .captured-photo {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+    }
+  }
+  
+  .modal-footer {
+    background: rgba(0, 0, 0, 0.8);
+    border-top: none;
+    padding: $spacing-unit * 3;
+    
+    .camera-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: $spacing-unit * 2;
+      width: 100%;
+      
+      .btn {
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        @include touch-feedback;
+        
+        &.capture-btn {
+          width: 80px;
+          height: 80px;
+          background: white;
+          color: $color-primary;
+          border: 4px solid rgba(255, 255, 255, 0.3);
+          
+          i {
+            font-size: 24px;
+          }
+        }
+        
+        &.retake-btn,
+        &.save-photo-btn {
+          i {
+            font-size: 20px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Loading states
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: $spacing-unit * 4;
+  
+  .spinner-border {
+    width: 3rem;
+    height: 3rem;
+  }
+}
+
+// Error states
+.error-message {
+  text-align: center;
+  padding: $spacing-unit * 4;
+  color: $color-bad;
+  
+  i {
+    font-size: 48px;
+    margin-bottom: $spacing-unit * 2;
+  }
+  
+  h4 {
+    margin-bottom: $spacing-unit * 2;
+  }
+}
+
+// Utility classes
+.text-good { color: $color-good !important; }
+.text-regular { color: $color-regular !important; }
+.text-bad { color: $color-bad !important; }
+.bg-good { background-color: lighten($color-good, 40%) !important; }
+.bg-regular { background-color: lighten($color-regular, 35%) !important; }
+.bg-bad { background-color: lighten($color-bad, 40%) !important; }
+
+// Animations
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+// Screen transitions
+.screen-enter-right {
+  animation: slideInRight 0.3s ease-out;
+}
+
+.screen-enter-left {
+  animation: slideInLeft 0.3s ease-out;
+}
+
+.fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+// High contrast mode
+@media (prefers-contrast: high) {
+  .o_fleet_inspection_mobile {
+    .btn-status {
+      border-width: 3px;
+    }
+    
+    .status-buttons .btn-good:not(.active) {
+      border-color: $color-good;
+    }
+    
+    .status-buttons .btn-regular:not(.active) {
+      border-color: darken($color-regular, 10%);
+    }
+    
+    .status-buttons .btn-bad:not(.active) {
+      border-color: $color-bad;
+    }
+  }
+}
+
+// Dark mode (if device prefers)
+@media (prefers-color-scheme: dark) {
+  .o_fleet_inspection_mobile {
+    background-color: #1a1a1a;
+    color: #ffffff;
+    
+    .inspection-header,
+    .inspection-footer,
+    .item-card,
+    .vehicle-item,
+    .summary-card {
+      background-color: #2d2d2d;
+      border-color: #404040;
+    }
+    
+    .form-control {
+      background-color: #404040;
+      border-color: #555555;
+      color: #ffffff;
+      
+      &:focus {
+        background-color: #404040;
+        border-color: $color-primary;
+      }
+    }
+  }
+}
+
+// Print styles (for inspection reports)
+@media print {
+  .o_fleet_inspection_mobile {
+    .inspection-header,
+    .inspection-footer {
+      display: none !important;
+    }
+    
+    .inspection-content {
+      height: auto !important;
+      overflow: visible !important;
+    }
+    
+    .screen {
+      display: block !important;
+    }
+    
+    .btn {
+      display: none !important;
+    }
+  }
+}
