@@ -26,37 +26,31 @@
     <record id="model_toyota_hilux" model="fleet.vehicle.model">
         <field name="name">Hilux</field>
         <field name="brand_id" ref="brand_toyota"/>
-        <field name="vehicle_type">truck</field>
     </record>
     
     <record id="model_ford_ranger" model="fleet.vehicle.model">
         <field name="name">Ranger</field>
         <field name="brand_id" ref="brand_ford"/>
-        <field name="vehicle_type">truck</field>
     </record>
     
     <record id="model_ford_transit" model="fleet.vehicle.model">
         <field name="name">Transit</field>
         <field name="brand_id" ref="brand_ford"/>
-        <field name="vehicle_type">van</field>
     </record>
     
     <record id="model_chevrolet_s10" model="fleet.vehicle.model">
         <field name="name">S10</field>
         <field name="brand_id" ref="brand_chevrolet"/>
-        <field name="vehicle_type">truck</field>
     </record>
     
     <record id="model_volkswagen_amarok" model="fleet.vehicle.model">
         <field name="name">Amarok</field>
         <field name="brand_id" ref="brand_volkswagen"/>
-        <field name="vehicle_type">truck</field>
     </record>
     
     <record id="model_renault_kangoo" model="fleet.vehicle.model">
         <field name="name">Kangoo</field>
         <field name="brand_id" ref="brand_renault"/>
-        <field name="vehicle_type">van</field>
     </record>
 
     <!-- Vehicle States -->
