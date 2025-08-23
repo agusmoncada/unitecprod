@@ -139,6 +139,25 @@ class FleetInspection(models.Model):
             'target': 'current',
         }
 
+    def initialize_mobile_inspection(self):
+        """Initialize inspection from template for mobile interface"""
+        self.ensure_one()
+        
+        if not self.start_time:
+            self.start_time = fields.Datetime.now()
+            
+        if not self.template_id:
+            template = self.env['fleet.inspection.template'].search([('active', '=', True)], limit=1)
+            if not template:
+                raise UserError("No active inspection template found. Please create one first.")
+            self.template_id = template
+        
+        # Create inspection lines from template
+        if not self.inspection_line_ids:
+            self._create_inspection_lines()
+        
+        return True
+
     def _create_inspection_lines(self):
         """Create inspection lines from template items"""
         if not self.template_id:

@@ -145,9 +145,31 @@ export class FleetInspectionMobile extends Component {
                 console.log("Set vehicle info:", this.state.vehicleInfo);
                 
                 // Initialize the inspection (create lines from template)
-                console.log("Calling action_start_inspection...");
-                const result = await this.orm.call("fleet.inspection", "action_start_inspection", [inspectionId]);
-                console.log("action_start_inspection result:", result);
+                console.log("Calling initialize_mobile_inspection...");
+                try {
+                    const result = await this.orm.call("fleet.inspection", "initialize_mobile_inspection", [inspectionId]);
+                    console.log("initialize_mobile_inspection result:", result);
+                } catch (templateError) {
+                    console.error("Error in initialize_mobile_inspection:", templateError);
+                    // Check if template exists
+                    const templates = await this.orm.searchRead(
+                        "fleet.inspection.template", 
+                        [['active', '=', true]], 
+                        ['id', 'name']
+                    );
+                    console.log("Available templates:", templates);
+                    
+                    if (templates.length === 0) {
+                        if (this.notification) {
+                            this.notification.add("No hay plantillas de inspección disponibles. Contacte al administrador.", {
+                                type: "warning",
+                            });
+                        }
+                        return;
+                    } else {
+                        throw templateError; // Re-throw if templates exist but there's another error
+                    }
+                }
                 
                 // Load inspection items
                 console.log("Loading inspection items...");
