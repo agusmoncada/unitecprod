@@ -59,10 +59,12 @@ $desktop-min: 1024px;
 // Base mobile inspection styles
 .o_fleet_inspection_mobile {
   height: 100vh;
+  width: 100%;
   display: flex;
   flex-direction: column;
   background-color: $color-background;
   font-size: $font-size-body;
+  position: relative;
   
   // Prevent text selection on mobile
   -webkit-user-select: none;
@@ -77,6 +79,25 @@ $desktop-min: 1024px;
     -moz-user-select: text;
     -ms-user-select: text;
     user-select: text;
+  }
+  
+  // Client action specific styles
+  .inspection-mobile-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    
+    .inspection-header {
+      flex-shrink: 0;
+    }
+    
+    .inspection-body {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
 }
 

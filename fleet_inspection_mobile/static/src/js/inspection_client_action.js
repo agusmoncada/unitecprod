@@ -23,6 +23,8 @@ export class FleetInspectionMobile extends Component {
             items: [],
             itemIndex: 0,
             loading: false,
+            selectingVehicle: false,
+            vehicles: [],
         });
         
         this.loadInspection();
@@ -42,37 +44,68 @@ export class FleetInspectionMobile extends Component {
 
     async startNewInspection() {
         try {
-            const vehicleId = await this.selectVehicle();
-            if (!vehicleId) return;
-            
-            const inspection = await this.orm.create("fleet.inspection", {
-                vehicle_id: vehicleId,
-                driver_id: this.env.user.partner_id,
-                state: 'draft',
-            });
-            
-            this.state.currentInspection = inspection;
-            await this.loadInspectionItems();
+            // Show vehicle selection
+            this.state.selectingVehicle = true;
+            this.state.vehicles = await this.loadVehicles();
         } catch (error) {
             console.error("Error starting inspection:", error);
-            this.notification.add("Error starting inspection", {
+            this.notification.add("Error al iniciar inspección", {
                 type: "danger",
             });
         }
     }
 
-    async selectVehicle() {
-        // Open vehicle selection dialog
-        const action = {
-            type: 'ir.actions.act_window',
-            res_model: 'fleet.vehicle',
-            view_mode: 'kanban,form',
-            views: [[false, 'kanban'], [false, 'form']],
-            target: 'new',
-            context: {},
-        };
-        
-        return this.action.doAction(action);
+    async loadVehicles() {
+        try {
+            const vehicles = await this.orm.searchRead(
+                "fleet.vehicle",
+                [],
+                ["id", "name", "license_plate", "driver_id"],
+                { limit: 100 }
+            );
+            return vehicles;
+        } catch (error) {
+            console.error("Error loading vehicles:", error);
+            return [];
+        }
+    }
+
+    async onSelectVehicle(vehicleId) {
+        try {
+            this.state.loading = true;
+            
+            // Create new inspection
+            const inspectionId = await this.orm.create("fleet.inspection", [{
+                vehicle_id: vehicleId,
+                driver_id: this.env.user.partner_id,
+                state: 'draft',
+                inspection_date: new Date().toISOString(),
+            }]);
+            
+            // Open the inspection in form view
+            await this.action.doAction({
+                type: 'ir.actions.act_window',
+                res_model: 'fleet.inspection',
+                res_id: inspectionId[0],
+                view_mode: 'form',
+                views: [[false, 'form']],
+                target: 'current',
+                context: {
+                    'form_view_initial_mode': 'edit',
+                },
+            });
+        } catch (error) {
+            console.error("Error creating inspection:", error);
+            this.notification.add("Error al crear inspección", {
+                type: "danger",
+            });
+            this.state.loading = false;
+        }
+    }
+
+    onCancelVehicleSelection() {
+        this.state.selectingVehicle = false;
+        this.state.vehicles = [];
     }
 
     async loadInspectionItems() {
@@ -86,22 +119,16 @@ export class FleetInspectionMobile extends Component {
         this.startNewInspection();
     }
 
-    onClickResume() {
-        // Resume existing inspection
-        this.action.doAction({
+    async onClickResume() {
+        // Resume existing inspection - show draft inspections
+        await this.action.doAction({
             type: 'ir.actions.act_window',
             res_model: 'fleet.inspection',
             view_mode: 'kanban,form',
             domain: [['state', '=', 'draft']],
+            target: 'current',
             context: {},
-        });
-    }
-
-    onClickBack() {
-        this.action.doAction({
-            type: 'ir.actions.act_window',
-            res_model: 'fleet.vehicle',
-            view_mode: 'kanban,tree,form',
+            name: 'Inspecciones Pendientes',
         });
     }
 }

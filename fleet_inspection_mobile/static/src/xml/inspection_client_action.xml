@@ -7,7 +7,7 @@
                 <div class="inspection-header bg-primary text-white p-3">
                     <h3 class="mb-0">
                         <i class="fa fa-clipboard-check me-2"/>
-                        Vehicle Inspection
+                        Inspección Vehicular
                     </h3>
                 </div>
 
@@ -15,31 +15,68 @@
                     <t t-if="state.loading">
                         <div class="text-center py-5">
                             <i class="fa fa-spinner fa-spin fa-3x text-primary"/>
-                            <p class="mt-3">Loading...</p>
+                            <p class="mt-3">Cargando...</p>
                         </div>
                     </t>
                     
+                    <t t-elif="state.selectingVehicle">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h4 class="mb-3">Seleccionar Vehículo</h4>
+                                    <button class="btn btn-secondary mb-3" t-on-click="onCancelVehicleSelection">
+                                        <i class="fa fa-arrow-left me-2"/>
+                                        Volver
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <t t-foreach="state.vehicles" t-as="vehicle" t-key="vehicle.id">
+                                    <div class="col-12 col-md-6 col-lg-4 mb-3">
+                                        <div class="card h-100" style="cursor: pointer;" t-on-click="() => onSelectVehicle(vehicle.id)">
+                                            <div class="card-body">
+                                                <h5 class="card-title">
+                                                    <i class="fa fa-car me-2"/>
+                                                    <t t-esc="vehicle.license_plate"/>
+                                                </h5>
+                                                <p class="card-text">
+                                                    <t t-esc="vehicle.name"/>
+                                                </p>
+                                                <t t-if="vehicle.driver_id">
+                                                    <small class="text-muted">
+                                                        Conductor: <t t-esc="vehicle.driver_id[1]"/>
+                                                    </small>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                                <t t-if="!state.vehicles or state.vehicles.length === 0">
+                                    <div class="col-12">
+                                        <div class="alert alert-warning">
+                                            No hay vehículos disponibles
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
                     <t t-else="">
                         <div class="text-center py-5">
-                            <h4 class="mb-4">Welcome to Vehicle Inspection</h4>
+                            <h4 class="mb-4">Sistema de Inspección Vehicular</h4>
                             <p class="text-muted mb-4">
-                                Select an option to begin
+                                Seleccione una opción para comenzar
                             </p>
                             
                             <div class="d-grid gap-3 mx-auto" style="max-width: 300px;">
                                 <button class="btn btn-primary btn-lg" t-on-click="onClickStart">
                                     <i class="fa fa-plus me-2"/>
-                                    Start New Inspection
+                                    Nueva Inspección
                                 </button>
                                 
                                 <button class="btn btn-outline-primary btn-lg" t-on-click="onClickResume">
                                     <i class="fa fa-play me-2"/>
-                                    Resume Inspection
-                                </button>
-                                
-                                <button class="btn btn-outline-secondary" t-on-click="onClickBack">
-                                    <i class="fa fa-arrow-left me-2"/>
-                                    Back to Vehicles
+                                    Continuar Inspección
                                 </button>
                             </div>
                         </div>

@@ -1,45 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     
-    <!-- Main Menu Item -->
+    <!-- Main Menu Item for Regular Users - Goes directly to Mobile Interface -->
     <menuitem id="menu_fleet_inspection_main"
-              name="Vehicle Inspections"
+              name="Inspección Vehicular"
               sequence="30"
-              groups="group_fleet_inspection_user"/>
+              action="action_fleet_inspection_mobile_client"
+              groups="group_fleet_inspection_user"
+              web_icon="fleet_inspection_mobile,static/description/icon.png"/>
 
-    <!-- Sub-menu Items -->
+    <!-- Admin Menu - Only for Managers -->
+    <menuitem id="menu_fleet_inspection_admin"
+              name="Gestión de Inspecciones"
+              sequence="31"
+              groups="group_fleet_inspection_manager"
+              web_icon="fleet_inspection_mobile,static/description/icon.png"/>
+
+    <!-- Admin Sub-menu Items -->
     <menuitem id="menu_fleet_vehicles"
               name="Vehicles"
-              parent="menu_fleet_inspection_main"
+              parent="menu_fleet_inspection_admin"
               action="fleet.fleet_vehicle_action"
               sequence="5"
-              groups="group_fleet_inspection_user"/>
+              groups="group_fleet_inspection_manager"/>
               
     <menuitem id="menu_fleet_inspection_new"
               name="New Inspection"
-              parent="menu_fleet_inspection_main"
+              parent="menu_fleet_inspection_admin"
               action="action_fleet_inspection_new"
               sequence="10"
-              groups="group_fleet_inspection_user"/>
+              groups="group_fleet_inspection_manager"/>
 
     <menuitem id="menu_fleet_inspections"
               name="All Inspections"
-              parent="menu_fleet_inspection_main"
+              parent="menu_fleet_inspection_admin"
               action="action_fleet_inspection"
               sequence="20"
-              groups="group_fleet_inspection_user"/>
+              groups="group_fleet_inspection_manager"/>
 
-    <menuitem id="menu_fleet_inspection_mobile"
+    <menuitem id="menu_fleet_inspection_mobile_admin"
               name="Mobile Interface"
-              parent="menu_fleet_inspection_main"
+              parent="menu_fleet_inspection_admin"
               action="action_fleet_inspection_mobile_client"
               sequence="30"
-              groups="group_fleet_inspection_user"/>
+              groups="group_fleet_inspection_manager"/>
 
     <!-- Configuration Menu -->
     <menuitem id="menu_fleet_inspection_config"
               name="Configuration"
-              parent="menu_fleet_inspection_main"
+              parent="menu_fleet_inspection_admin"
               sequence="100"
               groups="group_fleet_inspection_manager"/>
 
@@ -66,8 +75,8 @@
 
     <menuitem id="menu_fleet_inspection_reports"
               name="Reports"
-              parent="menu_fleet_inspection_main"
+              parent="menu_fleet_inspection_admin"
               sequence="90"
-              groups="group_fleet_inspection_user"/>
+              groups="group_fleet_inspection_manager"/>
 
 </odoo>
