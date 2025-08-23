@@ -216,10 +216,18 @@
                             <div class="o_kanban_card_header">
                                 <div class="o_kanban_card_header_title">
                                     <div class="o_primary">
-                                        <strong><t t-esc="record.vehicle_id.value"/></strong>
+                                        <strong>
+                                            <t t-if="record.vehicle_id">
+                                                <t t-esc="record.vehicle_id.value"/>
+                                            </t>
+                                            <t t-else="">Sin vehículo</t>
+                                        </strong>
                                     </div>
                                     <div class="o_secondary">
-                                        <t t-esc="record.name.value"/>
+                                        <t t-if="record.name">
+                                            <t t-esc="record.name.value"/>
+                                        </t>
+                                        <t t-else="">Nueva Inspección</t>
                                     </div>
                                 </div>
                             </div>
@@ -227,43 +235,55 @@
                                 <div class="row">
                                     <div class="col-6">
                                         <strong>Driver:</strong><br/>
-                                        <t t-esc="record.driver_id.value"/>
+                                        <t t-if="record.driver_id">
+                                            <t t-esc="record.driver_id.value"/>
+                                        </t>
+                                        <t t-else="">-</t>
                                     </div>
                                     <div class="col-6">
                                         <strong>Date:</strong><br/>
-                                        <t t-esc="record.inspection_date.value"/>
+                                        <t t-if="record.inspection_date">
+                                            <t t-esc="record.inspection_date.value"/>
+                                        </t>
+                                        <t t-else="">-</t>
                                     </div>
                                 </div>
-                                <div t-if="record.state.raw_value == 'completed'" class="row mt-2">
+                                <div t-if="record.state and record.state.raw_value == 'completed'" class="row mt-2">
                                     <div class="col-12">
-                                        <div t-attf-class="badge badge-#{record.overall_status.raw_value == 'good' ? 'success' : record.overall_status.raw_value == 'attention' ? 'warning' : 'danger'}">
-                                            <t t-esc="record.overall_status.value"/>
-                                        </div>
-                                        <t t-if="record.items_bad.raw_value > 0">
+                                        <t t-if="record.overall_status">
+                                            <div t-attf-class="badge badge-#{record.overall_status.raw_value == 'good' ? 'success' : record.overall_status.raw_value == 'attention' ? 'warning' : 'danger'}">
+                                                <t t-esc="record.overall_status.value"/>
+                                            </div>
+                                        </t>
+                                        <t t-if="record.items_bad and record.items_bad.raw_value > 0">
                                             <span class="badge badge-danger ml-1">
                                                 <t t-esc="record.items_bad.value"/> Bad Items
                                             </span>
                                         </t>
                                     </div>
                                 </div>
-                                <div t-if="record.state.raw_value == 'draft'" class="row mt-2">
+                                <div t-if="record.state and record.state.raw_value == 'draft'" class="row mt-2">
                                     <div class="col-12">
-                                        <div class="progress">
-                                            <div class="progress-bar" t-attf-style="width: #{record.completion_percentage.value}%"/>
-                                        </div>
-                                        <small><t t-esc="record.completion_percentage.value"/>% Complete</small>
+                                        <t t-if="record.completion_percentage">
+                                            <div class="progress">
+                                                <div class="progress-bar" t-attf-style="width: #{record.completion_percentage.value || 0}%"/>
+                                            </div>
+                                            <small><t t-esc="record.completion_percentage.value || 0"/>% Complete</small>
+                                        </t>
                                     </div>
                                 </div>
                             </div>
                             <div class="o_kanban_card_manage_pane">
                                 <div class="row">
                                     <div class="col-6 o_kanban_primary_left">
-                                        <button t-if="record.state.raw_value == 'draft'" class="btn btn-primary btn-sm" name="action_resume_inspection" type="object">
-                                            Resume
-                                        </button>
-                                        <button t-if="record.state.raw_value == 'completed'" class="btn btn-secondary btn-sm" name="action_view_details" type="object">
-                                            View
-                                        </button>
+                                        <t t-if="record.state">
+                                            <button t-if="record.state.raw_value == 'draft'" class="btn btn-primary btn-sm" name="action_resume_inspection" type="object">
+                                                Resume
+                                            </button>
+                                            <button t-if="record.state.raw_value == 'completed'" class="btn btn-secondary btn-sm" name="action_view_details" type="object">
+                                                View
+                                            </button>
+                                        </t>
                                     </div>
                                 </div>
                             </div>

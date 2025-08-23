@@ -331,15 +331,15 @@
                                 de <strong><t t-esc="state.completionStats.total"/></strong> elementos
                                 (<t t-esc="state.completionStats.percentage"/>%)
                             </p>
+                            <p class="text-info">
+                                <i class="fa fa-spinner fa-spin me-2"/>
+                                Volviendo al inicio en 3 segundos...
+                            </p>
                             
                             <div class="d-grid gap-2 mx-auto" style="max-width: 300px;">
-                                <button class="btn btn-success btn-lg" t-on-click="() => window.location.reload()">
+                                <button class="btn btn-primary btn-lg" t-on-click="() => this.resetToStartPage()">
                                     <i class="fa fa-plus me-2"/>
-                                    Nueva Inspección
-                                </button>
-                                <button class="btn btn-outline-secondary" t-on-click="() => this.action.doAction('fleet_inspection_mobile.action_fleet_inspection')">
-                                    <i class="fa fa-list me-2"/>
-                                    Ver Todas las Inspecciones
+                                    Nueva Inspección Ahora
                                 </button>
                             </div>
                         </div>

@@ -504,6 +504,35 @@ export class FleetInspectionMobile extends Component {
         this.state.capturedPhotos.splice(index, 1);
     }
 
+    resetToStartPage() {
+        // Reset all state to initial values
+        this.state.currentInspection = null;
+        this.state.currentItem = null;
+        this.state.items = [];
+        this.state.itemIndex = 0;
+        this.state.loading = false;
+        this.state.selectingVehicle = false;
+        this.state.vehicles = [];
+        this.state.inspectionStarted = false;
+        this.state.vehicleInfo = null;
+        this.state.inspectionCompleted = false;
+        this.state.completionStats = null;
+        this.state.showingObservations = false;
+        this.state.selectedStatus = null;
+        this.state.observations = '';
+        this.state.showingPhotoCapture = false;
+        this.state.capturedPhotos = [];
+        this.state.photoRequired = false;
+        
+        // Show start page message
+        if (this.notification) {
+            this.notification.add("Listo para una nueva inspección", {
+                type: "info",
+                sticky: false
+            });
+        }
+    }
+
     async onSavePhotos() {
         if (this.state.capturedPhotos.length === 0 && this.state.photoRequired) {
             if (this.notification) {
@@ -649,7 +678,6 @@ export class FleetInspectionMobile extends Component {
         // Complete the inspection in the backend
         try {
             await this.orm.call("fleet.inspection", "action_complete_inspection", [this.state.currentInspection]);
-            this.state.inspectionCompleted = true;
             
             // Show success notification
             if (this.notification) {
@@ -658,6 +686,14 @@ export class FleetInspectionMobile extends Component {
                     sticky: false
                 });
             }
+            
+            // Show completion screen briefly, then reset to start page
+            this.state.inspectionCompleted = true;
+            
+            // Auto-return to start page after 3 seconds
+            setTimeout(() => {
+                this.resetToStartPage();
+            }, 3000);
         } catch (error) {
             console.error("Error completing inspection:", error);
             
