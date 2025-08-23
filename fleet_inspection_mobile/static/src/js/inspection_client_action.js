@@ -26,6 +26,8 @@ export class FleetInspectionMobile extends Component {
             loading: false,
             selectingVehicle: false,
             vehicles: [],
+            inspectionStarted: false,
+            vehicleInfo: null,
         });
         
         this.loadInspection();
@@ -89,18 +91,14 @@ export class FleetInspectionMobile extends Component {
                 // Don't set inspection_date, let the default fields.Datetime.now handle it
             }]);
             
-            // Open the inspection in form view
-            await this.action.doAction({
-                type: 'ir.actions.act_window',
-                res_model: 'fleet.inspection',
-                res_id: inspectionId[0],
-                view_mode: 'form',
-                views: [[false, 'form']],
-                target: 'current',
-                context: {
-                    'form_view_initial_mode': 'edit',
-                },
-            });
+            // Start the inspection directly in mobile interface
+            this.state.currentInspection = inspectionId[0];
+            this.state.selectingVehicle = false;
+            this.state.vehicles = [];
+            this.state.loading = false;
+            
+            // Load the inspection and start the mobile inspection flow
+            await this.startInspectionFlow(inspectionId[0]);
         } catch (error) {
             console.error("Error creating inspection:", error);
             if (this.notification) {
@@ -117,11 +115,72 @@ export class FleetInspectionMobile extends Component {
         this.state.vehicles = [];
     }
 
-    async loadInspectionItems() {
-        // Load inspection items from template
-        // This would be implemented based on your inspection template structure
-        this.state.items = [];
-        this.state.itemIndex = 0;
+    async startInspectionFlow(inspectionId) {
+        try {
+            // Load inspection data
+            const inspection = await this.orm.read("fleet.inspection", [inspectionId], [
+                'name', 'vehicle_id', 'driver_id', 'inspection_date', 'state'
+            ]);
+            
+            if (inspection && inspection.length > 0) {
+                this.state.vehicleInfo = {
+                    name: inspection[0].vehicle_id[1],
+                    driver: inspection[0].driver_id[1],
+                    inspectionName: inspection[0].name,
+                };
+                this.state.inspectionStarted = true;
+                
+                // Initialize the inspection (create lines from template)
+                await this.orm.call("fleet.inspection", "action_start_inspection", [inspectionId]);
+                
+                // Load inspection items
+                await this.loadInspectionItems(inspectionId);
+            }
+        } catch (error) {
+            console.error("Error starting inspection flow:", error);
+            if (this.notification) {
+                this.notification.add("Error al iniciar el flujo de inspección", {
+                    type: "danger",
+                });
+            }
+        }
+    }
+
+    async loadInspectionItems(inspectionId) {
+        try {
+            // Load inspection items (lines)
+            const items = await this.orm.searchRead(
+                "fleet.inspection.line",
+                [['inspection_id', '=', inspectionId]],
+                ['id', 'template_item_id', 'status', 'observations', 'photo_ids', 'sequence'],
+                { order: 'sequence asc' }
+            );
+            
+            // Load template item details
+            for (let item of items) {
+                if (item.template_item_id) {
+                    const templateItem = await this.orm.read(
+                        "fleet.inspection.template.item",
+                        [item.template_item_id[0]],
+                        ['name', 'description', 'section_id', 'photo_required']
+                    );
+                    if (templateItem && templateItem.length > 0) {
+                        item.name = templateItem[0].name;
+                        item.description = templateItem[0].description;
+                        item.section = templateItem[0].section_id ? templateItem[0].section_id[1] : 'General';
+                        item.photo_required = templateItem[0].photo_required;
+                    }
+                }
+            }
+            
+            this.state.items = items;
+            this.state.itemIndex = 0;
+            this.state.currentItem = items.length > 0 ? items[0] : null;
+        } catch (error) {
+            console.error("Error loading inspection items:", error);
+            this.state.items = [];
+            this.state.itemIndex = 0;
+        }
     }
 
     onClickStart() {

@@ -61,6 +61,90 @@
                             </div>
                         </div>
                     </t>
+                    <t t-elif="state.inspectionStarted">
+                        <!-- Mobile Inspection Interface -->
+                        <div class="container-fluid h-100 d-flex flex-column">
+                            <!-- Vehicle Info Header -->
+                            <div class="row bg-light border-bottom py-2 mb-3 flex-shrink-0">
+                                <div class="col-12">
+                                    <h6 class="mb-1">
+                                        <i class="fa fa-car me-2"/>
+                                        <t t-esc="state.vehicleInfo.name"/>
+                                    </h6>
+                                    <small class="text-muted">
+                                        Conductor: <t t-esc="state.vehicleInfo.driver"/>
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <!-- Current Item -->
+                            <div class="row flex-grow-1">
+                                <div class="col-12">
+                                    <t t-if="state.currentItem">
+                                        <div class="card h-100">
+                                            <div class="card-header">
+                                                <h5 class="mb-1">
+                                                    <t t-esc="state.currentItem.name"/>
+                                                </h5>
+                                                <small class="text-muted">
+                                                    Item <t t-esc="state.itemIndex + 1"/> de <t t-esc="state.items.length"/>
+                                                    <t t-if="state.currentItem.section"> - <t t-esc="state.currentItem.section"/></t>
+                                                </small>
+                                            </div>
+                                            <div class="card-body text-center">
+                                                <t t-if="state.currentItem.description">
+                                                    <p class="text-muted mb-4">
+                                                        <t t-esc="state.currentItem.description"/>
+                                                    </p>
+                                                </t>
+                                                
+                                                <!-- Status Buttons -->
+                                                <div class="d-grid gap-2 mb-4">
+                                                    <button class="btn btn-success btn-lg">
+                                                        <i class="fa fa-check me-2"/>
+                                                        Bien
+                                                    </button>
+                                                    <button class="btn btn-warning btn-lg">
+                                                        <i class="fa fa-exclamation-triangle me-2"/>
+                                                        Regular
+                                                    </button>
+                                                    <button class="btn btn-danger btn-lg">
+                                                        <i class="fa fa-times me-2"/>
+                                                        Mal
+                                                    </button>
+                                                    <button class="btn btn-secondary btn-lg">
+                                                        <i class="fa fa-minus me-2"/>
+                                                        No Aplica
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="alert alert-info">
+                                            No hay elementos para inspeccionar
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                            
+                            <!-- Navigation -->
+                            <div class="row mt-3 flex-shrink-0">
+                                <div class="col-6">
+                                    <button class="btn btn-outline-secondary btn-block w-100">
+                                        <i class="fa fa-arrow-left me-2"/>
+                                        Anterior
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn btn-primary btn-block w-100">
+                                        <i class="fa fa-arrow-right me-2"/>
+                                        Siguiente
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
                     <t t-else="">
                         <div class="text-center py-5">
                             <h4 class="mb-4">Sistema de Inspección Vehicular</h4>
