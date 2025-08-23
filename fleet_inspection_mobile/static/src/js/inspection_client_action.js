@@ -328,11 +328,15 @@ export class FleetInspectionMobile extends Component {
         if (!this.state.currentItem) return;
 
         try {
+            console.log("Saving status for item:", this.state.currentItem.id, "status:", status);
+            
             // Update the inspection line status and observations
             await this.orm.write("fleet.inspection.line", [this.state.currentItem.id], {
                 status: status,
                 observations: observations || false
             });
+
+            console.log("Status saved successfully");
 
             // Update local state
             this.state.currentItem.status = status;
@@ -343,13 +347,21 @@ export class FleetInspectionMobile extends Component {
                 this.state.items[itemIndex].observations = observations;
             }
 
+            // Show success feedback
+            if (this.notification) {
+                this.notification.add("Estado guardado", {
+                    type: "success",
+                    sticky: false
+                });
+            }
+
             // Auto-advance to next item
             setTimeout(() => this.onNextItem(), 300);
 
         } catch (error) {
             console.error("Error updating status:", error);
             if (this.notification) {
-                this.notification.add("Error al actualizar estado", {
+                this.notification.add("Error al actualizar estado: " + error.message, {
                     type: "danger",
                 });
             }
@@ -377,6 +389,11 @@ export class FleetInspectionMobile extends Component {
         } else {
             // Reached last item - check if all are completed before finishing
             const incompleteItems = this.state.items.filter(item => !item.status);
+            console.log("Checking completion status:");
+            console.log("Total items:", this.state.items.length);
+            console.log("Incomplete items:", incompleteItems.length);
+            console.log("Incomplete items IDs:", incompleteItems.map(item => ({id: item.id, name: item.name})));
+            
             if (incompleteItems.length > 0) {
                 // Show notification about incomplete items
                 if (this.notification) {
@@ -391,8 +408,9 @@ export class FleetInspectionMobile extends Component {
                     this.state.currentItem = this.state.items[firstIncompleteIndex];
                 }
             } else {
-                // All items completed - show completion screen
-                this.showCompletionScreen();
+                // Double-check by reloading items from server before completing
+                console.log("All items appear complete in frontend, verifying with server...");
+                await this.verifyCompletionAndFinish();
             }
         }
     }
@@ -401,6 +419,56 @@ export class FleetInspectionMobile extends Component {
         if (this.state.itemIndex > 0) {
             this.state.itemIndex--;
             this.state.currentItem = this.state.items[this.state.itemIndex];
+        }
+    }
+
+    async verifyCompletionAndFinish() {
+        try {
+            // Reload items from server to check actual completion status
+            const serverItems = await this.orm.searchRead(
+                "fleet.inspection.line",
+                [['inspection_id', '=', this.state.currentInspection]],
+                ['id', 'status'],
+                { order: 'sequence asc' }
+            );
+            
+            const incompleteServerItems = serverItems.filter(item => !item.status);
+            console.log("Server verification:");
+            console.log("Server items:", serverItems.length);
+            console.log("Server incomplete:", incompleteServerItems.length);
+            console.log("Incomplete server items:", incompleteServerItems);
+            
+            if (incompleteServerItems.length > 0) {
+                // Sync frontend with server state
+                incompleteServerItems.forEach(serverItem => {
+                    const frontendItem = this.state.items.find(item => item.id === serverItem.id);
+                    if (frontendItem) {
+                        frontendItem.status = serverItem.status;
+                    }
+                });
+                
+                // Show notification and go to first incomplete
+                if (this.notification) {
+                    this.notification.add(`${incompleteServerItems.length} elementos no se guardaron correctamente. Revisando...`, {
+                        type: "warning",
+                    });
+                }
+                
+                const firstIncompleteIndex = this.state.items.findIndex(item => 
+                    incompleteServerItems.some(serverItem => serverItem.id === item.id)
+                );
+                if (firstIncompleteIndex >= 0) {
+                    this.state.itemIndex = firstIncompleteIndex;
+                    this.state.currentItem = this.state.items[firstIncompleteIndex];
+                }
+            } else {
+                // All verified complete, proceed with completion
+                this.showCompletionScreen();
+            }
+        } catch (error) {
+            console.error("Error verifying completion:", error);
+            // Fallback to completion screen with warning
+            this.showCompletionScreen();
         }
     }
 
