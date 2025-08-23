@@ -84,6 +84,7 @@
                         </group>
                         <group>
                             <field name="defensive_course"/>
+                            <field name="course_expiry" attrs="{'invisible': [('defensive_course', '=', False)]}"/>
                             <field name="course_duration" attrs="{'invisible': [('defensive_course', '=', False)]}"/>
                         </group>
                     </group>
@@ -92,70 +93,81 @@
                     <notebook>
                         <page string="Inspection Items">
                             <field name="inspection_line_ids" nolabel="1">
-                                <tree editable="bottom" decoration-danger="status=='mal'" decoration-warning="status=='regular'" decoration-success="status=='bien'">
+                                <tree decoration-danger="status=='mal'" decoration-warning="status=='regular'" decoration-success="status=='bien'">
                                     <field name="section" readonly="1"/>
                                     <field name="sequence" invisible="1"/>
                                     <field name="name" readonly="1"/>
                                     <field name="status"/>
                                     <field name="observations"/>
-                                    <field name="photo_count" string="Photos"/>
+                                    <field name="photo_count" string="Fotos"/>
                                     <field name="inspected_at" readonly="1"/>
                                 </tree>
                                 <form>
-                                    <group>
-                                        <field name="section" readonly="1"/>
-                                        <field name="name" readonly="1"/>
-                                        <field name="status"/>
-                                        <field name="observations"/>
-                                        <field name="inspected_at" readonly="1"/>
-                                    </group>
-                                    <group string="Fotos" attrs="{'invisible': [('photo_ids', '=', [])]}">
-                                        <field name="photo_count" readonly="1"/>
-                                        <field name="photo_ids" nolabel="1">
-                                            <tree>
-                                                <field name="name"/>
-                                                <field name="taken_at"/>
-                                                <field name="image_size"/>
-                                            </tree>
-                                            <form>
-                                                <group>
-                                                    <field name="name"/>
-                                                    <field name="taken_at"/>
-                                                    <field name="image_size"/>
-                                                </group>
-                                                <group string="Vista Previa">
-                                                    <field name="image" widget="image" options="{'size': [300, 200]}"/>
-                                                </group>
-                                            </form>
-                                        </field>
-                                    </group>
+                                    <sheet>
+                                        <div class="oe_title">
+                                            <h1><field name="name" readonly="1"/></h1>
+                                        </div>
+                                        
+                                        <group>
+                                            <group>
+                                                <field name="section" readonly="1"/>
+                                                <field name="status"/>
+                                                <field name="inspected_at" readonly="1"/>
+                                            </group>
+                                            <group>
+                                                <field name="photo_count" readonly="1" string="Total Fotos"/>
+                                            </group>
+                                        </group>
+                                        
+                                        <group string="Observaciones">
+                                            <field name="observations" nolabel="1"/>
+                                        </group>
+                                        
+                                        <notebook attrs="{'invisible': [('photo_ids', '=', [])]}">
+                                            <page string="Fotos Capturadas">
+                                                <field name="photo_ids" nolabel="1">
+                                                    <kanban>
+                                                        <field name="image"/>
+                                                        <field name="name"/>
+                                                        <field name="taken_at"/>
+                                                        <templates>
+                                                            <t t-name="kanban-box">
+                                                                <div class="oe_kanban_card">
+                                                                    <div class="o_kanban_card_header">
+                                                                        <div class="o_kanban_card_header_title">
+                                                                            <div class="o_primary"><strong><t t-esc="record.name.value"/></strong></div>
+                                                                            <div class="o_secondary"><t t-esc="record.taken_at.value"/></div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="o_kanban_image_wrapper">
+                                                                        <img class="o_image_64_cover" t-att-src="kanban_image('fleet.inspection.photo', 'image', record.id.raw_value)"/>
+                                                                    </div>
+                                                                </div>
+                                                            </t>
+                                                        </templates>
+                                                    </kanban>
+                                                    <form>
+                                                        <sheet>
+                                                            <div class="oe_title">
+                                                                <h1><field name="name"/></h1>
+                                                            </div>
+                                                            <group>
+                                                                <field name="taken_at" readonly="1"/>
+                                                                <field name="image_size" readonly="1"/>
+                                                            </group>
+                                                            <group string="Imagen">
+                                                                <field name="image" widget="image" options="{'size': [400, 300]}"/>
+                                                            </group>
+                                                        </sheet>
+                                                    </form>
+                                                </field>
+                                            </page>
+                                        </notebook>
+                                    </sheet>
                                 </form>
                             </field>
                         </page>
                         
-                        <page string="Fotos de Inspección" attrs="{'invisible': [('state', '=', 'draft')]}">
-                            <group>
-                                <div class="oe_title">
-                                    <h3>Fotos por Elemento de Inspección</h3>
-                                    <p>Fotos tomadas durante la inspección móvil para elementos marcados como problemáticos</p>
-                                </div>
-                            </group>
-                            
-                            <!-- Photos by inspection item -->
-                            <group string="Elementos con Fotos">
-                                <field name="inspection_line_ids" mode="tree" readonly="1" 
-                                       domain="[('photo_ids', '!=', [])]" 
-                                       context="{'tree_view_ref': 'fleet_inspection_mobile.view_inspection_line_photos_tree'}">
-                                    <tree string="Elementos con Fotos" create="false" edit="false">
-                                        <field name="section"/>
-                                        <field name="name"/>
-                                        <field name="status"/>
-                                        <field name="photo_count"/>
-                                        <field name="observations"/>
-                                    </tree>
-                                </field>
-                            </group>
-                        </page>
 
                         <page string="Observaciones Generales">
                             <field name="observations" nolabel="1" placeholder="Agregue observaciones generales sobre el vehículo..."/>

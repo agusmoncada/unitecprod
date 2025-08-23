@@ -918,6 +918,31 @@ body.o_inspection_mobile_mode {
 .bg-regular { background-color: lighten($color-regular, 35%) !important; }
 .bg-bad { background-color: lighten($color-bad, 40%) !important; }
 
+// Admin form inspection line colors
+.o_list_view {
+  .o_data_row {
+    &.text-success {
+      color: $color-good !important;
+      font-weight: 500;
+    }
+    
+    &.text-warning {
+      color: darken($color-regular, 15%) !important;
+      font-weight: 500;
+    }
+    
+    &.text-danger {
+      color: $color-bad !important;
+      font-weight: 500;
+    }
+    
+    // Make status field stand out more
+    .o_field_cell[name="status"] {
+      font-weight: 600 !important;
+    }
+  }
+}
+
 // Animations
 @keyframes slideInRight {
   from {

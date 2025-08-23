@@ -32,6 +32,7 @@ class FleetInspection(models.Model):
     license_type = fields.Char(string='License Type')
     license_expiry = fields.Date(string='License Expiry')
     defensive_course = fields.Boolean(string='Defensive Driving Course')
+    course_expiry = fields.Date(string='Course Expiry')
     course_duration = fields.Char(string='Course Duration')
     
     # Insurance information

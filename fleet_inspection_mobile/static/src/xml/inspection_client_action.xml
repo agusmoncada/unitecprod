@@ -184,12 +184,21 @@
                                                     </div>
                                                 </div>
                                                 
-                                                <div class="mb-3" t-if="state.driverInfo.defensive_course">
-                                                    <label class="form-label">Duración del Curso</label>
-                                                    <input type="text" 
-                                                           class="form-control form-control-lg" 
-                                                           t-model="state.driverInfo.course_duration"
-                                                           placeholder="Ej: 8 horas, 2 días"/>
+                                                <div t-if="state.driverInfo.defensive_course">
+                                                    <div class="mb-3">
+                                                        <label class="form-label"><strong>Vencimiento del Curso</strong></label>
+                                                        <input type="date" 
+                                                               class="form-control form-control-lg" 
+                                                               t-model="state.driverInfo.course_expiry"/>
+                                                    </div>
+                                                    
+                                                    <div class="mb-3">
+                                                        <label class="form-label"><strong>Duración del Curso</strong></label>
+                                                        <input type="text" 
+                                                               class="form-control form-control-lg" 
+                                                               t-model="state.driverInfo.course_duration"
+                                                               placeholder="Ej: 8 horas, 2 días"/>
+                                                    </div>
                                                 </div>
                                             </form>
                                         </div>

@@ -44,6 +44,7 @@ export class FleetInspectionMobile extends Component {
                 license_type: '',
                 license_expiry: '',
                 defensive_course: false,
+                course_expiry: '',
                 course_duration: '',
                 odometer: '',
             },
@@ -525,6 +526,7 @@ export class FleetInspectionMobile extends Component {
                 license_type: this.state.driverInfo.license_type,
                 license_expiry: this.state.driverInfo.license_expiry || false,
                 defensive_course: this.state.driverInfo.defensive_course,
+                course_expiry: this.state.driverInfo.course_expiry || false,
                 course_duration: this.state.driverInfo.course_duration || false,
                 odometer: parseFloat(this.state.driverInfo.odometer) || 0,
             };
