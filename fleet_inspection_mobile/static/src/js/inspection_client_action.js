@@ -480,19 +480,23 @@ export class FleetInspectionMobile extends Component {
     }
 
     async onCapturePhoto(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                const base64Data = e.target.result.split(',')[1]; // Remove data:image/jpeg;base64, prefix
-                this.state.capturedPhotos.push({
-                    name: file.name,
-                    data: base64Data,
-                    preview: e.target.result, // Keep full data URL for preview
-                });
-                event.target.value = ''; // Reset input
-            };
-            reader.readAsDataURL(file);
+        const files = event.target.files;
+        if (files && files.length > 0) {
+            // Handle multiple files if selected from gallery
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    const base64Data = e.target.result.split(',')[1]; // Remove data:image/jpeg;base64, prefix
+                    this.state.capturedPhotos.push({
+                        name: file.name || `Photo_${Date.now()}_${i}.jpg`,
+                        data: base64Data,
+                        preview: e.target.result, // Keep full data URL for preview
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+            event.target.value = ''; // Reset input
         }
     }
 
@@ -646,6 +650,14 @@ export class FleetInspectionMobile extends Component {
         try {
             await this.orm.call("fleet.inspection", "action_complete_inspection", [this.state.currentInspection]);
             this.state.inspectionCompleted = true;
+            
+            // Show success notification
+            if (this.notification) {
+                this.notification.add("¡Inspección completada exitosamente!", {
+                    type: "success",
+                    sticky: false
+                });
+            }
         } catch (error) {
             console.error("Error completing inspection:", error);
             

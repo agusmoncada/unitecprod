@@ -139,15 +139,29 @@
                                             
                                             <!-- Camera/File Input -->
                                             <div class="mb-4">
-                                                <label class="btn btn-primary btn-lg w-100">
-                                                    <i class="fa fa-camera me-2"/>
-                                                    Tomar/Seleccionar Foto
-                                                    <input type="file" 
-                                                           accept="image/*" 
-                                                           capture="environment"
-                                                           style="display: none;"
-                                                           t-on-change="this.onCapturePhoto"/>
-                                                </label>
+                                                <div class="d-grid gap-2">
+                                                    <!-- Direct Camera Capture (Mobile) -->
+                                                    <label class="btn btn-primary btn-lg">
+                                                        <i class="fa fa-camera me-2"/>
+                                                        Tomar Foto con Cámara
+                                                        <input type="file" 
+                                                               accept="image/*" 
+                                                               capture="camera"
+                                                               style="display: none;"
+                                                               t-on-change="this.onCapturePhoto"/>
+                                                    </label>
+                                                    
+                                                    <!-- File Selection (Gallery) -->
+                                                    <label class="btn btn-outline-primary btn-lg">
+                                                        <i class="fa fa-image me-2"/>
+                                                        Seleccionar de Galería
+                                                        <input type="file" 
+                                                               accept="image/*" 
+                                                               multiple="multiple"
+                                                               style="display: none;"
+                                                               t-on-change="this.onCapturePhoto"/>
+                                                    </label>
+                                                </div>
                                             </div>
                                             
                                             <!-- Preview of captured photos -->
@@ -319,13 +333,13 @@
                             </p>
                             
                             <div class="d-grid gap-2 mx-auto" style="max-width: 300px;">
-                                <button class="btn btn-success btn-lg">
-                                    <i class="fa fa-signature me-2"/>
-                                    Firmar y Finalizar
+                                <button class="btn btn-success btn-lg" t-on-click="() => window.location.reload()">
+                                    <i class="fa fa-plus me-2"/>
+                                    Nueva Inspección
                                 </button>
-                                <button class="btn btn-outline-secondary">
-                                    <i class="fa fa-edit me-2"/>
-                                    Revisar Items
+                                <button class="btn btn-outline-secondary" t-on-click="() => this.action.doAction('fleet_inspection_mobile.action_fleet_inspection')">
+                                    <i class="fa fa-list me-2"/>
+                                    Ver Todas las Inspecciones
                                 </button>
                             </div>
                         </div>
