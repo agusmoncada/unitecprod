@@ -1,9 +1,8 @@
 /** @odoo-module **/
 
 import { registry } from "@web/core/registry";
-import { Component } from "@odoo/owl";
+import { Component, useState } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
-import { _t } from "@web/core/l10n/translation";
 
 /**
  * Mobile Inspection Client Action
@@ -12,21 +11,19 @@ import { _t } from "@web/core/l10n/translation";
  */
 export class FleetInspectionMobile extends Component {
     static template = "fleet_inspection_mobile.InspectionMobile";
-    static props = ["*"];
-
+    
     setup() {
         this.orm = useService("orm");
         this.action = useService("action");
         this.notification = useService("notification");
-        this.rpc = useService("rpc");
         
-        this.state = {
+        this.state = useState({
             currentInspection: null,
             currentItem: null,
             items: [],
             itemIndex: 0,
-            loading: true,
-        };
+            loading: false,
+        });
         
         this.loadInspection();
     }
@@ -35,10 +32,9 @@ export class FleetInspectionMobile extends Component {
         try {
             // For now, just load a basic interface
             this.state.loading = false;
-            this.render();
         } catch (error) {
             console.error("Error loading inspection:", error);
-            this.notification.add(_t("Error loading inspection"), {
+            this.notification.add("Error loading inspection", {
                 type: "danger",
             });
         }
@@ -59,7 +55,7 @@ export class FleetInspectionMobile extends Component {
             await this.loadInspectionItems();
         } catch (error) {
             console.error("Error starting inspection:", error);
-            this.notification.add(_t("Error starting inspection"), {
+            this.notification.add("Error starting inspection", {
                 type: "danger",
             });
         }

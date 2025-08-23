@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<templates id="template" xml:space="preserve">
+<templates xml:space="preserve">
 
-    <t t-name="fleet_inspection_mobile.InspectionMobile">
+    <t t-name="fleet_inspection_mobile.InspectionMobile" owl="1">
         <div class="o_fleet_inspection_mobile">
             <div class="inspection-mobile-container">
                 <div class="inspection-header bg-primary text-white p-3">
