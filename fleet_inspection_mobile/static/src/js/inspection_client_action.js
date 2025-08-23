@@ -98,15 +98,20 @@ export class FleetInspectionMobile extends Component {
             }]);
             
             console.log("Inspection created with ID:", inspectionId);
+            console.log("Inspection ID type:", typeof inspectionId, "Is array:", Array.isArray(inspectionId));
+            
+            // Extract the actual ID - orm.create returns [id] array
+            const actualInspectionId = Array.isArray(inspectionId) ? inspectionId[0] : inspectionId;
+            console.log("Actual inspection ID:", actualInspectionId, "Type:", typeof actualInspectionId);
             
             // Start the inspection directly in mobile interface
-            this.state.currentInspection = inspectionId[0];
+            this.state.currentInspection = actualInspectionId;
             this.state.selectingVehicle = false;
             this.state.vehicles = [];
             this.state.loading = false;
             
             // Load the inspection and start the mobile inspection flow
-            await this.startInspectionFlow(inspectionId[0]);
+            await this.startInspectionFlow(actualInspectionId);
         } catch (error) {
             console.error("Error creating inspection:", error);
             console.error("Error details:", error.message, error.stack);
@@ -127,9 +132,22 @@ export class FleetInspectionMobile extends Component {
     async startInspectionFlow(inspectionId) {
         try {
             console.log("Starting inspection flow for ID:", inspectionId);
+            console.log("ID type:", typeof inspectionId);
+            
+            // Ensure inspectionId is a number
+            let id = inspectionId;
+            if (Array.isArray(inspectionId)) {
+                id = inspectionId[0];
+            }
+            id = parseInt(id);
+            if (isNaN(id) || id <= 0) {
+                throw new Error(`Invalid inspection ID: ${inspectionId}, parsed as: ${id}`);
+            }
+            
+            console.log("Using sanitized ID:", id);
             
             // Load inspection data
-            const inspection = await this.orm.read("fleet.inspection", [inspectionId], [
+            const inspection = await this.orm.read("fleet.inspection", [id], [
                 'name', 'vehicle_id', 'driver_id', 'inspection_date', 'state'
             ]);
             
@@ -147,7 +165,7 @@ export class FleetInspectionMobile extends Component {
                 // Initialize the inspection (create lines from template)
                 console.log("Calling initialize_mobile_inspection...");
                 try {
-                    const result = await this.orm.call("fleet.inspection", "initialize_mobile_inspection", [inspectionId]);
+                    const result = await this.orm.call("fleet.inspection", "initialize_mobile_inspection", [id]);
                     console.log("initialize_mobile_inspection result:", result);
                 } catch (templateError) {
                     console.error("Error in initialize_mobile_inspection:", templateError);
@@ -173,7 +191,7 @@ export class FleetInspectionMobile extends Component {
                 
                 // Load inspection items
                 console.log("Loading inspection items...");
-                await this.loadInspectionItems(inspectionId);
+                await this.loadInspectionItems(id);
                 
                 this.state.inspectionStarted = true;
                 console.log("Inspection flow started successfully");
