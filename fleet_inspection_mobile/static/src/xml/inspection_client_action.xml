@@ -112,6 +112,110 @@
                             </div>
                         </div>
                     </t>
+                    <t t-elif="state.showingDriverInfo">
+                        <!-- Driver Information Screen -->
+                        <div class="container-fluid h-100 d-flex flex-column">
+                            <!-- Header -->
+                            <div class="row bg-info text-white border-bottom py-2 mb-3 flex-shrink-0">
+                                <div class="col-12">
+                                    <h6 class="mb-1">
+                                        <i class="fa fa-id-card me-2"/>
+                                        Información del Conductor
+                                    </h6>
+                                    <small>
+                                        Complete los datos del conductor antes de comenzar
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <!-- Driver Information Form -->
+                            <div class="row flex-grow-1">
+                                <div class="col-12">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <form>
+                                                <div class="mb-3">
+                                                    <label class="form-label"><strong>Número de Licencia *</strong></label>
+                                                    <input type="text" 
+                                                           class="form-control form-control-lg" 
+                                                           t-model="state.driverInfo.license_number"
+                                                           placeholder="Ej: 12345678"
+                                                           required="required"/>
+                                                </div>
+                                                
+                                                <div class="mb-3">
+                                                    <label class="form-label"><strong>Tipo de Licencia *</strong></label>
+                                                    <select class="form-control form-control-lg" t-model="state.driverInfo.license_type" required="required">
+                                                        <option value="">Seleccione tipo</option>
+                                                        <option value="A">A - Motocicletas</option>
+                                                        <option value="B">B - Automóviles</option>
+                                                        <option value="C">C - Camiones</option>
+                                                        <option value="D">D - Transporte de pasajeros</option>
+                                                        <option value="E">E - Articulados</option>
+                                                    </select>
+                                                </div>
+                                                
+                                                <div class="mb-3">
+                                                    <label class="form-label">Vencimiento de Licencia</label>
+                                                    <input type="date" 
+                                                           class="form-control form-control-lg" 
+                                                           t-model="state.driverInfo.license_expiry"/>
+                                                </div>
+                                                
+                                                <div class="mb-3">
+                                                    <label class="form-label"><strong>Odómetro (km)</strong></label>
+                                                    <input type="number" 
+                                                           class="form-control form-control-lg" 
+                                                           t-model="state.driverInfo.odometer"
+                                                           placeholder="Ej: 150000"
+                                                           step="1"
+                                                           min="0"/>
+                                                </div>
+                                                
+                                                <div class="mb-3">
+                                                    <div class="form-check">
+                                                        <input type="checkbox" 
+                                                               class="form-check-input" 
+                                                               id="defensiveCourse"
+                                                               t-model="state.driverInfo.defensive_course"/>
+                                                        <label class="form-check-label" for="defensiveCourse">
+                                                            <strong>¿Curso de manejo defensivo?</strong>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="mb-3" t-if="state.driverInfo.defensive_course">
+                                                    <label class="form-label">Duración del Curso</label>
+                                                    <input type="text" 
+                                                           class="form-control form-control-lg" 
+                                                           t-model="state.driverInfo.course_duration"
+                                                           placeholder="Ej: 8 horas, 2 días"/>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Actions -->
+                            <div class="row mt-3 flex-shrink-0">
+                                <div class="col-6">
+                                    <button class="btn btn-outline-secondary btn-block w-100" 
+                                            t-on-click="this.onSkipDriverInfo">
+                                        <i class="fa fa-forward me-2"/>
+                                        Omitir
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn btn-primary btn-block w-100" 
+                                            t-on-click="this.onSaveDriverInfo">
+                                        <i class="fa fa-arrow-right me-2"/>
+                                        Continuar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
                     <t t-elif="state.showingPhotoCapture">
                         <!-- Photo Capture Screen -->
                         <div class="container-fluid h-100 d-flex flex-column">
@@ -314,6 +418,74 @@
                                             </t>
                                             <t t-else="">Finalizar</t>
                                         </t>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                    <t t-elif="state.showingSignature">
+                        <!-- Digital Signature Screen -->
+                        <div class="container-fluid h-100 d-flex flex-column">
+                            <!-- Header -->
+                            <div class="row bg-success text-white border-bottom py-2 mb-3 flex-shrink-0">
+                                <div class="col-12">
+                                    <h6 class="mb-1">
+                                        <i class="fa fa-signature me-2"/>
+                                        Firma del Conductor
+                                    </h6>
+                                    <small>
+                                        Firme en el área gris para finalizar la inspección
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <!-- Signature Area -->
+                            <div class="row flex-grow-1">
+                                <div class="col-12">
+                                    <div class="card h-100">
+                                        <div class="card-body d-flex flex-column">
+                                            <p class="mb-3 text-center">
+                                                <strong>Por favor firme aquí:</strong>
+                                            </p>
+                                            
+                                            <!-- Canvas for signature -->
+                                            <div class="signature-container flex-grow-1 border border-secondary rounded p-2 mb-3" 
+                                                 style="background-color: #f8f9fa; min-height: 200px; position: relative;">
+                                                <canvas id="signatureCanvas" 
+                                                        style="width: 100%; height: 100%; cursor: crosshair; touch-action: none;"
+                                                        t-ref="signatureCanvas"></canvas>
+                                                <div class="position-absolute top-50 start-50 translate-middle text-muted"
+                                                     style="pointer-events: none; z-index: 0;">
+                                                    Toque y arrastre para firmar
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="text-center">
+                                                <button class="btn btn-outline-secondary me-2" 
+                                                        t-on-click="this.clearSignature">
+                                                    <i class="fa fa-eraser me-2"/>
+                                                    Limpiar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Actions -->
+                            <div class="row mt-3 flex-shrink-0">
+                                <div class="col-6">
+                                    <button class="btn btn-outline-secondary btn-block w-100" 
+                                            t-on-click="this.onSkipSignature">
+                                        <i class="fa fa-forward me-2"/>
+                                        Omitir Firma
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn btn-success btn-block w-100" 
+                                            t-on-click="this.onSaveSignature">
+                                        <i class="fa fa-check me-2"/>
+                                        Finalizar Inspección
                                     </button>
                                 </div>
                             </div>

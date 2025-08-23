@@ -50,10 +50,10 @@ class FleetInspection(models.Model):
     completion_percentage = fields.Float(string='Completion %', compute='_compute_summary', store=True)
     
     overall_status = fields.Selection([
-        ('good', 'Good - Ready to Use'),
-        ('attention', 'Attention Required'),
-        ('maintenance', 'Requires Maintenance')
-    ], string='Overall Status', compute='_compute_overall_status', store=True)
+        ('good', 'Bueno - Listo para Usar'),
+        ('attention', 'Atención Requerida'),
+        ('maintenance', 'Requiere Mantenimiento')
+    ], string='Estado General', compute='_compute_overall_status', store=True)
     
     # Signatures
     driver_signature = fields.Binary(string='Driver Signature')

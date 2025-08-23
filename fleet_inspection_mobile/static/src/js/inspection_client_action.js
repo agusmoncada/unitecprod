@@ -36,6 +36,20 @@ export class FleetInspectionMobile extends Component {
             showingPhotoCapture: false,
             capturedPhotos: [],
             photoRequired: false,
+            // Driver information
+            showingDriverInfo: false,
+            selectedVehicleId: null,
+            driverInfo: {
+                license_number: '',
+                license_type: '',
+                license_expiry: '',
+                defensive_course: false,
+                course_duration: '',
+                odometer: '',
+            },
+            // Signature
+            showingSignature: false,
+            driverSignature: null,
         });
         
         this.loadInspection();
@@ -54,6 +68,12 @@ export class FleetInspectionMobile extends Component {
         this.onSavePhotos = this.onSavePhotos.bind(this);
         this.onSkipPhotos = this.onSkipPhotos.bind(this);
         this.onRemovePhoto = this.onRemovePhoto.bind(this);
+        this.onSaveDriverInfo = this.onSaveDriverInfo.bind(this);
+        this.onSkipDriverInfo = this.onSkipDriverInfo.bind(this);
+        this.onSaveSignature = this.onSaveSignature.bind(this);
+        this.onSkipSignature = this.onSkipSignature.bind(this);
+        this.clearSignature = this.clearSignature.bind(this);
+        this.setupSignatureCanvas = this.setupSignatureCanvas.bind(this);
     }
 
     async loadInspection() {
@@ -98,70 +118,20 @@ export class FleetInspectionMobile extends Component {
 
     async onSelectVehicle(vehicleId) {
         try {
-            console.log("Creating inspection for vehicle ID:", vehicleId);
-            this.state.loading = true;
+            console.log("Vehicle selected:", vehicleId);
             
-            // Get vehicle data for odometer and other info
+            // Load vehicle data to get current odometer reading
             const vehicleData = await this.orm.read("fleet.vehicle", [vehicleId], ['odometer', 'name', 'license_plate']);
             const vehicle = vehicleData && vehicleData.length > 0 ? vehicleData[0] : {};
             
-            // Get default template
-            let templateId = false;
-            try {
-                const templates = await this.orm.searchRead(
-                    "fleet.inspection.template", 
-                    [['active', '=', true]], 
-                    ['id', 'name'], 
-                    { limit: 1, order: 'sequence asc' }
-                );
-                if (templates.length > 0) {
-                    templateId = templates[0].id;
-                }
-            } catch (templateError) {
-                console.warn("Could not fetch inspection template:", templateError);
-            }
+            // Pre-fill odometer with current vehicle reading
+            this.state.driverInfo.odometer = vehicle.odometer || '';
             
-            // Get device info
-            const deviceInfo = `${navigator.userAgent} - ${new Date().toLocaleString()}`;
-            
-            // Create new inspection with all required fields
-            const inspectionData = {
-                vehicle_id: vehicleId,
-                driver_id: this.user.partnerId,
-                state: 'draft',
-                inspection_date: new Date().toISOString().replace('T', ' ').split('.')[0], // Format for Odoo datetime
-                start_time: new Date().toISOString().replace('T', ' ').split('.')[0],
-                device_info: deviceInfo,
-            };
-            
-            // Add template if found
-            if (templateId) {
-                inspectionData.template_id = templateId;
-            }
-            
-            // Add odometer if available
-            if (vehicle.odometer) {
-                inspectionData.odometer = vehicle.odometer;
-            }
-            
-            console.log("Creating inspection with data:", inspectionData);
-            const inspectionId = await this.orm.create("fleet.inspection", [inspectionData]);
-            
-            console.log("Inspection created with ID:", inspectionId);
-            console.log("Inspection ID type:", typeof inspectionId, "Is array:", Array.isArray(inspectionId));
-            
-            // Extract the actual ID - orm.create returns [id] array
-            const actualInspectionId = Array.isArray(inspectionId) ? inspectionId[0] : inspectionId;
-            console.log("Actual inspection ID:", actualInspectionId, "Type:", typeof actualInspectionId);
-            
-            // Start the inspection directly in mobile interface
-            this.state.currentInspection = actualInspectionId;
+            // Store selected vehicle and show driver info form
+            this.state.selectedVehicleId = vehicleId;
             this.state.selectingVehicle = false;
-            this.state.vehicles = [];
+            this.state.showingDriverInfo = true;
             this.state.loading = false;
-            
-            // Load the inspection and start the mobile inspection flow
-            await this.startInspectionFlow(actualInspectionId);
         } catch (error) {
             console.error("Error creating inspection:", error);
             console.error("Error details:", error.message, error.stack);
@@ -504,6 +474,103 @@ export class FleetInspectionMobile extends Component {
         this.state.capturedPhotos.splice(index, 1);
     }
 
+    async onSaveDriverInfo() {
+        // Validate required fields
+        if (!this.state.driverInfo.license_number || !this.state.driverInfo.license_type) {
+            if (this.notification) {
+                this.notification.add("Número de licencia y tipo son obligatorios", {
+                    type: "warning",
+                });
+            }
+            return;
+        }
+
+        try {
+            console.log("Creating inspection with driver info for vehicle ID:", this.state.selectedVehicleId);
+            this.state.loading = true;
+            
+            // Get vehicle data for odometer and other info
+            const vehicleData = await this.orm.read("fleet.vehicle", [this.state.selectedVehicleId], ['odometer', 'name', 'license_plate']);
+            const vehicle = vehicleData && vehicleData.length > 0 ? vehicleData[0] : {};
+            
+            // Get default template
+            let templateId = false;
+            try {
+                const templates = await this.orm.searchRead(
+                    "fleet.inspection.template", 
+                    [['active', '=', true]], 
+                    ['id', 'name'], 
+                    { limit: 1, order: 'sequence asc' }
+                );
+                if (templates.length > 0) {
+                    templateId = templates[0].id;
+                }
+            } catch (templateError) {
+                console.warn("Could not fetch inspection template:", templateError);
+            }
+            
+            // Get device info
+            const deviceInfo = `${navigator.userAgent} - ${new Date().toLocaleString()}`;
+            
+            // Create new inspection with all required fields including driver info
+            const inspectionData = {
+                vehicle_id: this.state.selectedVehicleId,
+                driver_id: this.user.partnerId,
+                state: 'draft',
+                inspection_date: new Date().toISOString().replace('T', ' ').split('.')[0],
+                start_time: new Date().toISOString().replace('T', ' ').split('.')[0],
+                device_info: deviceInfo,
+                // Driver information
+                license_number: this.state.driverInfo.license_number,
+                license_type: this.state.driverInfo.license_type,
+                license_expiry: this.state.driverInfo.license_expiry || false,
+                defensive_course: this.state.driverInfo.defensive_course,
+                course_duration: this.state.driverInfo.course_duration || false,
+                odometer: parseFloat(this.state.driverInfo.odometer) || 0,
+            };
+            
+            // Add template if found
+            if (templateId) {
+                inspectionData.template_id = templateId;
+            }
+            
+            // Add odometer if available
+            if (vehicle.odometer) {
+                inspectionData.odometer = vehicle.odometer;
+            }
+            
+            console.log("Creating inspection with data:", inspectionData);
+            const inspectionId = await this.orm.create("fleet.inspection", [inspectionData]);
+            
+            const actualInspectionId = Array.isArray(inspectionId) ? inspectionId[0] : inspectionId;
+            console.log("Actual inspection ID:", actualInspectionId);
+            
+            // Store inspection and hide driver info
+            this.state.currentInspection = actualInspectionId;
+            this.state.showingDriverInfo = false;
+            this.state.loading = false;
+            
+            // Load the inspection and start the mobile inspection flow
+            await this.startInspectionFlow(actualInspectionId);
+        } catch (error) {
+            console.error("Error creating inspection:", error);
+            if (this.notification) {
+                this.notification.add("Error al crear inspección: " + (error.message || 'Error desconocido'), {
+                    type: "danger",
+                    sticky: true
+                });
+            }
+            this.state.loading = false;
+        }
+    }
+
+    onSkipDriverInfo() {
+        // Set minimal required values
+        this.state.driverInfo.license_number = 'No especificado';
+        this.state.driverInfo.license_type = 'B';
+        this.onSaveDriverInfo();
+    }
+
     resetToStartPage() {
         // Reset all state to initial values
         this.state.currentInspection = null;
@@ -523,6 +590,17 @@ export class FleetInspectionMobile extends Component {
         this.state.showingPhotoCapture = false;
         this.state.capturedPhotos = [];
         this.state.photoRequired = false;
+        this.state.showingDriverInfo = false;
+        this.state.selectedVehicleId = null;
+        this.state.driverInfo = {
+            license_number: '',
+            license_type: '',
+            license_expiry: '',
+            defensive_course: false,
+            course_duration: '',
+        };
+        this.state.showingSignature = false;
+        this.state.driverSignature = null;
         
         // Show start page message
         if (this.notification) {
@@ -655,14 +733,150 @@ export class FleetInspectionMobile extends Component {
                     this.state.currentItem = this.state.items[firstIncompleteIndex];
                 }
             } else {
-                // All verified complete, proceed with completion
-                this.showCompletionScreen();
+                // All verified complete, show signature screen
+                this.showSignatureScreen();
             }
         } catch (error) {
             console.error("Error verifying completion:", error);
             // Fallback to completion screen with warning
             this.showCompletionScreen();
         }
+    }
+
+    showSignatureScreen() {
+        this.state.showingSignature = true;
+        this.state.driverSignature = null;
+        
+        // Setup canvas after render
+        setTimeout(() => this.setupSignatureCanvas(), 100);
+    }
+
+    setupSignatureCanvas() {
+        const canvas = document.getElementById('signatureCanvas');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const rect = canvas.getBoundingClientRect();
+        
+        // Set canvas size to match display size
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        
+        // Set drawing style
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        
+        let isDrawing = false;
+        let hasSignature = false;
+
+        // Mouse events
+        const startDrawing = (e) => {
+            isDrawing = true;
+            hasSignature = true;
+            const rect = canvas.getBoundingClientRect();
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        };
+
+        const draw = (e) => {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+            ctx.stroke();
+        };
+
+        const stopDrawing = () => {
+            if (isDrawing) {
+                isDrawing = false;
+                // Save signature as base64
+                this.state.driverSignature = canvas.toDataURL().split(',')[1];
+            }
+        };
+
+        // Touch events
+        const startTouch = (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        };
+
+        const moveTouch = (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        };
+
+        const endTouch = (e) => {
+            e.preventDefault();
+            const mouseEvent = new MouseEvent('mouseup', {});
+            canvas.dispatchEvent(mouseEvent);
+        };
+
+        // Add event listeners
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+        
+        canvas.addEventListener('touchstart', startTouch, { passive: false });
+        canvas.addEventListener('touchmove', moveTouch, { passive: false });
+        canvas.addEventListener('touchend', endTouch, { passive: false });
+
+        // Store canvas and context for clearing
+        this.signatureCanvas = canvas;
+        this.signatureCtx = ctx;
+    }
+
+    clearSignature() {
+        if (this.signatureCanvas && this.signatureCtx) {
+            this.signatureCtx.clearRect(0, 0, this.signatureCanvas.width, this.signatureCanvas.height);
+            this.state.driverSignature = null;
+        }
+    }
+
+    async onSaveSignature() {
+        if (!this.state.driverSignature) {
+            if (this.notification) {
+                this.notification.add("Se requiere la firma del conductor para finalizar", {
+                    type: "warning",
+                });
+            }
+            return;
+        }
+
+        try {
+            // Save signature to inspection
+            await this.orm.write("fleet.inspection", [this.state.currentInspection], {
+                driver_signature: this.state.driverSignature
+            });
+
+            // Now complete the inspection
+            this.state.showingSignature = false;
+            this.showCompletionScreen();
+        } catch (error) {
+            console.error("Error saving signature:", error);
+            if (this.notification) {
+                this.notification.add("Error al guardar firma: " + (error.message || 'Error desconocido'), {
+                    type: "danger",
+                });
+            }
+        }
+    }
+
+    async onSkipSignature() {
+        // Skip signature and complete directly
+        this.state.showingSignature = false;
+        this.showCompletionScreen();
     }
 
     async showCompletionScreen() {

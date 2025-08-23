@@ -51,7 +51,7 @@ class FleetVehicle(models.Model):
         """Smart button to view vehicle inspections"""
         self.ensure_one()
         
-        action = self.env.ref('fleet_inspection_mobile.action_fleet_inspection').read()[0]
+        action = self.env.ref('fleet_inspection_mobile.action_vehicle_inspections').read()[0]
         action['domain'] = [('vehicle_id', '=', self.id)]
         action['context'] = {
             'default_vehicle_id': self.id,

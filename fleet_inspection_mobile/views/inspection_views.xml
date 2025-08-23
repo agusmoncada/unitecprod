@@ -109,27 +109,62 @@
                                         <field name="observations"/>
                                         <field name="inspected_at" readonly="1"/>
                                     </group>
-                                    <group string="Photos">
+                                    <group string="Fotos" attrs="{'invisible': [('photo_ids', '=', [])]}">
+                                        <field name="photo_count" readonly="1"/>
                                         <field name="photo_ids" nolabel="1">
                                             <tree>
                                                 <field name="name"/>
                                                 <field name="taken_at"/>
                                                 <field name="image_size"/>
                                             </tree>
+                                            <form>
+                                                <group>
+                                                    <field name="name"/>
+                                                    <field name="taken_at"/>
+                                                    <field name="image_size"/>
+                                                </group>
+                                                <group string="Vista Previa">
+                                                    <field name="image" widget="image" options="{'size': [300, 200]}"/>
+                                                </group>
+                                            </form>
                                         </field>
                                     </group>
                                 </form>
                             </field>
                         </page>
                         
-                        <page string="General Observations">
-                            <field name="observations" nolabel="1" placeholder="Add any general observations about the vehicle..."/>
+                        <page string="Fotos de Inspección" attrs="{'invisible': [('state', '=', 'draft')]}">
+                            <group>
+                                <div class="oe_title">
+                                    <h3>Fotos por Elemento de Inspección</h3>
+                                    <p>Fotos tomadas durante la inspección móvil para elementos marcados como problemáticos</p>
+                                </div>
+                            </group>
+                            
+                            <!-- Photos by inspection item -->
+                            <group string="Elementos con Fotos">
+                                <field name="inspection_line_ids" mode="tree" readonly="1" 
+                                       domain="[('photo_ids', '!=', [])]" 
+                                       context="{'tree_view_ref': 'fleet_inspection_mobile.view_inspection_line_photos_tree'}">
+                                    <tree string="Elementos con Fotos" create="false" edit="false">
+                                        <field name="section"/>
+                                        <field name="name"/>
+                                        <field name="status"/>
+                                        <field name="photo_count"/>
+                                        <field name="observations"/>
+                                    </tree>
+                                </field>
+                            </group>
                         </page>
 
-                        <page string="Signatures" attrs="{'invisible': [('state', '=', 'draft')]}">
+                        <page string="Observaciones Generales">
+                            <field name="observations" nolabel="1" placeholder="Agregue observaciones generales sobre el vehículo..."/>
+                        </page>
+
+                        <page string="Firmas" attrs="{'invisible': [('state', '=', 'draft')]}">
                             <group>
-                                <field name="driver_signature" widget="image"/>
-                                <field name="supervisor_signature" widget="image"/>
+                                <field name="driver_signature" widget="image" string="Firma del Conductor"/>
+                                <field name="supervisor_signature" widget="image" string="Firma del Supervisor"/>
                             </group>
                         </page>
 
@@ -234,14 +269,14 @@
                             <div class="o_kanban_card_content">
                                 <div class="row">
                                     <div class="col-6">
-                                        <strong>Driver:</strong><br/>
+                                        <strong>Conductor:</strong><br/>
                                         <t t-if="record.driver_id">
                                             <t t-esc="record.driver_id.value"/>
                                         </t>
                                         <t t-else="">-</t>
                                     </div>
                                     <div class="col-6">
-                                        <strong>Date:</strong><br/>
+                                        <strong>Fecha:</strong><br/>
                                         <t t-if="record.inspection_date">
                                             <t t-esc="record.inspection_date.value"/>
                                         </t>
@@ -257,7 +292,7 @@
                                         </t>
                                         <t t-if="record.items_bad and record.items_bad.raw_value > 0">
                                             <span class="badge badge-danger ml-1">
-                                                <t t-esc="record.items_bad.value"/> Bad Items
+                                                <t t-esc="record.items_bad.value"/> Elementos Malos
                                             </span>
                                         </t>
                                     </div>
@@ -268,7 +303,7 @@
                                             <div class="progress">
                                                 <div class="progress-bar" t-attf-style="width: #{record.completion_percentage.value || 0}%"/>
                                             </div>
-                                            <small><t t-esc="record.completion_percentage.value || 0"/>% Complete</small>
+                                            <small><t t-esc="record.completion_percentage.value || 0"/>% Completado</small>
                                         </t>
                                     </div>
                                 </div>
@@ -278,10 +313,10 @@
                                     <div class="col-6 o_kanban_primary_left">
                                         <t t-if="record.state">
                                             <button t-if="record.state.raw_value == 'draft'" class="btn btn-primary btn-sm" name="action_resume_inspection" type="object">
-                                                Resume
+                                                Reanudar
                                             </button>
                                             <button t-if="record.state.raw_value == 'completed'" class="btn btn-secondary btn-sm" name="action_view_details" type="object">
-                                                View
+                                                Ver
                                             </button>
                                         </t>
                                     </div>
@@ -320,6 +355,21 @@
     </record>
 
     <!-- Inspection Template Action -->
+    <!-- Vehicle-specific Inspection Action (for smart button) -->
+    <record id="action_vehicle_inspections" model="ir.actions.act_window">
+        <field name="name">Vehicle Inspections</field>
+        <field name="res_model">fleet.inspection</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No inspections found for this vehicle.
+            </p>
+            <p>
+                Start a new inspection to track vehicle condition.
+            </p>
+        </field>
+    </record>
+
     <record id="action_fleet_inspection_template" model="ir.actions.act_window">
         <field name="name">Inspection Templates</field>
         <field name="res_model">fleet.inspection.template</field>
