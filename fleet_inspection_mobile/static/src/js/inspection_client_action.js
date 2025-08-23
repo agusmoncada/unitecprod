@@ -51,6 +51,9 @@ export class FleetInspectionMobile extends Component {
             // Signature
             showingSignature: false,
             driverSignature: null,
+            // Draft inspection selection
+            showingDraftSelection: false,
+            draftInspections: [],
         });
         
         this.loadInspection();
@@ -324,16 +327,126 @@ export class FleetInspectionMobile extends Component {
     }
 
     async onClickResume() {
-        // Resume existing inspection - show draft inspections
-        await this.action.doAction({
-            type: 'ir.actions.act_window',
-            res_model: 'fleet.inspection',
-            view_mode: 'kanban,form',
-            domain: [['state', '=', 'draft']],
-            target: 'current',
-            context: {},
-            name: 'Inspecciones Pendientes',
-        });
+        try {
+            this.state.loading = true;
+            
+            // Get draft inspections for current user
+            const draftInspections = await this.orm.search_read('fleet.inspection', 
+                [['state', '=', 'draft'], ['create_uid', '=', this.user.userId]], 
+                ['id', 'name', 'vehicle_id', 'inspection_date', 'completion_percentage']
+            );
+            
+            if (draftInspections.length === 0) {
+                this.notification.add("No tienes inspecciones pendientes", {
+                    type: "info",
+                });
+                this.state.loading = false;
+                return;
+            }
+            
+            if (draftInspections.length === 1) {
+                // Resume the single draft inspection
+                await this.resumeInspection(draftInspections[0].id);
+            } else {
+                // Show selection if multiple drafts exist
+                this.state.draftInspections = draftInspections;
+                this.state.showingDraftSelection = true;
+            }
+            
+            this.state.loading = false;
+        } catch (error) {
+            console.error("Error loading draft inspections:", error);
+            this.notification.add("Error al cargar inspecciones pendientes", {
+                type: "danger",
+            });
+            this.state.loading = false;
+        }
+    }
+
+    async resumeInspection(inspectionId) {
+        try {
+            console.log("Resuming inspection:", inspectionId);
+            this.state.loading = true;
+            
+            // Load the existing inspection
+            const inspection = await this.orm.read('fleet.inspection', [inspectionId], [
+                'id', 'name', 'vehicle_id', 'driver_id', 'template_id', 'state'
+            ]);
+            
+            if (!inspection || inspection.length === 0) {
+                throw new Error("Inspection not found");
+            }
+            
+            const inspectionData = inspection[0];
+            
+            // Load vehicle info
+            const vehicleData = await this.orm.read('fleet.vehicle', [inspectionData.vehicle_id[0]], 
+                ['name', 'license_plate']);
+            const vehicle = vehicleData[0];
+            
+            // Load inspection items
+            const lines = await this.orm.search_read('fleet.inspection.line', 
+                [['inspection_id', '=', inspectionId]], 
+                ['id', 'name', 'section', 'status', 'observations', 'sequence'], 
+                { order: 'sequence' }
+            );
+            
+            // Set up state for inspection
+            this.state.currentInspection = inspectionData;
+            this.state.items = lines;
+            this.state.vehicleInfo = {
+                id: vehicle.id,
+                name: vehicle.name,
+                license_plate: vehicle.license_plate,
+                driver: inspectionData.driver_id[1]
+            };
+            
+            // Find first incomplete item
+            const incompleteItems = lines.filter(item => !item.status);
+            if (incompleteItems.length > 0) {
+                this.state.currentItem = incompleteItems[0];
+                this.state.itemIndex = lines.findIndex(item => item.id === this.state.currentItem.id);
+            } else {
+                // All items completed, go to summary
+                this.state.currentItem = null;
+                this.state.itemIndex = lines.length;
+                this.goToSummary();
+                return;
+            }
+            
+            // Hide draft selection and show inspection
+            this.state.showingDraftSelection = false;
+            this.state.inspectionStarted = true;
+            this.state.loading = false;
+            
+        } catch (error) {
+            console.error("Error resuming inspection:", error);
+            this.notification.add("Error al reanudar inspección: " + error.message, {
+                type: "danger",
+            });
+            this.state.loading = false;
+        }
+    }
+
+    goToSummary() {
+        // Set summary state
+        this.state.inspectionCompleted = false; // Will be set to true after summary is shown
+        this.state.itemIndex = this.state.items.length; // Show summary
+        this.state.currentItem = null;
+        
+        // Calculate completion stats
+        this.calculateCompletionStats();
+    }
+
+    calculateCompletionStats() {
+        const items = this.state.items;
+        this.state.completionStats = {
+            total: items.length,
+            good: items.filter(item => item.status === 'bien').length,
+            regular: items.filter(item => item.status === 'regular').length,
+            bad: items.filter(item => item.status === 'mal').length,
+            na: items.filter(item => item.status === 'na').length,
+        };
     }
 
     async onSelectStatus(status) {

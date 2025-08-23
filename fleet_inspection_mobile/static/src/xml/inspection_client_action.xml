@@ -112,6 +112,66 @@
                             </div>
                         </div>
                     </t>
+                    <t t-elif="state.showingDraftSelection">
+                        <!-- Draft Inspections Selection Screen -->
+                        <div class="container-fluid h-100 d-flex flex-column">
+                            <!-- Header -->
+                            <div class="row bg-warning text-dark border-bottom py-2 mb-3 flex-shrink-0">
+                                <div class="col-12">
+                                    <h6 class="mb-1">
+                                        <i class="fa fa-clock-o me-2"/>
+                                        Inspecciones Pendientes
+                                    </h6>
+                                    <small>
+                                        Selecciona una inspección para continuar
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <!-- Draft Inspections List -->
+                            <div class="row flex-grow-1">
+                                <div class="col-12">
+                                    <div class="list-group">
+                                        <t t-foreach="state.draftInspections" t-as="inspection" t-key="inspection.id">
+                                            <button class="list-group-item list-group-item-action" 
+                                                    t-on-click="() => this.resumeInspection(inspection.id)">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <h6 class="mb-1">
+                                                            <i class="fa fa-car me-2"/>
+                                                            <t t-esc="inspection.vehicle_id[1]"/>
+                                                        </h6>
+                                                        <p class="mb-1 text-muted">
+                                                            <t t-esc="inspection.name"/>
+                                                        </p>
+                                                        <small class="text-muted">
+                                                            <t t-esc="inspection.inspection_date"/>
+                                                        </small>
+                                                    </div>
+                                                    <div class="text-end">
+                                                        <span class="badge bg-warning">
+                                                            <t t-esc="Math.round(inspection.completion_percentage || 0)"/>% completado
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </button>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Actions -->
+                            <div class="row mt-3 flex-shrink-0">
+                                <div class="col-12">
+                                    <button class="btn btn-outline-secondary btn-block w-100" 
+                                            t-on-click="() => { this.state.showingDraftSelection = false; }">
+                                        <i class="fa fa-arrow-left me-2"/>
+                                        Volver
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
                     <t t-elif="state.showingDriverInfo">
                         <!-- Driver Information Screen -->
                         <div class="container-fluid h-100 d-flex flex-column">
