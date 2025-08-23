@@ -820,10 +820,13 @@ export class FleetInspectionMobile extends Component {
 
     async verifyCompletionAndFinish() {
         try {
+            console.log("=== VERIFY COMPLETION AND FINISH ===");
+            console.log("Current inspection:", this.state.currentInspection);
+            
             // Reload items from server to check actual completion status
-            const serverItems = await this.orm.searchRead(
+            const serverItems = await this.orm.search_read(
                 "fleet.inspection.line",
-                [['inspection_id', '=', this.state.currentInspection]],
+                [['inspection_id', '=', this.state.currentInspection.id]],
                 ['id', 'status'],
                 { order: 'sequence asc' }
             );
@@ -859,6 +862,7 @@ export class FleetInspectionMobile extends Component {
                 }
             } else {
                 // All verified complete, show signature screen
+                console.log("All items verified complete on server, proceeding to signature screen...");
                 this.showSignatureScreen();
             }
         } catch (error) {
@@ -869,11 +873,14 @@ export class FleetInspectionMobile extends Component {
     }
 
     showSignatureScreen() {
+        console.log("=== SHOW SIGNATURE SCREEN ===");
+        console.log("Setting showingSignature = true");
         this.state.showingSignature = true;
         this.state.driverSignature = null;
         
         // Setup canvas after render
         setTimeout(() => this.setupSignatureCanvas(), 100);
+        console.log("Signature screen state set, canvas setup scheduled");
     }
 
     setupSignatureCanvas() {
