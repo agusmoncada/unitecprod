@@ -177,24 +177,48 @@ class FleetInspection(models.Model):
         """Mark inspection as completed"""
         self.ensure_one()
         
-        # Validation
+        _logger.info(f"Attempting to complete inspection {self.id}: {self.name}")
+        _logger.info(f"Inspection data: vehicle={self.vehicle_id.name}, driver={self.driver_id.name}, template={self.template_id.name if self.template_id else 'None'}")
+        
+        # Check required template
+        if not self.template_id:
+            raise UserError("Inspection template is required. Please set a template before completing.")
+        
+        # Check required odometer reading
+        try:
+            if hasattr(self.env.company, 'inspection_require_odometer') and self.env.company.inspection_require_odometer and not self.odometer:
+                raise UserError("Odometer reading is required to complete inspection.")
+        except Exception as e:
+            _logger.warning(f"Error checking odometer requirement: {e}")
+        
+        # Validation for incomplete items
         incomplete_items = self.inspection_line_ids.filtered(lambda l: not l.status)
         if incomplete_items:
-            raise UserError(f"Please complete all inspection items. {len(incomplete_items)} items remaining.")
+            incomplete_names = incomplete_items.mapped('name')
+            _logger.warning(f"Incomplete items found: {incomplete_names}")
+            raise UserError(f"Please complete all inspection items. {len(incomplete_items)} items remaining: {', '.join(incomplete_names[:3])}{'...' if len(incomplete_names) > 3 else ''}")
         
-        # Check required photos
-        bad_items_without_photos = self.inspection_line_ids.filtered(
-            lambda l: l.status == 'mal' and l.photo_required and not l.photo_ids
-        )
-        if bad_items_without_photos:
-            raise UserError("Photos are required for all items marked as 'Mal'.")
+        # Check required photos (only if photo functionality is configured)
+        try:
+            if self.env.company.inspection_require_photo_for_bad:
+                bad_items_without_photos = self.inspection_line_ids.filtered(
+                    lambda l: l.status == 'mal' and hasattr(l, 'photo_required') and l.photo_required and not l.photo_ids
+                )
+                if bad_items_without_photos:
+                    raise UserError("Photos are required for all items marked as 'Mal'.")
+        except Exception as e:
+            _logger.warning(f"Error checking photo requirements: {e}")
         
         self.state = 'completed'
         self.end_time = fields.Datetime.now()
         
         # Auto-create maintenance requests if configured
-        if self.env.company.inspection_auto_create_maintenance:
-            self._create_maintenance_requests()
+        try:
+            if hasattr(self.env.company, 'inspection_auto_create_maintenance') and self.env.company.inspection_auto_create_maintenance:
+                self._create_maintenance_requests()
+        except Exception as e:
+            # Don't fail inspection completion if maintenance request creation fails
+            _logger.warning(f"Failed to create maintenance requests: {e}")
         
         return {
             'type': 'ir.actions.client',
@@ -231,12 +255,19 @@ class FleetInspection(models.Model):
                     description += f": {item.observations}"
                 description += "\n"
             
+            # Try to find maintenance service type, create without it if not found
+            service_type_id = False
+            try:
+                service_type_id = self.env.ref('fleet.type_service_maintenance').id
+            except ValueError:
+                _logger.warning("fleet.type_service_maintenance reference not found")
+            
             self.env['fleet.vehicle.log.services'].create({
                 'vehicle_id': self.vehicle_id.id,
                 'description': f'Maintenance Required - {section}',
                 'notes': description,
                 'state': 'new',
-                'service_type_id': self.env.ref('fleet.type_service_maintenance').id,
+                'service_type_id': service_type_id,
             })
 
     @api.model

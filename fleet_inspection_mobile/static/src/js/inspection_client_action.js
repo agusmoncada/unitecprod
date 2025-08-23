@@ -94,13 +94,51 @@ export class FleetInspectionMobile extends Component {
             console.log("Creating inspection for vehicle ID:", vehicleId);
             this.state.loading = true;
             
-            // Create new inspection - let Odoo handle the default datetime
-            const inspectionId = await this.orm.create("fleet.inspection", [{
+            // Get vehicle data for odometer and other info
+            const vehicleData = await this.orm.read("fleet.vehicle", [vehicleId], ['odometer', 'name', 'license_plate']);
+            const vehicle = vehicleData && vehicleData.length > 0 ? vehicleData[0] : {};
+            
+            // Get default template
+            let templateId = false;
+            try {
+                const templates = await this.orm.searchRead(
+                    "fleet.inspection.template", 
+                    [['active', '=', true]], 
+                    ['id', 'name'], 
+                    { limit: 1, order: 'sequence asc' }
+                );
+                if (templates.length > 0) {
+                    templateId = templates[0].id;
+                }
+            } catch (templateError) {
+                console.warn("Could not fetch inspection template:", templateError);
+            }
+            
+            // Get device info
+            const deviceInfo = `${navigator.userAgent} - ${new Date().toLocaleString()}`;
+            
+            // Create new inspection with all required fields
+            const inspectionData = {
                 vehicle_id: vehicleId,
                 driver_id: this.user.partnerId,
                 state: 'draft',
-                // Don't set inspection_date, let the default fields.Datetime.now handle it
-            }]);
+                inspection_date: new Date().toISOString().replace('T', ' ').split('.')[0], // Format for Odoo datetime
+                start_time: new Date().toISOString().replace('T', ' ').split('.')[0],
+                device_info: deviceInfo,
+            };
+            
+            // Add template if found
+            if (templateId) {
+                inspectionData.template_id = templateId;
+            }
+            
+            // Add odometer if available
+            if (vehicle.odometer) {
+                inspectionData.odometer = vehicle.odometer;
+            }
+            
+            console.log("Creating inspection with data:", inspectionData);
+            const inspectionId = await this.orm.create("fleet.inspection", [inspectionData]);
             
             console.log("Inspection created with ID:", inspectionId);
             console.log("Inspection ID type:", typeof inspectionId, "Is array:", Array.isArray(inspectionId));
@@ -120,9 +158,20 @@ export class FleetInspectionMobile extends Component {
         } catch (error) {
             console.error("Error creating inspection:", error);
             console.error("Error details:", error.message, error.stack);
+            
+            let errorMessage = "Error al crear inspección";
+            if (error.message && error.message.includes('template')) {
+                errorMessage = "No hay plantillas de inspección disponibles. Contacte al administrador.";
+            } else if (error.message && error.message.includes('odometer')) {
+                errorMessage = "Se requiere lectura del odómetro para crear la inspección.";
+            } else if (error.message) {
+                errorMessage += ": " + error.message;
+            }
+            
             if (this.notification) {
-                this.notification.add("Error al crear inspección: " + error.message, {
+                this.notification.add(errorMessage, {
                     type: "danger",
+                    sticky: true
                 });
             }
             this.state.loading = false;
@@ -488,11 +537,25 @@ export class FleetInspectionMobile extends Component {
             this.state.inspectionCompleted = true;
         } catch (error) {
             console.error("Error completing inspection:", error);
-            // Show completion screen anyway but with warning
-            this.state.inspectionCompleted = true;
+            
+            let errorMessage = "Error al completar inspección";
+            if (error.message && error.message.includes('template')) {
+                errorMessage = "Falta plantilla de inspección. Contacte al administrador.";
+            } else if (error.message && error.message.includes('odometer')) {
+                errorMessage = "Se requiere lectura del odómetro para completar.";
+            } else if (error.message && error.message.includes('items remaining')) {
+                errorMessage = "Hay elementos incompletos. Revise todos los elementos.";
+            } else if (error.message && error.message.includes('Photos are required')) {
+                errorMessage = "Se requieren fotos para elementos marcados como 'Mal'.";
+            } else if (error.message) {
+                errorMessage += ": " + error.message;
+            }
+            
+            // Don't show completion screen, stay in inspection mode
             if (this.notification) {
-                this.notification.add("Inspección completada pero con advertencias. Verifique el estado.", {
-                    type: "warning",
+                this.notification.add(errorMessage, {
+                    type: "danger",
+                    sticky: true
                 });
             }
         }
