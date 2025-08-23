@@ -33,6 +33,9 @@ export class FleetInspectionMobile extends Component {
             showingObservations: false,
             selectedStatus: null,
             observations: '',
+            showingPhotoCapture: false,
+            capturedPhotos: [],
+            photoRequired: false,
         });
         
         this.loadInspection();
@@ -47,6 +50,10 @@ export class FleetInspectionMobile extends Component {
         this.onPreviousItem = this.onPreviousItem.bind(this);
         this.onSaveObservations = this.onSaveObservations.bind(this);
         this.onSkipObservations = this.onSkipObservations.bind(this);
+        this.onCapturePhoto = this.onCapturePhoto.bind(this);
+        this.onSavePhotos = this.onSavePhotos.bind(this);
+        this.onSkipPhotos = this.onSkipPhotos.bind(this);
+        this.onRemovePhoto = this.onRemovePhoto.bind(this);
     }
 
     async loadInspection() {
@@ -361,19 +368,30 @@ export class FleetInspectionMobile extends Component {
     async onSelectStatus(status) {
         if (!this.state.currentItem) return;
 
-        // For 'regular' and 'mal' status, show observations input
-        if (status === 'regular' || status === 'mal') {
-            this.state.selectedStatus = status;
+        // Store selected status
+        this.state.selectedStatus = status;
+
+        // For 'mal' status, check if photos are required
+        if (status === 'mal' && this.state.currentItem.photo_required) {
             this.state.observations = this.state.currentItem.observations || '';
             this.state.showingObservations = true;
+            this.state.photoRequired = true;
+            return;
+        }
+
+        // For 'regular' status, show observations input without photo requirement
+        if (status === 'regular') {
+            this.state.observations = this.state.currentItem.observations || '';
+            this.state.showingObservations = true;
+            this.state.photoRequired = false;
             return;
         }
 
         // For 'bien' and 'na', save directly
-        await this.saveStatusAndObservations(status, '');
+        await this.saveStatusAndObservations(status, '', []);
     }
 
-    async saveStatusAndObservations(status, observations) {
+    async saveStatusAndObservations(status, observations, photos = null) {
         if (!this.state.currentItem) return;
 
         try {
@@ -384,6 +402,19 @@ export class FleetInspectionMobile extends Component {
                 status: status,
                 observations: observations || false
             });
+
+            // Save photos if provided
+            if (photos && photos.length > 0) {
+                console.log("Saving", photos.length, "photos for item");
+                for (const photo of photos) {
+                    await this.orm.create("fleet.inspection.photo", [{
+                        line_id: this.state.currentItem.id,
+                        name: photo.name || `Photo_${new Date().getTime()}.jpg`,
+                        image: photo.data, // Base64 encoded image
+                        taken_at: new Date().toISOString().replace('T', ' ').split('.')[0],
+                    }]);
+                }
+            }
 
             console.log("Status saved successfully");
 
@@ -418,17 +449,97 @@ export class FleetInspectionMobile extends Component {
     }
 
     async onSaveObservations() {
-        await this.saveStatusAndObservations(this.state.selectedStatus, this.state.observations);
-        this.state.showingObservations = false;
-        this.state.selectedStatus = null;
-        this.state.observations = '';
+        // If photo is required, show photo capture screen
+        if (this.state.photoRequired && this.state.selectedStatus === 'mal') {
+            this.state.showingObservations = false;
+            this.state.showingPhotoCapture = true;
+            this.state.capturedPhotos = [];
+        } else {
+            // Save without photos
+            await this.saveStatusAndObservations(this.state.selectedStatus, this.state.observations, []);
+            this.state.showingObservations = false;
+            this.state.selectedStatus = null;
+            this.state.observations = '';
+            this.state.photoRequired = false;
+        }
     }
 
     async onSkipObservations() {
-        await this.saveStatusAndObservations(this.state.selectedStatus, '');
-        this.state.showingObservations = false;
+        // If photo is required, still need to show photo capture
+        if (this.state.photoRequired && this.state.selectedStatus === 'mal') {
+            this.state.showingObservations = false;
+            this.state.showingPhotoCapture = true;
+            this.state.capturedPhotos = [];
+        } else {
+            await this.saveStatusAndObservations(this.state.selectedStatus, '', []);
+            this.state.showingObservations = false;
+            this.state.selectedStatus = null;
+            this.state.observations = '';
+            this.state.photoRequired = false;
+        }
+    }
+
+    async onCapturePhoto(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const base64Data = e.target.result.split(',')[1]; // Remove data:image/jpeg;base64, prefix
+                this.state.capturedPhotos.push({
+                    name: file.name,
+                    data: base64Data,
+                    preview: e.target.result, // Keep full data URL for preview
+                });
+                event.target.value = ''; // Reset input
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    onRemovePhoto(index) {
+        this.state.capturedPhotos.splice(index, 1);
+    }
+
+    async onSavePhotos() {
+        if (this.state.capturedPhotos.length === 0 && this.state.photoRequired) {
+            if (this.notification) {
+                this.notification.add("Se requiere al menos una foto para elementos marcados como 'Mal'", {
+                    type: "warning",
+                });
+            }
+            return;
+        }
+
+        await this.saveStatusAndObservations(
+            this.state.selectedStatus, 
+            this.state.observations, 
+            this.state.capturedPhotos
+        );
+        
+        this.state.showingPhotoCapture = false;
+        this.state.capturedPhotos = [];
         this.state.selectedStatus = null;
         this.state.observations = '';
+        this.state.photoRequired = false;
+    }
+
+    async onSkipPhotos() {
+        // Can't skip if photos are required
+        if (this.state.photoRequired) {
+            if (this.notification) {
+                this.notification.add("Las fotos son obligatorias para elementos marcados como 'Mal'", {
+                    type: "danger",
+                });
+            }
+            return;
+        }
+
+        await this.saveStatusAndObservations(this.state.selectedStatus, this.state.observations, []);
+        this.state.showingPhotoCapture = false;
+        this.state.capturedPhotos = [];
+        this.state.selectedStatus = null;
+        this.state.observations = '';
+        this.state.photoRequired = false;
     }
 
     async onNextItem() {

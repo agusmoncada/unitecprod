@@ -112,6 +112,96 @@
                             </div>
                         </div>
                     </t>
+                    <t t-elif="state.showingPhotoCapture">
+                        <!-- Photo Capture Screen -->
+                        <div class="container-fluid h-100 d-flex flex-column">
+                            <!-- Header -->
+                            <div class="row bg-danger text-white border-bottom py-2 mb-3 flex-shrink-0">
+                                <div class="col-12">
+                                    <h6 class="mb-1">
+                                        <i class="fa fa-camera me-2"/>
+                                        Capturar Fotos - Elemento Mal
+                                    </h6>
+                                    <small>
+                                        <t t-esc="state.currentItem.name"/>
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <!-- Photo Capture Area -->
+                            <div class="row flex-grow-1">
+                                <div class="col-12">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <p class="mb-3 text-danger">
+                                                <strong>Se requiere foto para elementos marcados como 'Mal'</strong>
+                                            </p>
+                                            
+                                            <!-- Camera/File Input -->
+                                            <div class="mb-4">
+                                                <label class="btn btn-primary btn-lg w-100">
+                                                    <i class="fa fa-camera me-2"/>
+                                                    Tomar/Seleccionar Foto
+                                                    <input type="file" 
+                                                           accept="image/*" 
+                                                           capture="environment"
+                                                           style="display: none;"
+                                                           t-on-change="this.onCapturePhoto"/>
+                                                </label>
+                                            </div>
+                                            
+                                            <!-- Preview of captured photos -->
+                                            <t t-if="state.capturedPhotos.length > 0">
+                                                <h6>Fotos capturadas (<t t-esc="state.capturedPhotos.length"/>):</h6>
+                                                <div class="row">
+                                                    <t t-foreach="state.capturedPhotos" t-as="photo" t-key="photo_index">
+                                                        <div class="col-6 col-md-4 mb-3">
+                                                            <div class="position-relative">
+                                                                <img t-att-src="photo.preview" 
+                                                                     class="img-thumbnail w-100" 
+                                                                     style="height: 150px; object-fit: cover;"/>
+                                                                <button class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
+                                                                        t-on-click="() => this.onRemovePhoto(photo_index)">
+                                                                    <i class="fa fa-times"/>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                            </t>
+                                            
+                                            <t t-else="">
+                                                <div class="alert alert-warning">
+                                                    No hay fotos capturadas. Tome al menos una foto del problema.
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Actions -->
+                            <div class="row mt-3 flex-shrink-0">
+                                <div class="col-6">
+                                    <button class="btn btn-outline-secondary btn-block w-100" 
+                                            t-on-click="this.onSkipPhotos"
+                                            t-att-disabled="state.photoRequired">
+                                        <i class="fa fa-forward me-2"/>
+                                        <t t-if="state.photoRequired">No Permitido</t>
+                                        <t t-else="">Omitir</t>
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn btn-success btn-block w-100" 
+                                            t-on-click="this.onSavePhotos"
+                                            t-att-disabled="state.capturedPhotos.length === 0">
+                                        <i class="fa fa-check me-2"/>
+                                        Guardar y Continuar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
                     <t t-elif="state.inspectionStarted">
                         <!-- Mobile Inspection Interface -->
                         <div class="container-fluid h-100 d-flex flex-column">
