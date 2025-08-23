@@ -81,12 +81,12 @@ export class FleetInspectionMobile extends Component {
         try {
             this.state.loading = true;
             
-            // Create new inspection
+            // Create new inspection - let Odoo handle the default datetime
             const inspectionId = await this.orm.create("fleet.inspection", [{
                 vehicle_id: vehicleId,
                 driver_id: this.user.partnerId,
                 state: 'draft',
-                inspection_date: new Date().toISOString(),
+                // Don't set inspection_date, let the default fields.Datetime.now handle it
             }]);
             
             // Open the inspection in form view
