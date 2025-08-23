@@ -861,14 +861,54 @@ export class FleetInspectionMobile extends Component {
                     this.state.currentItem = this.state.items[firstIncompleteIndex];
                 }
             } else {
-                // All verified complete, show signature screen
-                console.log("All items verified complete on server, proceeding to signature screen...");
-                this.showSignatureScreen();
+                // All verified complete, complete the inspection directly
+                console.log("All items verified complete on server, completing inspection...");
+                await this.completeInspection();
             }
         } catch (error) {
             console.error("Error verifying completion:", error);
             // Fallback to completion screen with warning
             this.showCompletionScreen();
+        }
+    }
+
+    async completeInspection() {
+        try {
+            console.log("=== COMPLETE INSPECTION ===");
+            console.log("Calling backend action_complete_inspection for inspection:", this.state.currentInspection.id);
+            
+            // Call the backend method to complete the inspection
+            await this.orm.call("fleet.inspection", "action_complete_inspection", [this.state.currentInspection.id]);
+            
+            console.log("Backend completion successful!");
+            
+            // Show completion screen with success message
+            await this.showCompletionScreen();
+            
+        } catch (error) {
+            console.error("Error completing inspection:", error);
+            
+            let errorMessage = "Error al completar inspección";
+            if (error.message && error.message.includes('template')) {
+                errorMessage = "Falta plantilla de inspección. Contacte al administrador.";
+            } else if (error.message && error.message.includes('odometer')) {
+                errorMessage = "Se requiere lectura del odómetro para completar.";
+            } else if (error.message && error.message.includes('items remaining')) {
+                errorMessage = "Hay elementos incompletos. Revise todos los elementos.";
+            } else if (error.message && error.message.includes('Photos are required')) {
+                errorMessage = "Se requieren fotos para elementos marcados como 'Mal'.";
+            } else if (error.message) {
+                errorMessage += ": " + error.message;
+            }
+            
+            if (this.notification) {
+                this.notification.add(errorMessage, {
+                    type: "danger",
+                });
+            }
+            
+            // Don't proceed to completion screen on error
+            throw error;
         }
     }
 
@@ -1025,54 +1065,24 @@ export class FleetInspectionMobile extends Component {
         
         console.log("Completion stats:", this.state.completionStats);
 
-        // Complete the inspection in the backend
-        try {
-            console.log("Calling backend to complete inspection:", this.state.currentInspection);
-            await this.orm.call("fleet.inspection", "action_complete_inspection", [this.state.currentInspection]);
-            console.log("Backend completion successful!");
-            
-            // Show success notification
-            if (this.notification) {
-                this.notification.add("¡Inspección completada exitosamente!", {
-                    type: "success",
-                    sticky: false
-                });
-            }
-            
-            // Show completion screen briefly, then reset to start page
-            console.log("Setting inspectionCompleted = true");
-            this.state.inspectionCompleted = true;
-            
-            // Auto-return to start page after 2 seconds (reduced for better UX)
-            console.log("Setting timeout to reset to start page in 2 seconds...");
-            setTimeout(() => {
-                console.log("Timeout triggered - calling resetToStartPage");
-                this.resetToStartPage();
-            }, 2000);
-        } catch (error) {
-            console.error("Error completing inspection:", error);
-            
-            let errorMessage = "Error al completar inspección";
-            if (error.message && error.message.includes('template')) {
-                errorMessage = "Falta plantilla de inspección. Contacte al administrador.";
-            } else if (error.message && error.message.includes('odometer')) {
-                errorMessage = "Se requiere lectura del odómetro para completar.";
-            } else if (error.message && error.message.includes('items remaining')) {
-                errorMessage = "Hay elementos incompletos. Revise todos los elementos.";
-            } else if (error.message && error.message.includes('Photos are required')) {
-                errorMessage = "Se requieren fotos para elementos marcados como 'Mal'.";
-            } else if (error.message) {
-                errorMessage += ": " + error.message;
-            }
-            
-            // Don't show completion screen, stay in inspection mode
-            if (this.notification) {
-                this.notification.add(errorMessage, {
-                    type: "danger",
-                    sticky: true
-                });
-            }
+        // Show success notification (inspection already completed in backend)
+        if (this.notification) {
+            this.notification.add("¡Inspección completada exitosamente!", {
+                type: "success",
+                sticky: false
+            });
         }
+        
+        // Show completion screen briefly, then reset to start page
+        console.log("Setting inspectionCompleted = true");
+        this.state.inspectionCompleted = true;
+        
+        // Auto-return to start page after 2 seconds
+        console.log("Setting timeout to reset to start page in 2 seconds...");
+        setTimeout(() => {
+            console.log("Timeout triggered - calling resetToStartPage");
+            this.resetToStartPage();
+        }, 2000);
     }
 }
 

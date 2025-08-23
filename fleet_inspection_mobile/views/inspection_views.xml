@@ -64,7 +64,7 @@
                     </group>
 
                     <!-- Summary Statistics -->
-                    <group string="Summary" attrs="{'invisible': [('state', '=', 'draft'), ('inspection_line_ids', '=', [])]}">
+                    <group string="Resumen" attrs="{'invisible': [('state', '=', 'draft'), ('inspection_line_ids', '=', [])]}">
                         <group>
                             <field name="total_items"/>
                             <field name="items_good"/>
@@ -76,7 +76,7 @@
                     </group>
 
                     <!-- Driver Information -->
-                    <group string="Driver Information" groups="fleet_inspection_mobile.group_fleet_inspection_manager">
+                    <group string="Información del Conductor" groups="fleet_inspection_mobile.group_fleet_inspection_manager">
                         <group>
                             <field name="license_number"/>
                             <field name="license_type"/>
