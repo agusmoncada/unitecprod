@@ -86,6 +86,7 @@ export class FleetInspectionMobile extends Component {
 
     async onSelectVehicle(vehicleId) {
         try {
+            console.log("Creating inspection for vehicle ID:", vehicleId);
             this.state.loading = true;
             
             // Create new inspection - let Odoo handle the default datetime
@@ -95,6 +96,8 @@ export class FleetInspectionMobile extends Component {
                 state: 'draft',
                 // Don't set inspection_date, let the default fields.Datetime.now handle it
             }]);
+            
+            console.log("Inspection created with ID:", inspectionId);
             
             // Start the inspection directly in mobile interface
             this.state.currentInspection = inspectionId[0];
@@ -106,8 +109,9 @@ export class FleetInspectionMobile extends Component {
             await this.startInspectionFlow(inspectionId[0]);
         } catch (error) {
             console.error("Error creating inspection:", error);
+            console.error("Error details:", error.message, error.stack);
             if (this.notification) {
-                this.notification.add("Error al crear inspección", {
+                this.notification.add("Error al crear inspección: " + error.message, {
                     type: "danger",
                 });
             }
@@ -122,10 +126,14 @@ export class FleetInspectionMobile extends Component {
 
     async startInspectionFlow(inspectionId) {
         try {
+            console.log("Starting inspection flow for ID:", inspectionId);
+            
             // Load inspection data
             const inspection = await this.orm.read("fleet.inspection", [inspectionId], [
                 'name', 'vehicle_id', 'driver_id', 'inspection_date', 'state'
             ]);
+            
+            console.log("Loaded inspection data:", inspection);
             
             if (inspection && inspection.length > 0) {
                 this.state.vehicleInfo = {
@@ -133,18 +141,28 @@ export class FleetInspectionMobile extends Component {
                     driver: inspection[0].driver_id[1],
                     inspectionName: inspection[0].name,
                 };
-                this.state.inspectionStarted = true;
+                
+                console.log("Set vehicle info:", this.state.vehicleInfo);
                 
                 // Initialize the inspection (create lines from template)
-                await this.orm.call("fleet.inspection", "action_start_inspection", [inspectionId]);
+                console.log("Calling action_start_inspection...");
+                const result = await this.orm.call("fleet.inspection", "action_start_inspection", [inspectionId]);
+                console.log("action_start_inspection result:", result);
                 
                 // Load inspection items
+                console.log("Loading inspection items...");
                 await this.loadInspectionItems(inspectionId);
+                
+                this.state.inspectionStarted = true;
+                console.log("Inspection flow started successfully");
+            } else {
+                console.error("No inspection data found for ID:", inspectionId);
             }
         } catch (error) {
             console.error("Error starting inspection flow:", error);
+            console.error("Error details:", error.message, error.stack);
             if (this.notification) {
-                this.notification.add("Error al iniciar el flujo de inspección", {
+                this.notification.add("Error al iniciar el flujo de inspección: " + error.message, {
                     type: "danger",
                 });
             }
@@ -153,6 +171,8 @@ export class FleetInspectionMobile extends Component {
 
     async loadInspectionItems(inspectionId) {
         try {
+            console.log("Loading inspection items for inspection ID:", inspectionId);
+            
             // Load inspection items (lines)
             const items = await this.orm.searchRead(
                 "fleet.inspection.line",
@@ -160,6 +180,8 @@ export class FleetInspectionMobile extends Component {
                 ['id', 'template_item_id', 'status', 'observations', 'photo_ids', 'sequence'],
                 { order: 'sequence asc' }
             );
+            
+            console.log("Found inspection items:", items);
             
             // Load template item details
             for (let item of items) {
@@ -174,15 +196,21 @@ export class FleetInspectionMobile extends Component {
                         item.description = templateItem[0].description;
                         item.section = templateItem[0].section_id ? templateItem[0].section_id[1] : 'General';
                         item.photo_required = templateItem[0].photo_required;
+                        console.log("Loaded template item:", item.name);
                     }
+                } else {
+                    console.log("Item has no template_item_id:", item);
                 }
             }
             
             this.state.items = items;
             this.state.itemIndex = 0;
             this.state.currentItem = items.length > 0 ? items[0] : null;
+            
+            console.log("Final items loaded:", items.length, "Current item:", this.state.currentItem);
         } catch (error) {
             console.error("Error loading inspection items:", error);
+            console.error("Error details:", error.message, error.stack);
             this.state.items = [];
             this.state.itemIndex = 0;
         }
