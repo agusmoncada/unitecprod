@@ -225,21 +225,35 @@ export class FleetInspectionMobile extends Component {
             
             // Load template item details
             for (let item of items) {
-                if (item.template_item_id) {
-                    const templateItem = await this.orm.read(
-                        "fleet.inspection.template.item",
-                        [item.template_item_id[0]],
-                        ['name', 'description', 'section_id', 'photo_required']
-                    );
-                    if (templateItem && templateItem.length > 0) {
-                        item.name = templateItem[0].name;
-                        item.description = templateItem[0].description;
-                        item.section = templateItem[0].section_id ? templateItem[0].section_id[1] : 'General';
-                        item.photo_required = templateItem[0].photo_required;
-                        console.log("Loaded template item:", item.name);
+                if (item.template_item_id && item.template_item_id.length > 0) {
+                    try {
+                        const templateItem = await this.orm.read(
+                            "fleet.inspection.template.item",
+                            [item.template_item_id[0]],
+                            ['name', 'description', 'section_id', 'photo_required_on_bad']
+                        );
+                        if (templateItem && templateItem.length > 0) {
+                            item.name = templateItem[0].name;
+                            item.description = templateItem[0].description;
+                            item.section = templateItem[0].section_id ? templateItem[0].section_id[1] : 'General';
+                            item.photo_required = templateItem[0].photo_required_on_bad;
+                            console.log("Loaded template item:", item.name);
+                        }
+                    } catch (templateError) {
+                        console.error("Error loading template item for item:", item.id, templateError);
+                        // Set fallback values
+                        item.name = `Item ${item.id}`;
+                        item.description = 'Elemento de inspección';
+                        item.section = 'General';
+                        item.photo_required = false;
                     }
                 } else {
                     console.log("Item has no template_item_id:", item);
+                    // Set fallback values
+                    item.name = `Item ${item.id}`;
+                    item.description = 'Elemento de inspección';
+                    item.section = 'General';
+                    item.photo_required = false;
                 }
             }
             
