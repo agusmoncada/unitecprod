@@ -30,6 +30,9 @@ export class FleetInspectionMobile extends Component {
             vehicleInfo: null,
             inspectionCompleted: false,
             completionStats: null,
+            showingObservations: false,
+            selectedStatus: null,
+            observations: '',
         });
         
         this.loadInspection();
@@ -42,6 +45,8 @@ export class FleetInspectionMobile extends Component {
         this.onSelectStatus = this.onSelectStatus.bind(this);
         this.onNextItem = this.onNextItem.bind(this);
         this.onPreviousItem = this.onPreviousItem.bind(this);
+        this.onSaveObservations = this.onSaveObservations.bind(this);
+        this.onSkipObservations = this.onSkipObservations.bind(this);
     }
 
     async loadInspection() {
@@ -223,24 +228,39 @@ export class FleetInspectionMobile extends Component {
             
             console.log("Found inspection items:", items);
             
-            // Load template item details
+            // Load template item details in batch for better performance
+            const templateItemIds = items
+                .filter(item => item.template_item_id && item.template_item_id.length > 0)
+                .map(item => item.template_item_id[0]);
+            
+            let templateItemsMap = {};
+            if (templateItemIds.length > 0) {
+                try {
+                    const templateItems = await this.orm.read(
+                        "fleet.inspection.template.item",
+                        templateItemIds,
+                        ['name', 'description', 'section_id', 'photo_required_on_bad']
+                    );
+                    
+                    // Create a map for fast lookup
+                    templateItems.forEach(templateItem => {
+                        templateItemsMap[templateItem.id] = templateItem;
+                    });
+                } catch (templateError) {
+                    console.error("Error loading template items:", templateError);
+                }
+            }
+            
+            // Apply template data to items
             for (let item of items) {
                 if (item.template_item_id && item.template_item_id.length > 0) {
-                    try {
-                        const templateItem = await this.orm.read(
-                            "fleet.inspection.template.item",
-                            [item.template_item_id[0]],
-                            ['name', 'description', 'section_id', 'photo_required_on_bad']
-                        );
-                        if (templateItem && templateItem.length > 0) {
-                            item.name = templateItem[0].name;
-                            item.description = templateItem[0].description;
-                            item.section = templateItem[0].section_id ? templateItem[0].section_id[1] : 'General';
-                            item.photo_required = templateItem[0].photo_required_on_bad;
-                            console.log("Loaded template item:", item.name);
-                        }
-                    } catch (templateError) {
-                        console.error("Error loading template item for item:", item.id, templateError);
+                    const templateItem = templateItemsMap[item.template_item_id[0]];
+                    if (templateItem) {
+                        item.name = templateItem.name;
+                        item.description = templateItem.description;
+                        item.section = templateItem.section_id ? templateItem.section_id[1] : 'General';
+                        item.photo_required = templateItem.photo_required_on_bad;
+                    } else {
                         // Set fallback values
                         item.name = `Item ${item.id}`;
                         item.description = 'Elemento de inspección';
@@ -256,6 +276,8 @@ export class FleetInspectionMobile extends Component {
                     item.photo_required = false;
                 }
             }
+            
+            console.log("Loaded all template items in batch");
             
             this.state.items = items;
             this.state.itemIndex = 0;
@@ -290,26 +312,39 @@ export class FleetInspectionMobile extends Component {
     async onSelectStatus(status) {
         if (!this.state.currentItem) return;
 
+        // For 'regular' and 'mal' status, show observations input
+        if (status === 'regular' || status === 'mal') {
+            this.state.selectedStatus = status;
+            this.state.observations = this.state.currentItem.observations || '';
+            this.state.showingObservations = true;
+            return;
+        }
+
+        // For 'bien' and 'na', save directly
+        await this.saveStatusAndObservations(status, '');
+    }
+
+    async saveStatusAndObservations(status, observations) {
+        if (!this.state.currentItem) return;
+
         try {
-            // Update the inspection line status
+            // Update the inspection line status and observations
             await this.orm.write("fleet.inspection.line", [this.state.currentItem.id], {
-                status: status
+                status: status,
+                observations: observations || false
             });
 
             // Update local state
             this.state.currentItem.status = status;
+            this.state.currentItem.observations = observations;
             const itemIndex = this.state.items.findIndex(item => item.id === this.state.currentItem.id);
             if (itemIndex >= 0) {
                 this.state.items[itemIndex].status = status;
+                this.state.items[itemIndex].observations = observations;
             }
 
-            // Auto-advance to next item after selection (unless it's "Mal" and needs photo)
-            if (status !== 'mal' || !this.state.currentItem.photo_required) {
-                setTimeout(() => this.onNextItem(), 500);
-            } else {
-                // TODO: Show photo capture for "Mal" items
-                setTimeout(() => this.onNextItem(), 500);
-            }
+            // Auto-advance to next item
+            setTimeout(() => this.onNextItem(), 300);
 
         } catch (error) {
             console.error("Error updating status:", error);
@@ -319,6 +354,20 @@ export class FleetInspectionMobile extends Component {
                 });
             }
         }
+    }
+
+    async onSaveObservations() {
+        await this.saveStatusAndObservations(this.state.selectedStatus, this.state.observations);
+        this.state.showingObservations = false;
+        this.state.selectedStatus = null;
+        this.state.observations = '';
+    }
+
+    onSkipObservations() {
+        this.saveStatusAndObservations(this.state.selectedStatus, '');
+        this.state.showingObservations = false;
+        this.state.selectedStatus = null;
+        this.state.observations = '';
     }
 
     onNextItem() {
@@ -338,8 +387,7 @@ export class FleetInspectionMobile extends Component {
         }
     }
 
-    showCompletionScreen() {
-        this.state.inspectionCompleted = true;
+    async showCompletionScreen() {
         // Calculate completion stats
         const completed = this.state.items.filter(item => item.status).length;
         const total = this.state.items.length;
@@ -348,6 +396,21 @@ export class FleetInspectionMobile extends Component {
             total,
             percentage: Math.round((completed / total) * 100)
         };
+
+        // Complete the inspection in the backend
+        try {
+            await this.orm.call("fleet.inspection", "action_complete_inspection", [this.state.currentInspection]);
+            this.state.inspectionCompleted = true;
+        } catch (error) {
+            console.error("Error completing inspection:", error);
+            // Show completion screen anyway but with warning
+            this.state.inspectionCompleted = true;
+            if (this.notification) {
+                this.notification.add("Inspección completada pero con advertencias. Verifique el estado.", {
+                    type: "warning",
+                });
+            }
+        }
     }
 }
 

@@ -61,6 +61,57 @@
                             </div>
                         </div>
                     </t>
+                    <t t-elif="state.showingObservations">
+                        <!-- Observations Input -->
+                        <div class="container-fluid h-100 d-flex flex-column">
+                            <!-- Header -->
+                            <div class="row bg-warning text-dark border-bottom py-2 mb-3 flex-shrink-0">
+                                <div class="col-12">
+                                    <h6 class="mb-1">
+                                        <i class="fa fa-comment me-2"/>
+                                        Observaciones - <t t-esc="state.selectedStatus === 'regular' ? 'Regular' : 'Mal'"/>
+                                    </h6>
+                                    <small class="text-muted">
+                                        <t t-esc="state.currentItem.name"/>
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <!-- Observations Input -->
+                            <div class="row flex-grow-1">
+                                <div class="col-12">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <p class="mb-3">
+                                                Describe el problema encontrado:
+                                            </p>
+                                            <textarea class="form-control" rows="5" 
+                                                      t-model="state.observations"
+                                                      placeholder="Escriba aquí las observaciones (opcional)..."/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Actions -->
+                            <div class="row mt-3 flex-shrink-0">
+                                <div class="col-6">
+                                    <button class="btn btn-outline-secondary btn-block w-100" 
+                                            t-on-click="this.onSkipObservations">
+                                        <i class="fa fa-forward me-2"/>
+                                        Omitir
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn btn-primary btn-block w-100" 
+                                            t-on-click="this.onSaveObservations">
+                                        <i class="fa fa-save me-2"/>
+                                        Guardar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
                     <t t-elif="state.inspectionStarted">
                         <!-- Mobile Inspection Interface -->
                         <div class="container-fluid h-100 d-flex flex-column">
