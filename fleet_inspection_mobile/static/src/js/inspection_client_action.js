@@ -16,6 +16,7 @@ export class FleetInspectionMobile extends Component {
         this.orm = useService("orm");
         this.action = useService("action");
         this.notification = useService("notification");
+        this.user = useService("user");
         
         this.state = useState({
             currentInspection: null,
@@ -28,6 +29,12 @@ export class FleetInspectionMobile extends Component {
         });
         
         this.loadInspection();
+        
+        // Bind methods to maintain context
+        this.onSelectVehicle = this.onSelectVehicle.bind(this);
+        this.onCancelVehicleSelection = this.onCancelVehicleSelection.bind(this);
+        this.onClickStart = this.onClickStart.bind(this);
+        this.onClickResume = this.onClickResume.bind(this);
     }
 
     async loadInspection() {
@@ -77,7 +84,7 @@ export class FleetInspectionMobile extends Component {
             // Create new inspection
             const inspectionId = await this.orm.create("fleet.inspection", [{
                 vehicle_id: vehicleId,
-                driver_id: this.env.user.partner_id,
+                driver_id: this.user.partnerId,
                 state: 'draft',
                 inspection_date: new Date().toISOString(),
             }]);
@@ -96,9 +103,11 @@ export class FleetInspectionMobile extends Component {
             });
         } catch (error) {
             console.error("Error creating inspection:", error);
-            this.notification.add("Error al crear inspección", {
-                type: "danger",
-            });
+            if (this.notification) {
+                this.notification.add("Error al crear inspección", {
+                    type: "danger",
+                });
+            }
             this.state.loading = false;
         }
     }

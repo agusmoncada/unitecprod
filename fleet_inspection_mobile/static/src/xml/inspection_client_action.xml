@@ -33,7 +33,7 @@
                             <div class="row">
                                 <t t-foreach="state.vehicles" t-as="vehicle" t-key="vehicle.id">
                                     <div class="col-12 col-md-6 col-lg-4 mb-3">
-                                        <div class="card h-100" style="cursor: pointer;" t-on-click="() => onSelectVehicle(vehicle.id)">
+                                        <div class="card h-100" style="cursor: pointer;" t-on-click="(ev) => this.onSelectVehicle(vehicle.id)">
                                             <div class="card-body">
                                                 <h5 class="card-title">
                                                     <i class="fa fa-car me-2"/>
