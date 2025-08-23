@@ -2,7 +2,7 @@
 <odoo>
 
     <!-- Mobile Inspection Interface Action -->
-    <record id="action_fleet_inspection_mobile" model="ir.actions.client">
+    <record id="action_fleet_inspection_mobile_client" model="ir.actions.client">
         <field name="name">Mobile Inspection</field>
         <field name="tag">fleet_inspection_mobile</field>
         <field name="target">current</field>

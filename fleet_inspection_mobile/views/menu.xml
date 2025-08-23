@@ -32,7 +32,7 @@
     <menuitem id="menu_fleet_inspection_mobile"
               name="Mobile Interface"
               parent="menu_fleet_inspection_main"
-              action="action_fleet_inspection_mobile"
+              action="action_fleet_inspection_mobile_client"
               sequence="30"
               groups="group_fleet_inspection_user"/>
 
