@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api
+from odoo.exceptions import UserError
 import base64
 import logging
 
@@ -114,4 +115,41 @@ class FleetInspectionPhoto(models.Model):
             'res_model': 'fleet.inspection.photo.delete.wizard',
             'target': 'new',
             'context': {'default_photo_id': self.id}
+        }
+
+    def action_download_photo(self):
+        """Download photo as file"""
+        self.ensure_one()
+        
+        if not self.image:
+            raise UserError("No hay imagen para descargar")
+        
+        # Generate filename
+        filename = self.image_filename or f"{self.name.replace(' ', '_')}.jpg"
+        if not filename.lower().endswith(('.jpg', '.jpeg', '.png', '.gif')):
+            filename += '.jpg'
+        
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/web/content/fleet.inspection.photo/{self.id}/image/{filename}?download=true',
+            'target': 'self',
+        }
+
+    def action_view_fullscreen(self):
+        """View photo in fullscreen modal"""
+        self.ensure_one()
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Imagen: {self.name}',
+            'view_mode': 'form',
+            'res_model': 'fleet.inspection.photo',
+            'res_id': self.id,
+            'view_id': self.env.ref('fleet_inspection_mobile.view_inspection_photo_fullscreen').id,
+            'target': 'new',
+            'context': {
+                'form_view_initial_mode': 'readonly',
+                'create': False,
+                'edit': False,
+            }
         }

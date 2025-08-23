@@ -687,6 +687,7 @@ export class FleetInspectionMobile extends Component {
     }
 
     resetToStartPage() {
+        console.log("=== RESET TO START PAGE ===");
         // Reset all state to initial values
         this.state.currentInspection = null;
         this.state.currentItem = null;
@@ -712,10 +713,15 @@ export class FleetInspectionMobile extends Component {
             license_type: '',
             license_expiry: '',
             defensive_course: false,
+            course_expiry: '',
             course_duration: '',
+            odometer: '',
         };
         this.state.showingSignature = false;
         this.state.driverSignature = null;
+        // Reset draft selection state
+        this.state.showingDraftSelection = false;
+        this.state.draftInspections = [];
         
         // Show start page message
         if (this.notification) {
@@ -769,12 +775,16 @@ export class FleetInspectionMobile extends Component {
     }
 
     async onNextItem() {
+        console.log("onNextItem called - Current index:", this.state.itemIndex, "Total items:", this.state.items.length);
+        
         if (this.state.itemIndex < this.state.items.length - 1) {
             this.state.itemIndex++;
             this.state.currentItem = this.state.items[this.state.itemIndex];
+            console.log("Moved to next item:", this.state.currentItem?.name);
         } else {
             // Reached last item - check if all are completed before finishing
             const incompleteItems = this.state.items.filter(item => !item.status);
+            console.log("=== FINALIZAR BUTTON CLICKED ===");
             console.log("Checking completion status:");
             console.log("Total items:", this.state.items.length);
             console.log("Incomplete items:", incompleteItems.length);
@@ -794,8 +804,8 @@ export class FleetInspectionMobile extends Component {
                     this.state.currentItem = this.state.items[firstIncompleteIndex];
                 }
             } else {
-                // Double-check by reloading items from server before completing
-                console.log("All items appear complete in frontend, verifying with server...");
+                // All items complete - proceed with finalization
+                console.log("All items appear complete, starting finalization process...");
                 await this.verifyCompletionAndFinish();
             }
         }
@@ -995,6 +1005,8 @@ export class FleetInspectionMobile extends Component {
     }
 
     async showCompletionScreen() {
+        console.log("=== SHOW COMPLETION SCREEN ===");
+        
         // Calculate completion stats
         const completed = this.state.items.filter(item => item.status).length;
         const total = this.state.items.length;
@@ -1003,10 +1015,14 @@ export class FleetInspectionMobile extends Component {
             total,
             percentage: Math.round((completed / total) * 100)
         };
+        
+        console.log("Completion stats:", this.state.completionStats);
 
         // Complete the inspection in the backend
         try {
+            console.log("Calling backend to complete inspection:", this.state.currentInspection);
             await this.orm.call("fleet.inspection", "action_complete_inspection", [this.state.currentInspection]);
+            console.log("Backend completion successful!");
             
             // Show success notification
             if (this.notification) {
@@ -1017,12 +1033,15 @@ export class FleetInspectionMobile extends Component {
             }
             
             // Show completion screen briefly, then reset to start page
+            console.log("Setting inspectionCompleted = true");
             this.state.inspectionCompleted = true;
             
-            // Auto-return to start page after 3 seconds
+            // Auto-return to start page after 2 seconds (reduced for better UX)
+            console.log("Setting timeout to reset to start page in 2 seconds...");
             setTimeout(() => {
+                console.log("Timeout triggered - calling resetToStartPage");
                 this.resetToStartPage();
-            }, 3000);
+            }, 2000);
         } catch (error) {
             console.error("Error completing inspection:", error);
             

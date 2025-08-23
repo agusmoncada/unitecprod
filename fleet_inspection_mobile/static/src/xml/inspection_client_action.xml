@@ -402,6 +402,43 @@
                                     <small class="text-muted">
                                         Conductor: <t t-esc="state.vehicleInfo.driver"/>
                                     </small>
+                                    <!-- Visual Progress Indicator -->
+                                    <div class="mt-2">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <span class="small">Progreso de Inspección</span>
+                                            <span class="badge bg-primary">
+                                                <t t-esc="state.items.filter(item => item.status).length"/>/<t t-esc="state.items.length"/> completados
+                                            </span>
+                                        </div>
+                                        <div class="progress" style="height: 8px;">
+                                            <div class="progress-bar bg-success" 
+                                                 t-att-style="'width: ' + ((state.items.filter(item => item.status === 'bien').length / state.items.length) * 100) + '%'"
+                                                 t-att-title="state.items.filter(item => item.status === 'bien').length + ' elementos buenos'"></div>
+                                            <div class="progress-bar bg-warning" 
+                                                 t-att-style="'width: ' + ((state.items.filter(item => item.status === 'regular').length / state.items.length) * 100) + '%'"
+                                                 t-att-title="state.items.filter(item => item.status === 'regular').length + ' elementos regulares'"></div>
+                                            <div class="progress-bar bg-danger" 
+                                                 t-att-style="'width: ' + ((state.items.filter(item => item.status === 'mal').length / state.items.length) * 100) + '%'"
+                                                 t-att-title="state.items.filter(item => item.status === 'mal').length + ' elementos malos'"></div>
+                                            <div class="progress-bar bg-secondary" 
+                                                 t-att-style="'width: ' + ((state.items.filter(item => item.status === 'na').length / state.items.length) * 100) + '%'"
+                                                 t-att-title="state.items.filter(item => item.status === 'na').length + ' elementos N/A'"></div>
+                                        </div>
+                                        <div class="d-flex justify-content-between mt-1">
+                                            <small class="text-success">
+                                                <i class="fa fa-check"/> <t t-esc="state.items.filter(item => item.status === 'bien').length"/>
+                                            </small>
+                                            <small class="text-warning">
+                                                <i class="fa fa-exclamation-triangle"/> <t t-esc="state.items.filter(item => item.status === 'regular').length"/>
+                                            </small>
+                                            <small class="text-danger">
+                                                <i class="fa fa-times"/> <t t-esc="state.items.filter(item => item.status === 'mal').length"/>
+                                            </small>
+                                            <small class="text-muted">
+                                                <i class="fa fa-minus"/> <t t-esc="state.items.filter(item => item.status === 'na').length"/>
+                                            </small>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -411,15 +448,36 @@
                                     <t t-if="state.currentItem">
                                         <div class="card h-100">
                                             <div class="card-header">
-                                                <h5 class="mb-1">
-                                                    <t t-esc="state.currentItem.name"/>
-                                                </h5>
-                                                <small class="text-muted">
-                                                    Item <t t-esc="state.itemIndex + 1"/> de <t t-esc="state.items.length"/>
-                                                    <t t-if="state.currentItem.section"> - <t t-esc="state.currentItem.section"/></t>
-                                                    <br/>
-                                                    Completados: <t t-esc="state.items.filter(item => item.status).length"/>/<t t-esc="state.items.length"/>
-                                                </small>
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <h5 class="mb-1">
+                                                            <t t-if="state.currentItem.status">
+                                                                <span t-att-class="'badge me-2 ' + (state.currentItem.status === 'bien' ? 'bg-success' : state.currentItem.status === 'regular' ? 'bg-warning text-dark' : state.currentItem.status === 'mal' ? 'bg-danger' : 'bg-secondary')">
+                                                                    <i t-att-class="'fa ' + (state.currentItem.status === 'bien' ? 'fa-check' : state.currentItem.status === 'regular' ? 'fa-exclamation-triangle' : state.currentItem.status === 'mal' ? 'fa-times' : 'fa-minus')"/>
+                                                                    <t t-esc="state.currentItem.status === 'bien' ? 'BIEN' : state.currentItem.status === 'regular' ? 'REGULAR' : state.currentItem.status === 'mal' ? 'MAL' : 'N/A'"/>
+                                                                </span>
+                                                            </t>
+                                                            <t t-else="">
+                                                                <span class="badge bg-light text-dark me-2">PENDIENTE</span>
+                                                            </t>
+                                                            <t t-esc="state.currentItem.name"/>
+                                                        </h5>
+                                                        <small class="text-muted">
+                                                            Item <t t-esc="state.itemIndex + 1"/> de <t t-esc="state.items.length"/>
+                                                            <t t-if="state.currentItem.section"> - <t t-esc="state.currentItem.section"/></t>
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <t t-if="state.currentItem.observations">
+                                                    <div class="mt-2 p-2 bg-light border rounded">
+                                                        <small class="text-muted d-block mb-1">
+                                                            <i class="fa fa-comment me-1"/> Observaciones previas:
+                                                        </small>
+                                                        <small class="text-dark">
+                                                            <t t-esc="state.currentItem.observations"/>
+                                                        </small>
+                                                    </div>
+                                                </t>
                                             </div>
                                             <div class="card-body text-center">
                                                 <t t-if="state.currentItem.description">
@@ -430,29 +488,25 @@
                                                 
                                                 <!-- Status Buttons -->
                                                 <div class="d-grid gap-2 mb-4">
-                                                    <button class="btn btn-success btn-lg" 
-                                                            t-att-class="{'btn-success': state.currentItem.status !== 'bien', 'btn-success active': state.currentItem.status === 'bien'}"
+                                                    <button t-att-class="state.currentItem.status === 'bien' ? 'btn btn-success btn-lg fw-bold border-3 border-dark' : 'btn btn-outline-success btn-lg'" 
                                                             t-on-click="() => this.onSelectStatus('bien')">
-                                                        <i class="fa fa-check me-2"/>
-                                                        Bien
+                                                        <i t-att-class="state.currentItem.status === 'bien' ? 'fa fa-check-circle me-2' : 'fa fa-check me-2'"/>
+                                                        <span t-if="state.currentItem.status === 'bien'">✓ SELECCIONADO - </span>Bien
                                                     </button>
-                                                    <button class="btn btn-warning btn-lg"
-                                                            t-att-class="{'btn-warning': state.currentItem.status !== 'regular', 'btn-warning active': state.currentItem.status === 'regular'}"
+                                                    <button t-att-class="state.currentItem.status === 'regular' ? 'btn btn-warning btn-lg fw-bold border-3 border-dark text-dark' : 'btn btn-outline-warning btn-lg'"
                                                             t-on-click="() => this.onSelectStatus('regular')">
-                                                        <i class="fa fa-exclamation-triangle me-2"/>
-                                                        Regular
+                                                        <i t-att-class="state.currentItem.status === 'regular' ? 'fa fa-exclamation-circle me-2' : 'fa fa-exclamation-triangle me-2'"/>
+                                                        <span t-if="state.currentItem.status === 'regular'">✓ SELECCIONADO - </span>Regular
                                                     </button>
-                                                    <button class="btn btn-danger btn-lg"
-                                                            t-att-class="{'btn-danger': state.currentItem.status !== 'mal', 'btn-danger active': state.currentItem.status === 'mal'}"
+                                                    <button t-att-class="state.currentItem.status === 'mal' ? 'btn btn-danger btn-lg fw-bold border-3 border-dark' : 'btn btn-outline-danger btn-lg'"
                                                             t-on-click="() => this.onSelectStatus('mal')">
-                                                        <i class="fa fa-times me-2"/>
-                                                        Mal
+                                                        <i t-att-class="state.currentItem.status === 'mal' ? 'fa fa-times-circle me-2' : 'fa fa-times me-2'"/>
+                                                        <span t-if="state.currentItem.status === 'mal'">✓ SELECCIONADO - </span>Mal
                                                     </button>
-                                                    <button class="btn btn-secondary btn-lg"
-                                                            t-att-class="{'btn-secondary': state.currentItem.status !== 'na', 'btn-secondary active': state.currentItem.status === 'na'}"
+                                                    <button t-att-class="state.currentItem.status === 'na' ? 'btn btn-secondary btn-lg fw-bold border-3 border-dark' : 'btn btn-outline-secondary btn-lg'"
                                                             t-on-click="() => this.onSelectStatus('na')">
-                                                        <i class="fa fa-minus me-2"/>
-                                                        No Aplica
+                                                        <i t-att-class="state.currentItem.status === 'na' ? 'fa fa-minus-circle me-2' : 'fa fa-minus me-2'"/>
+                                                        <span t-if="state.currentItem.status === 'na'">✓ SELECCIONADO - </span>No Aplica
                                                     </button>
                                                 </div>
                                             </div>
@@ -574,7 +628,7 @@
                             </p>
                             <p class="text-info">
                                 <i class="fa fa-spinner fa-spin me-2"/>
-                                Volviendo al inicio en 3 segundos...
+                                Volviendo al inicio en 2 segundos...
                             </p>
                             
                             <div class="d-grid gap-2 mx-auto" style="max-width: 300px;">

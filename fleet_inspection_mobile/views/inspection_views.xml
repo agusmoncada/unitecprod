@@ -130,33 +130,75 @@
                                                         <field name="image"/>
                                                         <field name="name"/>
                                                         <field name="taken_at"/>
+                                                        <field name="image_size"/>
                                                         <templates>
                                                             <t t-name="kanban-box">
-                                                                <div class="oe_kanban_card">
+                                                                <div class="oe_kanban_card oe_kanban_global_click">
                                                                     <div class="o_kanban_card_header">
                                                                         <div class="o_kanban_card_header_title">
-                                                                            <div class="o_primary"><strong><t t-esc="record.name.value"/></strong></div>
-                                                                            <div class="o_secondary"><t t-esc="record.taken_at.value"/></div>
+                                                                            <div class="o_primary">
+                                                                                <strong><t t-esc="record.name.value"/></strong>
+                                                                                <button name="action_view_fullscreen" type="object" 
+                                                                                        class="btn btn-sm btn-outline-primary float-end">
+                                                                                    <i class="fa fa-expand"/> Ver Completa
+                                                                                </button>
+                                                                            </div>
+                                                                            <div class="o_secondary">
+                                                                                <i class="fa fa-calendar"/> <t t-esc="record.taken_at.value"/>
+                                                                            </div>
+                                                                            <div class="o_secondary">
+                                                                                <i class="fa fa-file-image-o"/> 
+                                                                                <t t-if="record.image_size.value">
+                                                                                    <t t-esc="Math.round(record.image_size.value / 1024)"/> KB
+                                                                                </t>
+                                                                                <t t-else="">Tamaño desconocido</t>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="o_kanban_image_wrapper">
-                                                                        <img class="o_image_64_cover" t-att-src="kanban_image('fleet.inspection.photo', 'image', record.id.raw_value)"/>
+                                                                    <div class="o_kanban_image_wrapper" style="cursor: pointer;">
+                                                                        <img class="o_image_64_cover" 
+                                                                             t-att-src="kanban_image('fleet.inspection.photo', 'image', record.id.raw_value)"
+                                                                             t-att-alt="record.name.value"
+                                                                             title="Click para ver en pantalla completa"/>
+                                                                        <div class="o_kanban_image_overlay">
+                                                                            <i class="fa fa-expand fa-2x text-white"/>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </t>
                                                         </templates>
                                                     </kanban>
                                                     <form>
+                                                        <header>
+                                                            <button name="action_download_photo" string="Descargar Imagen" type="object" class="btn-primary"/>
+                                                            <button name="action_view_fullscreen" string="Ver Pantalla Completa" type="object" class="btn-secondary"/>
+                                                        </header>
                                                         <sheet>
                                                             <div class="oe_title">
                                                                 <h1><field name="name"/></h1>
                                                             </div>
+                                                            
                                                             <group>
-                                                                <field name="taken_at" readonly="1"/>
-                                                                <field name="image_size" readonly="1"/>
+                                                                <group>
+                                                                    <field name="taken_at" readonly="1"/>
+                                                                    <field name="image_size" readonly="1"/>
+                                                                </group>
+                                                                <group>
+                                                                    <field name="line_id" readonly="1" string="Elemento de Inspección"/>
+                                                                </group>
                                                             </group>
-                                                            <group string="Imagen">
-                                                                <field name="image" widget="image" options="{'size': [400, 300]}"/>
+                                                            
+                                                            <group string="Vista Previa de Imagen">
+                                                                <field name="image" 
+                                                                       widget="image" 
+                                                                       options="{'size': [800, 600], 'preview_image': 'image'}"
+                                                                       class="o_image_preview"/>
+                                                            </group>
+                                                            
+                                                            <!-- Technical Info -->
+                                                            <group string="Información Técnica" groups="base.group_no_one">
+                                                                <field name="create_date" readonly="1"/>
+                                                                <field name="write_date" readonly="1"/>
                                                             </group>
                                                         </sheet>
                                                     </form>
@@ -393,6 +435,47 @@
             <p>
                 Templates define the items to check during vehicle inspections.
             </p>
+        </field>
+    </record>
+
+    <!-- Photo Fullscreen View -->
+    <record id="view_inspection_photo_fullscreen" model="ir.ui.view">
+        <field name="name">fleet.inspection.photo.fullscreen</field>
+        <field name="model">fleet.inspection.photo</field>
+        <field name="arch" type="xml">
+            <form string="Vista Completa de Imagen">
+                <header>
+                    <button name="action_download_photo" string="Descargar" type="object" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                        <h3><field name="line_id" readonly="1" string="Elemento"/></h3>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="taken_at" readonly="1"/>
+                            <field name="image_size" readonly="1" widget="float" options="{'digit': [16,0]}"/>
+                        </group>
+                        <group>
+                            <field name="gps_latitude" readonly="1" attrs="{'invisible': [('gps_latitude', '=', 0.0)]}"/>
+                            <field name="gps_longitude" readonly="1" attrs="{'invisible': [('gps_longitude', '=', 0.0)]}"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Imagen Completa">
+                        <field name="image" 
+                               widget="image" 
+                               options="{'size': [1200, 900], 'zoom': true, 'preview_image': 'image'}"
+                               class="o_image_fullscreen"/>
+                    </group>
+                    
+                    <group string="Descripción" attrs="{'invisible': [('description', '=', False)]}">
+                        <field name="description" readonly="1" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
         </field>
     </record>
 
