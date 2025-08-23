@@ -28,6 +28,8 @@ export class FleetInspectionMobile extends Component {
             vehicles: [],
             inspectionStarted: false,
             vehicleInfo: null,
+            inspectionCompleted: false,
+            completionStats: null,
         });
         
         this.loadInspection();
@@ -37,6 +39,9 @@ export class FleetInspectionMobile extends Component {
         this.onCancelVehicleSelection = this.onCancelVehicleSelection.bind(this);
         this.onClickStart = this.onClickStart.bind(this);
         this.onClickResume = this.onClickResume.bind(this);
+        this.onSelectStatus = this.onSelectStatus.bind(this);
+        this.onNextItem = this.onNextItem.bind(this);
+        this.onPreviousItem = this.onPreviousItem.bind(this);
     }
 
     async loadInspection() {
@@ -198,6 +203,69 @@ export class FleetInspectionMobile extends Component {
             context: {},
             name: 'Inspecciones Pendientes',
         });
+    }
+
+    async onSelectStatus(status) {
+        if (!this.state.currentItem) return;
+
+        try {
+            // Update the inspection line status
+            await this.orm.write("fleet.inspection.line", [this.state.currentItem.id], {
+                status: status
+            });
+
+            // Update local state
+            this.state.currentItem.status = status;
+            const itemIndex = this.state.items.findIndex(item => item.id === this.state.currentItem.id);
+            if (itemIndex >= 0) {
+                this.state.items[itemIndex].status = status;
+            }
+
+            // Auto-advance to next item after selection (unless it's "Mal" and needs photo)
+            if (status !== 'mal' || !this.state.currentItem.photo_required) {
+                setTimeout(() => this.onNextItem(), 500);
+            } else {
+                // TODO: Show photo capture for "Mal" items
+                setTimeout(() => this.onNextItem(), 500);
+            }
+
+        } catch (error) {
+            console.error("Error updating status:", error);
+            if (this.notification) {
+                this.notification.add("Error al actualizar estado", {
+                    type: "danger",
+                });
+            }
+        }
+    }
+
+    onNextItem() {
+        if (this.state.itemIndex < this.state.items.length - 1) {
+            this.state.itemIndex++;
+            this.state.currentItem = this.state.items[this.state.itemIndex];
+        } else {
+            // All items completed - show completion screen
+            this.showCompletionScreen();
+        }
+    }
+
+    onPreviousItem() {
+        if (this.state.itemIndex > 0) {
+            this.state.itemIndex--;
+            this.state.currentItem = this.state.items[this.state.itemIndex];
+        }
+    }
+
+    showCompletionScreen() {
+        this.state.inspectionCompleted = true;
+        // Calculate completion stats
+        const completed = this.state.items.filter(item => item.status).length;
+        const total = this.state.items.length;
+        this.state.completionStats = {
+            completed,
+            total,
+            percentage: Math.round((completed / total) * 100)
+        };
     }
 }
 

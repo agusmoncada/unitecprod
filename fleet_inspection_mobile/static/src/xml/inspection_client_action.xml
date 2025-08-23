@@ -100,19 +100,27 @@
                                                 
                                                 <!-- Status Buttons -->
                                                 <div class="d-grid gap-2 mb-4">
-                                                    <button class="btn btn-success btn-lg">
+                                                    <button class="btn btn-success btn-lg" 
+                                                            t-att-class="{'btn-success': state.currentItem.status !== 'bien', 'btn-success active': state.currentItem.status === 'bien'}"
+                                                            t-on-click="() => this.onSelectStatus('bien')">
                                                         <i class="fa fa-check me-2"/>
                                                         Bien
                                                     </button>
-                                                    <button class="btn btn-warning btn-lg">
+                                                    <button class="btn btn-warning btn-lg"
+                                                            t-att-class="{'btn-warning': state.currentItem.status !== 'regular', 'btn-warning active': state.currentItem.status === 'regular'}"
+                                                            t-on-click="() => this.onSelectStatus('regular')">
                                                         <i class="fa fa-exclamation-triangle me-2"/>
                                                         Regular
                                                     </button>
-                                                    <button class="btn btn-danger btn-lg">
+                                                    <button class="btn btn-danger btn-lg"
+                                                            t-att-class="{'btn-danger': state.currentItem.status !== 'mal', 'btn-danger active': state.currentItem.status === 'mal'}"
+                                                            t-on-click="() => this.onSelectStatus('mal')">
                                                         <i class="fa fa-times me-2"/>
                                                         Mal
                                                     </button>
-                                                    <button class="btn btn-secondary btn-lg">
+                                                    <button class="btn btn-secondary btn-lg"
+                                                            t-att-class="{'btn-secondary': state.currentItem.status !== 'na', 'btn-secondary active': state.currentItem.status === 'na'}"
+                                                            t-on-click="() => this.onSelectStatus('na')">
                                                         <i class="fa fa-minus me-2"/>
                                                         No Aplica
                                                     </button>
@@ -131,17 +139,46 @@
                             <!-- Navigation -->
                             <div class="row mt-3 flex-shrink-0">
                                 <div class="col-6">
-                                    <button class="btn btn-outline-secondary btn-block w-100">
+                                    <button class="btn btn-outline-secondary btn-block w-100" 
+                                            t-att-disabled="state.itemIndex === 0"
+                                            t-on-click="this.onPreviousItem">
                                         <i class="fa fa-arrow-left me-2"/>
                                         Anterior
                                     </button>
                                 </div>
                                 <div class="col-6">
-                                    <button class="btn btn-primary btn-block w-100">
+                                    <button class="btn btn-primary btn-block w-100" 
+                                            t-on-click="this.onNextItem">
                                         <i class="fa fa-arrow-right me-2"/>
-                                        Siguiente
+                                        <t t-if="state.itemIndex &lt; state.items.length - 1">Siguiente</t>
+                                        <t t-else="">Finalizar</t>
                                     </button>
                                 </div>
+                            </div>
+                        </div>
+                    </t>
+                    <t t-elif="state.inspectionCompleted">
+                        <!-- Completion Screen -->
+                        <div class="text-center py-5">
+                            <div class="mb-4">
+                                <i class="fa fa-check-circle fa-5x text-success"/>
+                            </div>
+                            <h3 class="mb-3">¡Inspección Completada!</h3>
+                            <p class="text-muted mb-4">
+                                Has completado <strong><t t-esc="state.completionStats.completed"/></strong> 
+                                de <strong><t t-esc="state.completionStats.total"/></strong> elementos
+                                (<t t-esc="state.completionStats.percentage"/>%)
+                            </p>
+                            
+                            <div class="d-grid gap-2 mx-auto" style="max-width: 300px;">
+                                <button class="btn btn-success btn-lg">
+                                    <i class="fa fa-signature me-2"/>
+                                    Firmar y Finalizar
+                                </button>
+                                <button class="btn btn-outline-secondary">
+                                    <i class="fa fa-edit me-2"/>
+                                    Revisar Items
+                                </button>
                             </div>
                         </div>
                     </t>
