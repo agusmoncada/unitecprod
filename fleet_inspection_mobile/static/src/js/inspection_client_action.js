@@ -375,8 +375,25 @@ export class FleetInspectionMobile extends Component {
             this.state.itemIndex++;
             this.state.currentItem = this.state.items[this.state.itemIndex];
         } else {
-            // All items completed - show completion screen
-            this.showCompletionScreen();
+            // Reached last item - check if all are completed before finishing
+            const incompleteItems = this.state.items.filter(item => !item.status);
+            if (incompleteItems.length > 0) {
+                // Show notification about incomplete items
+                if (this.notification) {
+                    this.notification.add(`Faltan ${incompleteItems.length} elementos por completar. Revise los elementos pendientes.`, {
+                        type: "warning",
+                    });
+                }
+                // Go to first incomplete item
+                const firstIncompleteIndex = this.state.items.findIndex(item => !item.status);
+                if (firstIncompleteIndex >= 0) {
+                    this.state.itemIndex = firstIncompleteIndex;
+                    this.state.currentItem = this.state.items[firstIncompleteIndex];
+                }
+            } else {
+                // All items completed - show completion screen
+                this.showCompletionScreen();
+            }
         }
     }
 

@@ -140,6 +140,8 @@
                                                 <small class="text-muted">
                                                     Item <t t-esc="state.itemIndex + 1"/> de <t t-esc="state.items.length"/>
                                                     <t t-if="state.currentItem.section"> - <t t-esc="state.currentItem.section"/></t>
+                                                    <br/>
+                                                    Completados: <t t-esc="state.items.filter(item => item.status).length"/>/<t t-esc="state.items.length"/>
                                                 </small>
                                             </div>
                                             <div class="card-body text-center">
@@ -202,7 +204,12 @@
                                             t-on-click="this.onNextItem">
                                         <i class="fa fa-arrow-right me-2"/>
                                         <t t-if="state.itemIndex &lt; state.items.length - 1">Siguiente</t>
-                                        <t t-else="">Finalizar</t>
+                                        <t t-else="">
+                                            <t t-if="state.items.filter(item => !item.status).length > 0">
+                                                Revisar (<t t-esc="state.items.filter(item => !item.status).length"/> pendientes)
+                                            </t>
+                                            <t t-else="">Finalizar</t>
+                                        </t>
                                     </button>
                                 </div>
                             </div>
