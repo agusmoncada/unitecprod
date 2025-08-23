@@ -356,7 +356,7 @@ export class FleetInspectionMobile extends Component {
             }
 
             // Auto-advance to next item
-            setTimeout(() => this.onNextItem(), 300);
+            setTimeout(async () => await this.onNextItem(), 300);
 
         } catch (error) {
             console.error("Error updating status:", error);
@@ -375,14 +375,14 @@ export class FleetInspectionMobile extends Component {
         this.state.observations = '';
     }
 
-    onSkipObservations() {
-        this.saveStatusAndObservations(this.state.selectedStatus, '');
+    async onSkipObservations() {
+        await this.saveStatusAndObservations(this.state.selectedStatus, '');
         this.state.showingObservations = false;
         this.state.selectedStatus = null;
         this.state.observations = '';
     }
 
-    onNextItem() {
+    async onNextItem() {
         if (this.state.itemIndex < this.state.items.length - 1) {
             this.state.itemIndex++;
             this.state.currentItem = this.state.items[this.state.itemIndex];
