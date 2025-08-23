@@ -177,48 +177,99 @@ class FleetInspection(models.Model):
         """Mark inspection as completed"""
         self.ensure_one()
         
-        _logger.info(f"Attempting to complete inspection {self.id}: {self.name}")
-        _logger.info(f"Inspection data: vehicle={self.vehicle_id.name}, driver={self.driver_id.name}, template={self.template_id.name if self.template_id else 'None'}")
-        
-        # Check required template
-        if not self.template_id:
-            raise UserError("Inspection template is required. Please set a template before completing.")
-        
-        # Check required odometer reading
         try:
-            if hasattr(self.env.company, 'inspection_require_odometer') and self.env.company.inspection_require_odometer and not self.odometer:
-                raise UserError("Odometer reading is required to complete inspection.")
+            _logger.info(f"=== STARTING COMPLETION FOR INSPECTION {self.id} ===")
+            _logger.info(f"Inspection name: {self.name}")
+            _logger.info(f"Vehicle: {self.vehicle_id.name if self.vehicle_id else 'None'}")
+            _logger.info(f"Driver: {self.driver_id.name if self.driver_id else 'None'}")
+            _logger.info(f"Template: {self.template_id.name if self.template_id else 'None'}")
+            _logger.info(f"Current state: {self.state}")
+            _logger.info(f"Total inspection lines: {len(self.inspection_line_ids)}")
+            
+            # Check required template
+            if not self.template_id:
+                _logger.error("COMPLETION FAILED: No template assigned")
+                raise UserError("Inspection template is required. Please set a template before completing.")
+            
+            # Check required odometer reading
+            try:
+                odometer_required = hasattr(self.env.company, 'inspection_require_odometer') and self.env.company.inspection_require_odometer
+                _logger.info(f"Odometer required: {odometer_required}, Current odometer: {self.odometer}")
+                if odometer_required and not self.odometer:
+                    _logger.error("COMPLETION FAILED: Odometer required but not set")
+                    raise UserError("Odometer reading is required to complete inspection.")
+            except Exception as e:
+                _logger.warning(f"Error checking odometer requirement: {e}")
+            
+            # Detailed validation for incomplete items
+            all_lines = self.inspection_line_ids
+            _logger.info(f"Checking {len(all_lines)} inspection lines for completion...")
+            
+            incomplete_items = all_lines.filtered(lambda l: not l.status)
+            completed_items = all_lines.filtered(lambda l: l.status)
+            
+            _logger.info(f"Completed items: {len(completed_items)}")
+            _logger.info(f"Incomplete items: {len(incomplete_items)}")
+            
+            if incomplete_items:
+                incomplete_details = []
+                for item in incomplete_items:
+                    incomplete_details.append(f"ID:{item.id} - {item.name or 'No name'} - Status:{item.status}")
+                _logger.error(f"COMPLETION FAILED: Incomplete items found: {incomplete_details}")
+                incomplete_names = incomplete_items.mapped('name')
+                raise UserError(f"Please complete all inspection items. {len(incomplete_items)} items remaining: {', '.join(incomplete_names[:3])}{'...' if len(incomplete_names) > 3 else ''}")
+            
+            # Check required photos (only if photo functionality is configured)
+            try:
+                photo_required = hasattr(self.env.company, 'inspection_require_photo_for_bad') and self.env.company.inspection_require_photo_for_bad
+                _logger.info(f"Photo validation required: {photo_required}")
+                
+                if photo_required:
+                    bad_items = self.inspection_line_ids.filtered(lambda l: l.status == 'mal')
+                    _logger.info(f"Found {len(bad_items)} items marked as 'mal'")
+                    
+                    bad_items_without_photos = bad_items.filtered(
+                        lambda l: hasattr(l, 'photo_required') and l.photo_required and not l.photo_ids
+                    )
+                    if bad_items_without_photos:
+                        bad_names = bad_items_without_photos.mapped('name')
+                        _logger.error(f"COMPLETION FAILED: Photos required for: {bad_names}")
+                        raise UserError(f"Photos are required for items marked as 'Mal': {', '.join(bad_names)}")
+            except UserError:
+                raise
+            except Exception as e:
+                _logger.warning(f"Error checking photo requirements: {e}")
+            
+            _logger.info("All validations passed, completing inspection...")
+            
+            # Complete the inspection
+            self.state = 'completed'
+            self.end_time = fields.Datetime.now()
+            
+            _logger.info(f"Inspection {self.id} marked as completed successfully")
+            
+        except UserError:
+            raise
         except Exception as e:
-            _logger.warning(f"Error checking odometer requirement: {e}")
+            _logger.error(f"UNEXPECTED ERROR during completion: {e}")
+            _logger.error(f"Error type: {type(e)}")
+            _logger.error(f"Error details: {str(e)}")
+            import traceback
+            _logger.error(f"Full traceback: {traceback.format_exc()}")
+            raise UserError(f"Unexpected error during completion: {str(e)}")
         
-        # Validation for incomplete items
-        incomplete_items = self.inspection_line_ids.filtered(lambda l: not l.status)
-        if incomplete_items:
-            incomplete_names = incomplete_items.mapped('name')
-            _logger.warning(f"Incomplete items found: {incomplete_names}")
-            raise UserError(f"Please complete all inspection items. {len(incomplete_items)} items remaining: {', '.join(incomplete_names[:3])}{'...' if len(incomplete_names) > 3 else ''}")
-        
-        # Check required photos (only if photo functionality is configured)
+        # Auto-create maintenance requests if configured (temporarily disabled due to service_type constraint)
         try:
-            if self.env.company.inspection_require_photo_for_bad:
-                bad_items_without_photos = self.inspection_line_ids.filtered(
-                    lambda l: l.status == 'mal' and hasattr(l, 'photo_required') and l.photo_required and not l.photo_ids
-                )
-                if bad_items_without_photos:
-                    raise UserError("Photos are required for all items marked as 'Mal'.")
-        except Exception as e:
-            _logger.warning(f"Error checking photo requirements: {e}")
-        
-        self.state = 'completed'
-        self.end_time = fields.Datetime.now()
-        
-        # Auto-create maintenance requests if configured
-        try:
-            if hasattr(self.env.company, 'inspection_auto_create_maintenance') and self.env.company.inspection_auto_create_maintenance:
-                self._create_maintenance_requests()
+            _logger.info("Maintenance request creation is temporarily disabled to avoid database constraint issues")
+            # TODO: Re-enable after fixing fleet.service.type dependencies
+            # if hasattr(self.env.company, 'inspection_auto_create_maintenance') and self.env.company.inspection_auto_create_maintenance:
+            #     _logger.info("Maintenance request creation is enabled, attempting to create requests...")
+            #     self._create_maintenance_requests()
+            #     _logger.info("Maintenance requests created successfully")
         except Exception as e:
             # Don't fail inspection completion if maintenance request creation fails
-            _logger.warning(f"Failed to create maintenance requests: {e}")
+            _logger.error(f"Failed to create maintenance requests: {e}")
+            # Continue with completion
         
         return {
             'type': 'ir.actions.client',
@@ -255,20 +306,38 @@ class FleetInspection(models.Model):
                     description += f": {item.observations}"
                 description += "\n"
             
-            # Try to find maintenance service type, create without it if not found
+            # Try to find maintenance service type
             service_type_id = False
             try:
                 service_type_id = self.env.ref('fleet.type_service_maintenance').id
+                _logger.info(f"Found fleet.type_service_maintenance with ID: {service_type_id}")
             except ValueError:
                 _logger.warning("fleet.type_service_maintenance reference not found")
+                # Try to find any service type for maintenance
+                try:
+                    service_types = self.env['fleet.service.type'].search([('category', '=', 'service')], limit=1)
+                    if service_types:
+                        service_type_id = service_types[0].id
+                        _logger.info(f"Using alternative service type ID: {service_type_id}")
+                except Exception as e:
+                    _logger.warning(f"Could not find any service type: {e}")
             
-            self.env['fleet.vehicle.log.services'].create({
-                'vehicle_id': self.vehicle_id.id,
-                'description': f'Maintenance Required - {section}',
-                'notes': description,
-                'state': 'new',
-                'service_type_id': service_type_id,
-            })
+            # Only create maintenance request if we have a valid service type
+            if service_type_id:
+                try:
+                    maintenance_request = self.env['fleet.vehicle.log.services'].create({
+                        'vehicle_id': self.vehicle_id.id,
+                        'description': f'Maintenance Required - {section}',
+                        'notes': description,
+                        'state': 'new',
+                        'service_type_id': service_type_id,
+                    })
+                    _logger.info(f"Created maintenance request ID: {maintenance_request.id}")
+                except Exception as create_error:
+                    _logger.error(f"Failed to create maintenance request: {create_error}")
+                    # Don't fail the whole completion for this
+            else:
+                _logger.warning(f"Skipping maintenance request creation for section '{section}' - no valid service type found")
 
     @api.model
     def create_from_vehicle(self, vehicle_id, driver_id=None):
