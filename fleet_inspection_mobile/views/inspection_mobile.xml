@@ -53,7 +53,7 @@
                             <div class="o_kanban_card_footer">
                                 <button class="btn btn-primary btn-block o_start_inspection_btn" 
                                         t-attf-data-vehicle-id="#{record.id.raw_value}">
-                                    Start Inspection
+                                    Iniciar Inspección
                                 </button>
                             </div>
                         </div>
@@ -77,7 +77,7 @@
                                 </button>
                             </div>
                             <div class="col-8 text-center">
-                                <h4 class="mb-0 vehicle-name">Vehicle Inspection</h4>
+                                <h4 class="mb-0 vehicle-name">Inspección Vehicular</h4>
                             </div>
                             <div class="col-2 text-right">
                                 <div class="progress-indicator">
@@ -104,7 +104,7 @@
                             <div class="search-section mt-3">
                                 <div class="input-group">
                                     <input type="text" class="form-control vehicle-search" 
-                                           placeholder="Search by license plate, model..." />
+                                           placeholder="Buscar por patente, modelo..." />
                                     <div class="input-group-append">
                                         <span class="input-group-text">
                                             <i class="fa fa-search"/>
@@ -114,16 +114,16 @@
                             </div>
                             
                             <div class="recent-vehicles mt-4">
-                                <h5>Recent Vehicles</h5>
+                                <h5>Vehículos Recientes</h5>
                                 <div class="recent-vehicles-list">
-                                    <!-- Recent vehicles will be loaded here -->
+                                    <!-- Los vehículos recientes se cargarán aquí -->
                                 </div>
                             </div>
                             
                             <div class="all-vehicles mt-4">
-                                <h5>All Vehicles</h5>
+                                <h5>Todos los Vehículos</h5>
                                 <div class="all-vehicles-list">
-                                    <!-- All vehicles will be loaded here -->
+                                    <!-- Todos los vehículos se cargarán aquí -->
                                 </div>
                             </div>
                         </div>

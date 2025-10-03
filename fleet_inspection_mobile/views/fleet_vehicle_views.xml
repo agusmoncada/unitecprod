@@ -132,7 +132,7 @@
         <field name="name">fleet.inspection.template.tree</field>
         <field name="model">fleet.inspection.template</field>
         <field name="arch" type="xml">
-            <tree string="Inspection Templates">
+            <tree string="Plantillas de Inspección">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="section_count"/>
@@ -146,14 +146,14 @@
         <field name="name">fleet.inspection.template.form</field>
         <field name="model">fleet.inspection.template</field>
         <field name="arch" type="xml">
-            <form string="Inspection Template">
+            <form string="Plantilla de Inspección">
                 <header>
-                    <button name="action_duplicate_template" string="Duplicate" type="object" class="btn-secondary"/>
+                    <button name="action_duplicate_template" string="Duplicar" type="object" class="btn-secondary"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
                         <h1>
-                            <field name="name" placeholder="Template Name"/>
+                            <field name="name" placeholder="Nombre de Plantilla"/>
                         </h1>
                     </div>
                     <group>
@@ -166,10 +166,10 @@
                             <field name="item_count" readonly="1"/>
                         </group>
                     </group>
-                    <field name="description" placeholder="Template description..."/>
+                    <field name="description" placeholder="Descripción de la plantilla..."/>
                     
                     <notebook>
-                        <page string="Sections">
+                        <page string="Secciones">
                             <field name="section_ids" nolabel="1">
                                 <tree editable="bottom">
                                     <field name="sequence" widget="handle"/>
@@ -213,7 +213,7 @@
     </record>
 
     <record id="action_fleet_inspection_template" model="ir.actions.act_window">
-        <field name="name">Inspection Templates</field>
+        <field name="name">Plantillas de Inspección">
         <field name="res_model">fleet.inspection.template</field>
         <field name="view_mode">tree,form</field>
     </record>

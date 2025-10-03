@@ -8,7 +8,7 @@
         <field name="name">fleet.inspection.tree</field>
         <field name="model">fleet.inspection</field>
         <field name="arch" type="xml">
-            <tree string="Fleet Inspections" decoration-info="state=='draft'" decoration-success="state=='completed'">
+            <tree string="Inspecciones Vehiculares" decoration-info="state=='draft'" decoration-success="state=='completed'">
                 <field name="name"/>
                 <field name="vehicle_id"/>
                 <field name="driver_id"/>
@@ -27,15 +27,15 @@
         <field name="name">fleet.inspection.form</field>
         <field name="model">fleet.inspection</field>
         <field name="arch" type="xml">
-            <form string="Fleet Inspection">
+            <form string="Inspección Vehicular">
                 <header>
-                    <button name="action_start_inspection" string="Start Inspection" 
+                    <button name="action_start_inspection" string="Iniciar Inspección" 
                             type="object" class="oe_highlight" 
                             attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('inspection_line_ids', '!=', [])]}"/>
-                    <button name="action_resume_inspection" string="Resume Inspection" 
+                    <button name="action_resume_inspection" string="Reanudar Inspección" 
                             type="object" class="oe_highlight" 
                             attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('inspection_line_ids', '=', [])]}"/>
-                    <button name="action_complete_inspection" string="Complete Inspection" 
+                    <button name="action_complete_inspection" string="Completar Inspección" 
                             type="object" class="oe_highlight" 
                             attrs="{'invisible': [('state', '!=', 'draft')]}"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,completed"/>
@@ -401,7 +401,7 @@
     </record>
 
     <record id="action_fleet_inspection_new" model="ir.actions.act_window">
-        <field name="name">New Inspection</field>
+        <field name="name">Nueva Inspección</field>
         <field name="res_model">fleet.inspection</field>
         <field name="view_mode">form</field>
         <field name="target">current</field>
@@ -411,29 +411,29 @@
     <!-- Inspection Template Action -->
     <!-- Vehicle-specific Inspection Action (for smart button) -->
     <record id="action_vehicle_inspections" model="ir.actions.act_window">
-        <field name="name">Vehicle Inspections</field>
+        <field name="name">Inspecciones del Vehículo</field>
         <field name="res_model">fleet.inspection</field>
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                No inspections found for this vehicle.
+                No se encontraron inspecciones para este vehículo.
             </p>
             <p>
-                Start a new inspection to track vehicle condition.
+                Inicie una nueva inspección para rastrear la condición del vehículo.
             </p>
         </field>
     </record>
 
     <record id="action_fleet_inspection_template" model="ir.actions.act_window">
-        <field name="name">Inspection Templates</field>
+        <field name="name">Plantillas de Inspección</field>
         <field name="res_model">fleet.inspection.template</field>
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Create an Inspection Template
+                Crear una Plantilla de Inspección
             </p>
             <p>
-                Templates define the items to check during vehicle inspections.
+                Las plantillas definen los elementos a verificar durante las inspecciones vehiculares.
             </p>
         </field>
     </record>

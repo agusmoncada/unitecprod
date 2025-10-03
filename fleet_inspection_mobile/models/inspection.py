@@ -8,24 +8,24 @@ _logger = logging.getLogger(__name__)
 
 class FleetInspection(models.Model):
     _name = 'fleet.inspection'
-    _description = 'Vehicle Inspection'
+    _description = 'Inspección Vehicular'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'inspection_date desc'
     _rec_name = 'name'
 
     name = fields.Char(string='Inspection Number', compute='_compute_name', store=True)
-    vehicle_id = fields.Many2one('fleet.vehicle', string='Vehicle', required=True, ondelete='cascade')
+    vehicle_id = fields.Many2one('fleet.vehicle', string='Vehículo', required=True, ondelete='cascade')
     # Fallback vehicle name if fleet module not available
-    vehicle_name = fields.Char(string='Vehicle Name')
+    vehicle_name = fields.Char(string='Nombre del Vehículo')
     driver_id = fields.Many2one('res.partner', string='Driver', required=True)
     inspection_date = fields.Datetime(string='Inspection Date', default=fields.Datetime.now, required=True)
     odometer = fields.Float(string='Odometer (km)')
     
     state = fields.Selection([
-        ('draft', 'In Progress'),
-        ('completed', 'Completed'),
+        ('draft', 'En Progreso'),
+        ('completed', 'Completado'),
         ('cancelled', 'Cancelled')
-    ], string='Status', default='draft', required=True, tracking=True)
+    ], string='Estado', default='draft', required=True, tracking=True)
     
     # Driver information
     license_number = fields.Char(string='License Number')
@@ -40,7 +40,7 @@ class FleetInspection(models.Model):
     insurance_expiry = fields.Date(string='Insurance Expiry')
     
     # Inspection items
-    inspection_line_ids = fields.One2many('fleet.inspection.line', 'inspection_id', string='Inspection Items')
+    inspection_line_ids = fields.One2many('fleet.inspection.line', 'inspection_id', string='Elementos de Inspección')
     
     # Summary fields
     items_good = fields.Integer(string='Items - Good', compute='_compute_summary', store=True)
@@ -69,7 +69,7 @@ class FleetInspection(models.Model):
     end_time = fields.Datetime(string='End Time')
     
     # Template reference
-    template_id = fields.Many2one('fleet.inspection.template', string='Inspection Template')
+    template_id = fields.Many2one('fleet.inspection.template', string='Plantilla de Inspección')
 
     @api.depends('vehicle_id', 'inspection_date')
     def _compute_name(self):
@@ -78,7 +78,7 @@ class FleetInspection(models.Model):
                 date_str = fields.Datetime.to_string(record.inspection_date)[:10]
                 record.name = f"INS/{record.vehicle_id.license_plate or record.vehicle_id.name}/{date_str}"
             else:
-                record.name = "New Inspection"
+                record.name = "Nueva Inspección"
 
     @api.depends('inspection_line_ids', 'inspection_line_ids.status')
     def _compute_summary(self):
@@ -124,7 +124,7 @@ class FleetInspection(models.Model):
         if not self.template_id:
             template = self.env['fleet.inspection.template'].search([('active', '=', True)], limit=1)
             if not template:
-                raise UserError("No active inspection template found. Please create one first.")
+                raise UserError("No se encontró una plantilla de inspección activa. Por favor cree una primero.")
             self.template_id = template
         
         # Create inspection lines from template
@@ -150,7 +150,7 @@ class FleetInspection(models.Model):
         if not self.template_id:
             template = self.env['fleet.inspection.template'].search([('active', '=', True)], limit=1)
             if not template:
-                raise UserError("No active inspection template found. Please create one first.")
+                raise UserError("No se encontró una plantilla de inspección activa. Por favor cree una primero.")
             self.template_id = template
         
         # Create inspection lines from template
@@ -190,7 +190,7 @@ class FleetInspection(models.Model):
             # Check required template
             if not self.template_id:
                 _logger.error("COMPLETION FAILED: No template assigned")
-                raise UserError("Inspection template is required. Please set a template before completing.")
+                raise UserError("Se requiere una plantilla de inspección. Por favor configure una plantilla antes de completar.")
             
             # Check required odometer reading
             try:
@@ -198,7 +198,7 @@ class FleetInspection(models.Model):
                 _logger.info(f"Odometer required: {odometer_required}, Current odometer: {self.odometer}")
                 if odometer_required and not self.odometer:
                     _logger.error("COMPLETION FAILED: Odometer required but not set")
-                    raise UserError("Odometer reading is required to complete inspection.")
+                    raise UserError("La lectura del odómetro es requerida para completar la inspección.")
             except Exception as e:
                 _logger.warning(f"Error checking odometer requirement: {e}")
             
@@ -218,7 +218,7 @@ class FleetInspection(models.Model):
                     incomplete_details.append(f"ID:{item.id} - {item.name or 'No name'} - Status:{item.status}")
                 _logger.error(f"COMPLETION FAILED: Incomplete items found: {incomplete_details}")
                 incomplete_names = incomplete_items.mapped('name')
-                raise UserError(f"Please complete all inspection items. {len(incomplete_items)} items remaining: {', '.join(incomplete_names[:3])}{'...' if len(incomplete_names) > 3 else ''}")
+                raise UserError(f"Por favor complete todos los elementos de inspección. {len(incomplete_items)} elementos restantes: {', '.join(incomplete_names[:3])}{'...' if len(incomplete_names) > 3 else ''}")
             
             # Check required photos (only if photo functionality is configured)
             try:
@@ -235,7 +235,7 @@ class FleetInspection(models.Model):
                     if bad_items_without_photos:
                         bad_names = bad_items_without_photos.mapped('name')
                         _logger.error(f"COMPLETION FAILED: Photos required for: {bad_names}")
-                        raise UserError(f"Photos are required for items marked as 'Mal': {', '.join(bad_names)}")
+                        raise UserError(f"Se requieren fotos para los elementos marcados como 'Mal': {', '.join(bad_names)}")
             except UserError:
                 raise
             except Exception as e:
@@ -257,7 +257,7 @@ class FleetInspection(models.Model):
             _logger.error(f"Error details: {str(e)}")
             import traceback
             _logger.error(f"Full traceback: {traceback.format_exc()}")
-            raise UserError(f"Unexpected error during completion: {str(e)}")
+            raise UserError(f"Error inesperado durante la finalización: {str(e)}")
         
         # Auto-create maintenance requests if configured (temporarily disabled due to service_type constraint)
         try:
@@ -345,7 +345,7 @@ class FleetInspection(models.Model):
         """Create new inspection for vehicle"""
         vehicle = self.env['fleet.vehicle'].browse(vehicle_id)
         if not vehicle.exists():
-            raise UserError("Vehicle not found.")
+            raise UserError("Vehículo no encontrado.")
         
         # Use current user as driver if not specified
         if not driver_id:
@@ -365,7 +365,7 @@ class FleetInspection(models.Model):
         """Resume incomplete inspection"""
         self.ensure_one()
         if self.state != 'draft':
-            raise UserError("Only draft inspections can be resumed.")
+            raise UserError("Solo se pueden reanudar inspecciones en borrador.")
         
         return {
             'type': 'ir.actions.act_window',

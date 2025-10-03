@@ -85,8 +85,8 @@ export class FleetInspectionMobile extends Component {
             // For now, just load a basic interface
             this.state.loading = false;
         } catch (error) {
-            console.error("Error loading inspection:", error);
-            this.notification.add("Error loading inspection", {
+            console.error("Error al cargar inspección:", error);
+            this.notification.add("Error al cargar inspección", {
                 type: "danger",
             });
         }
@@ -115,7 +115,7 @@ export class FleetInspectionMobile extends Component {
             );
             return vehicles;
         } catch (error) {
-            console.error("Error loading vehicles:", error);
+            console.error("Error al cargar vehículos:", error);
             return [];
         }
     }
@@ -137,7 +137,7 @@ export class FleetInspectionMobile extends Component {
             this.state.showingDriverInfo = true;
             this.state.loading = false;
         } catch (error) {
-            console.error("Error creating inspection:", error);
+            console.error("Error al crear inspección:", error);
             console.error("Error details:", error.message, error.stack);
             
             let errorMessage = "Error al crear inspección";
@@ -277,7 +277,7 @@ export class FleetInspectionMobile extends Component {
                         templateItemsMap[templateItem.id] = templateItem;
                     });
                 } catch (templateError) {
-                    console.error("Error loading template items:", templateError);
+                    console.error("Error al cargar elementos de plantilla:", templateError);
                 }
             }
             
@@ -315,7 +315,7 @@ export class FleetInspectionMobile extends Component {
             
             console.log("Final items loaded:", items.length, "Current item:", this.state.currentItem);
         } catch (error) {
-            console.error("Error loading inspection items:", error);
+            console.error("Error al cargar elementos de inspección:", error);
             console.error("Error details:", error.message, error.stack);
             this.state.items = [];
             this.state.itemIndex = 0;
@@ -355,7 +355,7 @@ export class FleetInspectionMobile extends Component {
             
             this.state.loading = false;
         } catch (error) {
-            console.error("Error loading draft inspections:", error);
+            console.error("Error al cargar inspecciones en borrador:", error);
             this.notification.add("Error al cargar inspecciones pendientes", {
                 type: "danger",
             });
@@ -620,7 +620,7 @@ export class FleetInspectionMobile extends Component {
                     templateId = templates[0].id;
                 }
             } catch (templateError) {
-                console.warn("Could not fetch inspection template:", templateError);
+                console.warn("No se pudo obtener plantilla de inspección:", templateError);
             }
             
             // Get device info
@@ -668,7 +668,7 @@ export class FleetInspectionMobile extends Component {
             // Load the inspection and start the mobile inspection flow
             await this.startInspectionFlow(actualInspectionId);
         } catch (error) {
-            console.error("Error creating inspection:", error);
+            console.error("Error al crear inspección:", error);
             if (this.notification) {
                 this.notification.add("Error al crear inspección: " + (error.message || 'Error desconocido'), {
                     type: "danger",
