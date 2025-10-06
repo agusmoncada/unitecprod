@@ -830,3 +830,26 @@ msgstr "Foto Permitida en Regular"
 #: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_template_item__section_sequence
 msgid "Section Sequence"
 msgstr "Secuencia de Sección"
+
+# Additional Field Labels Translations
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_template__section_count
+msgid "Total Sections"
+msgstr "Total de Secciones"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_template__item_count
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection__total_items
+msgid "Total Items"
+msgstr "Total de Items"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_template__item_ids
+#: model:ir.ui.view,arch_db:fleet_inspection_mobile.view_fleet_inspection_form
+msgid "Inspection Items"
+msgstr "Items de Inspección"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_template__active
+msgid "Active"
+msgstr "Activo"
