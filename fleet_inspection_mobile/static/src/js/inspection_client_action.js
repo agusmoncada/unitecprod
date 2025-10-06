@@ -331,8 +331,9 @@ export class FleetInspectionMobile extends Component {
             this.state.loading = true;
             
             // Get draft inspections for current user
+            const userId = this.user.context.uid || this.user.uid;
             const draftInspections = await this.orm.search_read('fleet.inspection', 
-                [['state', '=', 'draft'], ['create_uid', '=', this.user.userId]], 
+                [['state', '=', 'draft'], ['create_uid', '=', userId]], 
                 ['id', 'name', 'vehicle_id', 'inspection_date', 'completion_percentage']
             );
             
