@@ -368,12 +368,15 @@ class FleetInspection(models.Model):
             raise UserError("Solo se pueden reanudar inspecciones en borrador.")
         
         return {
-            'type': 'ir.actions.act_window',
-            'name': 'Resume Inspection',
-            'view_mode': 'inspection_mobile',
-            'res_model': 'fleet.inspection',
-            'res_id': self.id,
-            'target': 'current',
+            'type': 'ir.actions.client',
+            'tag': 'fleet_inspection_mobile',
+            'name': 'Inspección Vehicular',
+            'target': 'fullscreen',
+            'context': {
+                'default_inspection_id': self.id,
+                'mobile_interface': True,
+                'resume_inspection': True
+            }
         }
 
     def get_next_item(self, current_item_id=None):
