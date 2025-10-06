@@ -797,3 +797,36 @@ msgstr "Foto guardada exitosamente"
 #, python-format
 msgid "Failed to save photo"
 msgstr "Error al guardar la foto"
+
+# Missing Field Labels Translations
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_template__name
+msgid "Template"
+msgstr "Plantilla"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_template_item__sequence
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_template_section__sequence
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_template__sequence
+msgid "Sequence"
+msgstr "Secuencia"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_template_item__is_mandatory
+msgid "Mandatory"
+msgstr "Obligatorio"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_template_item__photo_required_on_bad
+msgid "Photo Required on Bad"
+msgstr "Foto Requerida en Mal"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_template_item__photo_allowed_on_regular
+msgid "Photo Allowed on Regular"
+msgstr "Foto Permitida en Regular"
+
+#. module: fleet_inspection_mobile
+#: model:ir.model.fields,field_description:fleet_inspection_mobile.field_fleet_inspection_template_item__section_sequence
+msgid "Section Sequence"
+msgstr "Secuencia de Sección"
