@@ -3,6 +3,7 @@
 import { registry } from "@web/core/registry";
 import { Component, useState } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
+import { session } from "@web/session";
 
 /**
  * Mobile Inspection Client Action
@@ -17,6 +18,7 @@ export class FleetInspectionMobile extends Component {
         this.action = useService("action");
         this.notification = useService("notification");
         this.user = useService("user");
+        this.session = session;
         
         this.state = useState({
             currentInspection: null,
@@ -328,11 +330,20 @@ export class FleetInspectionMobile extends Component {
 
     async onClickResume() {
         try {
+            console.log("onClickResume started");
             this.state.loading = true;
             
             // Get draft inspections for current user
-            const userId = this.user.context.uid || this.user.uid;
-            const draftInspections = await this.orm.search_read('fleet.inspection', 
+            const userId = this.session.uid || this.user.userId || this.user.context?.uid;
+            console.log("User ID:", userId);
+            console.log("Session object:", this.session);
+            console.log("User object:", this.user);
+            
+            if (!userId) {
+                throw new Error("No se pudo obtener el ID del usuario");
+            }
+            
+            const draftInspections = await this.orm.searchRead('fleet.inspection', 
                 [['state', '=', 'draft'], ['create_uid', '=', userId]], 
                 ['id', 'name', 'vehicle_id', 'inspection_date', 'completion_percentage']
             );
@@ -386,7 +397,7 @@ export class FleetInspectionMobile extends Component {
             const vehicle = vehicleData[0];
             
             // Load inspection items
-            const lines = await this.orm.search_read('fleet.inspection.line', 
+            const lines = await this.orm.searchRead('fleet.inspection.line', 
                 [['inspection_id', '=', inspectionId]], 
                 ['id', 'name', 'section', 'status', 'observations', 'sequence'], 
                 { order: 'sequence' }
@@ -825,7 +836,7 @@ export class FleetInspectionMobile extends Component {
             console.log("Current inspection:", this.state.currentInspection);
             
             // Reload items from server to check actual completion status
-            const serverItems = await this.orm.search_read(
+            const serverItems = await this.orm.searchRead(
                 "fleet.inspection.line",
                 [['inspection_id', '=', this.state.currentInspection.id]],
                 ['id', 'status'],
