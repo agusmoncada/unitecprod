@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api
+from odoo.exceptions import UserError
 
 
 class FleetInspectionTemplate(models.Model):
@@ -86,6 +87,21 @@ class FleetInspectionTemplateItem(models.Model):
     # Instructions
     instructions = fields.Text(string='Instructions')
     tips = fields.Text(string='Tips')
+
+    def unlink(self):
+        """Override unlink to check for existing inspection lines"""
+        for record in self:
+            # Check if there are inspection lines using this template item
+            inspection_lines = self.env['fleet.inspection.line'].search([
+                ('template_item_id', '=', record.id)
+            ])
+            if inspection_lines:
+                raise UserError(
+                    f"No se puede eliminar el elemento '{record.name}' porque está siendo "
+                    f"utilizado en {len(inspection_lines)} línea(s) de inspección. "
+                    f"Primero debe eliminar o reasignar estas líneas de inspección."
+                )
+        return super().unlink()
 
     @api.model
     def create_default_items(self, template_id):

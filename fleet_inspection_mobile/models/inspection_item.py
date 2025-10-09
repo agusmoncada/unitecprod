@@ -8,7 +8,7 @@ class FleetInspectionLine(models.Model):
     _order = 'sequence, id'
 
     inspection_id = fields.Many2one('fleet.inspection', string='Inspection', required=True, ondelete='cascade')
-    template_item_id = fields.Many2one('fleet.inspection.template.item', string='Template Item', required=True)
+    template_item_id = fields.Many2one('fleet.inspection.template.item', string='Template Item', required=True, ondelete='restrict')
     
     # Item info from template
     name = fields.Char(string='Item Name', related='template_item_id.name', readonly=True)
