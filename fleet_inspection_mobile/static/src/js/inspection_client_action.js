@@ -292,6 +292,8 @@ export class FleetInspectionMobile extends Component {
                         item.description = templateItem.description;
                         item.section = templateItem.section_id ? templateItem.section_id[1] : 'General';
                         item.photo_required = templateItem.photo_required_on_bad;
+                        item.instructions = templateItem.instructions;
+                        item.tips = templateItem.tips;
                     } else {
                         // Set fallback values
                         item.name = `Item ${item.id}`;
