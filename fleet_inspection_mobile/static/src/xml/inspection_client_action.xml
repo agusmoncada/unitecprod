@@ -485,7 +485,21 @@
                                                         <t t-esc="state.currentItem.description"/>
                                                     </p>
                                                 </t>
-                                                
+
+                                                <t t-if="state.currentItem.instructions and state.currentItem.instructions !== 'false'">
+                                                    <div class="alert alert-info text-start mb-4">
+                                                        <strong><i class="fa fa-info-circle me-2"/>Instrucciones:</strong>
+                                                        <p class="mb-0 mt-2" style="white-space: pre-line;"><t t-esc="state.currentItem.instructions"/></p>
+                                                    </div>
+                                                </t>
+
+                                                <t t-if="state.currentItem.tips and state.currentItem.tips !== 'false'">
+                                                    <div class="alert alert-warning text-start mb-4">
+                                                        <strong><i class="fa fa-lightbulb-o me-2"/>Consejos:</strong>
+                                                        <p class="mb-0 mt-2" style="white-space: pre-line;"><t t-esc="state.currentItem.tips"/></p>
+                                                    </div>
+                                                </t>
+
                                                 <!-- Status Buttons -->
                                                 <div class="d-grid gap-2 mb-4">
                                                     <button t-att-class="state.currentItem.status === 'bien' ? 'btn btn-success btn-lg fw-bold border-3 border-dark' : 'btn btn-outline-success btn-lg'" 
