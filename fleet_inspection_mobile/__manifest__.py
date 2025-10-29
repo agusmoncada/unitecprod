@@ -39,6 +39,7 @@ with a digital, user-friendly interface. Features:
             'fleet_inspection_mobile/static/src/scss/inspection_mobile.scss',
             'fleet_inspection_mobile/static/src/js/inspection_client_action.js',
             'fleet_inspection_mobile/static/src/xml/inspection_client_action.xml',
+            'fleet_inspection_mobile/static/src/xml/inspection_templates.xml',
         ],
     },
     'installable': True,
