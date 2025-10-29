@@ -273,7 +273,9 @@ export class FleetInspectionMobile extends Component {
                         templateItemIds,
                         ['name', 'description', 'section_id', 'photo_required_on_bad', 'instructions', 'tips']
                     );
-                    
+
+                    console.log("DEBUG: Loaded template items from DB:", templateItems);
+
                     // Create a map for fast lookup
                     templateItems.forEach(templateItem => {
                         templateItemsMap[templateItem.id] = templateItem;
@@ -294,6 +296,7 @@ export class FleetInspectionMobile extends Component {
                         item.photo_required = templateItem.photo_required_on_bad;
                         item.instructions = templateItem.instructions;
                         item.tips = templateItem.tips;
+                        console.log(`DEBUG: Mapped item ${item.id} - instructions: "${item.instructions}", tips: "${item.tips}"`);
                     } else {
                         // Set fallback values
                         item.name = `Item ${item.id}`;
