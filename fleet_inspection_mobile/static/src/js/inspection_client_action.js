@@ -271,7 +271,7 @@ export class FleetInspectionMobile extends Component {
                     const templateItems = await this.orm.read(
                         "fleet.inspection.template.item",
                         templateItemIds,
-                        ['name', 'description', 'section_id', 'photo_required_on_bad']
+                        ['name', 'description', 'section_id', 'photo_required_on_bad', 'instructions', 'tips']
                     );
                     
                     // Create a map for fast lookup
