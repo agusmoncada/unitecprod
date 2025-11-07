@@ -409,7 +409,7 @@ export class FleetInspectionMobile extends Component {
             );
             
             // Set up state for inspection
-            this.state.currentInspection = inspectionData;
+            this.state.currentInspection = inspectionData.id;
             this.state.items = lines;
             this.state.vehicleInfo = {
                 id: vehicle.id,
@@ -843,7 +843,7 @@ export class FleetInspectionMobile extends Component {
             // Reload items from server to check actual completion status
             const serverItems = await this.orm.searchRead(
                 "fleet.inspection.line",
-                [['inspection_id', '=', this.state.currentInspection.id]],
+                [['inspection_id', '=', this.state.currentInspection]],
                 ['id', 'status'],
                 { order: 'sequence asc' }
             );
@@ -892,10 +892,10 @@ export class FleetInspectionMobile extends Component {
     async completeInspection() {
         try {
             console.log("=== COMPLETE INSPECTION ===");
-            console.log("Calling backend action_complete_inspection for inspection:", this.state.currentInspection.id);
-            
+            console.log("Calling backend action_complete_inspection for inspection:", this.state.currentInspection);
+
             // Call the backend method to complete the inspection
-            await this.orm.call("fleet.inspection", "action_complete_inspection", [this.state.currentInspection.id]);
+            await this.orm.call("fleet.inspection", "action_complete_inspection", [this.state.currentInspection]);
             
             console.log("Backend completion successful!");
             
