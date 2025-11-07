@@ -58,7 +58,8 @@ $desktop-min: 1024px;
 
 // Base mobile inspection styles
 .o_fleet_inspection_mobile {
-  height: 100vh;
+  min-height: 100vh;
+  min-height: -webkit-fill-available; // Better mobile support
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -83,7 +84,7 @@ $desktop-min: 1024px;
   
   // Client action specific styles
   .inspection-mobile-container {
-    height: 100%;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
     
@@ -752,11 +753,11 @@ body.o_inspection_mobile_mode {
   .modal-dialog {
     margin: 0;
     max-width: 100%;
-    height: 100vh;
+    min-height: 100vh;
   }
-  
+
   .modal-content {
-    height: 100vh;
+    min-height: 100vh;
     border-radius: 0;
     border: none;
   }
