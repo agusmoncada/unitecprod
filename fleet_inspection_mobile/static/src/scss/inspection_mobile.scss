@@ -96,8 +96,14 @@ $desktop-min: 1024px;
       flex: 1;
       overflow-y: auto;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
+
+      // Fix for long scrollable lists (vehicle selection, draft inspections, etc.)
+      > .container-fluid {
+        width: 100%;
+        align-self: flex-start;
+      }
     }
   }
 }
